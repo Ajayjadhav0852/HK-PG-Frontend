@@ -61,9 +61,12 @@ export default function Header() {
               <button
                 onClick={() => go(user.role === 'admin' ? '/admin' : '/student')}
                 className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold text-gray-700 hover:bg-pink-50 transition">
-                <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-extrabold"
-                  style={btnStyle}>
-                  {user.name.charAt(0).toUpperCase()}
+                <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-white text-xs font-extrabold flex-shrink-0"
+                  style={user.profilePhotoUrl ? {} : btnStyle}>
+                  {user.profilePhotoUrl
+                    ? <img src={user.profilePhotoUrl} alt={user.name} className="w-full h-full object-cover" />
+                    : user.name.charAt(0).toUpperCase()
+                  }
                 </div>
                 <span className="hidden lg:block">{user.name.split(' ')[0]}</span>
               </button>

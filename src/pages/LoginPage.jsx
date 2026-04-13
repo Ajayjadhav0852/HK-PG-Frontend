@@ -1,25 +1,52 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { showToast } from '../components/Toast'
 import hkpgLogo from '../assets/hkpg-logo.png'
 
 export default function LoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
   const [form, setForm] = useState({ email: '', password: '' })
-  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setError('')
+
+    // Client-side validation
+    if (!form.email.trim()) {
+      showToast.error('Email Required', 'Please enter your email address.')
+      return
+    }
+    if (!form.password.trim()) {
+      showToast.error('Password Required', 'Please enter your password.')
+      return
+    }
+
     setLoading(true)
+    const id = showToast.loading('Signing In...', 'Verifying your credentials, please wait.')
+
+    const result = await login(form.email, form.password)
+    setLoading(false)
+
+    if (!result.success) {
+      showToast.update(id, 'error',
+        'Login Failed',
+        result.error || 'Invalid email or password. Please try again.'
+      )
+      return
+    }
+
+    showToast.update(id, 'success',
+      result.role === 'admin' ? 'Welcome, Admin! 👑' : 'Welcome Back! 👋',
+      result.role === 'admin'
+        ? 'Redirecting to Admin Dashboard...'
+        : 'Redirecting to your Student Dashboard...'
+    )
+
     setTimeout(() => {
-      const result = login(form.email, form.password)
-      setLoading(false)
-      if (!result.success) { setError(result.error); return }
       navigate(result.role === 'admin' ? '/admin' : '/student', { replace: true })
-    }, 600)
+    }, 800)
   }
 
   return (
@@ -36,33 +63,36 @@ export default function LoginPage() {
 
         <div className="bg-white rounded-3xl shadow-lg p-8 space-y-5">
 
-          {/* Demo credentials hint */}
-          <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 text-xs text-blue-700 space-y-1">
-            <p className="font-bold">Demo credentials:</p>
-            <p>🔑 Admin: admin@hkpg.com / admin123</p>
-            <p>🎓 Student: rahul@student.com / student123</p>
-          </div>
-
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl">
-              ❌ {error}
+          {/* Info hint — remove in production if desired */}
+          {import.meta.env.DEV && (
+            <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 space-y-1">
+              <p className="text-xs font-bold text-blue-700">🔐 Dev — Default Admin</p>
+              <p className="text-xs text-blue-600">Email: <span className="font-semibold">admin@hkpg.com</span></p>
+              <p className="text-xs text-blue-600">Password: <span className="font-semibold">admin123</span></p>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Email Address</label>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                Email Address <span className="text-red-400">*</span>
+              </label>
               <input
-                type="email" required placeholder="you@example.com"
+                type="email"
+                placeholder="you@example.com"
                 value={form.email}
                 onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100 transition"
               />
             </div>
+
             <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">Password</label>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                Password <span className="text-red-400">*</span>
+              </label>
               <input
-                type="password" required placeholder="••••••••"
+                type="password"
+                placeholder="Enter your password"
                 value={form.password}
                 onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100 transition"
@@ -70,24 +100,27 @@ export default function LoginPage() {
             </div>
 
             <button
-              type="submit" disabled={loading}
-              className="w-full py-3.5 rounded-xl font-extrabold text-white text-sm transition hover:opacity-90 active:scale-95 disabled:opacity-60"
+              type="submit"
+              disabled={loading}
+              className="w-full py-3.5 rounded-xl font-extrabold text-white text-sm transition hover:opacity-90 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
               style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}
             >
-              {loading ? 'Signing in...' : 'Sign In →'}
+              {loading ? '⏳ Signing in...' : 'Sign In →'}
             </button>
           </form>
 
           <p className="text-center text-sm text-gray-500">
             Don't have an account?{' '}
             <Link to="/register" className="font-bold hover:underline" style={{ color: '#c026d3' }}>
-              Sign Up
+              Create Account
             </Link>
           </p>
         </div>
 
         <p className="text-center mt-4">
-          <Link to="/" className="text-xs text-gray-400 hover:text-gray-600">← Back to Home</Link>
+          <Link to="/" className="text-xs text-gray-400 hover:text-gray-600 transition">
+            ← Back to Home
+          </Link>
         </p>
       </div>
     </div>

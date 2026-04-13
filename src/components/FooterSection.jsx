@@ -14,7 +14,6 @@ const facilities = [
   '💧 RO Water Purifier',
   '🏍️ Two Wheeler Parking',
   '🧹 Daily Housekeeping',
-  '🔋 Power Backup',
   '🏠 1–4 Sharing Rooms',
 ]
 
@@ -117,24 +116,20 @@ export default function FooterSection() {
             <li>📍 Near Gurudwara, Akurdi Rly St., Pune – 411035</li>
             <li>
               <a href="tel:9579828996" className="hover:text-pink-600 transition">
-                📞 9579828996 — Owner
+                📞 9579828996 — Owner(PG Management)
+              </a>
+            </li>
+             <li>
+              <a href="tel:9022481019" className="hover:text-pink-600 transition">
+                📞 9022481019 — Team (PG management)
               </a>
             </li>
             <li>
               <a href="tel:9096398032" className="hover:text-pink-600 transition">
-                📞 9096398032 — Warden
+                📞 9096398032 — Owner
               </a>
             </li>
           </ul>
-          <a
-            href="https://wa.me/919579828996"
-            target="_blank"
-            rel="noreferrer"
-            className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-white text-sm transition hover:opacity-90 active:scale-95"
-            style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}
-          >
-            💬 Chat on WhatsApp
-          </a>
         </div>
 
       </div>

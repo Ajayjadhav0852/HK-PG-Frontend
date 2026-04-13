@@ -1,30 +1,56 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { showToast } from '../components/Toast'
 import hkpgLogo from '../assets/hkpg-logo.png'
+
+const inputCls = 'w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100 transition'
 
 export default function RegisterPage() {
   const { register } = useAuth()
   const navigate = useNavigate()
-  const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' })
-  const [error, setError] = useState('')
+  const [form, setForm] = useState({ name: '', email: '', phone: '', password: '', confirm: '' })
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    setError('')
-    if (form.password !== form.confirm) { setError('Passwords do not match'); return }
-    if (form.password.length < 6) { setError('Password must be at least 6 characters'); return }
-    setLoading(true)
-    setTimeout(() => {
-      const result = register(form.name, form.email, form.password)
-      setLoading(false)
-      if (!result.success) { setError(result.error); return }
-      navigate('/student', { replace: true })
-    }, 600)
-  }
-
   const set = (key) => (e) => setForm(f => ({ ...f, [key]: e.target.value }))
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    if (!form.name.trim() || form.name.trim().length < 2) {
+      showToast.error('Name Too Short', 'Full name must be at least 2 characters.')
+      return
+    }
+    if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) {
+      showToast.error('Invalid Email', 'Please enter a valid email address.')
+      return
+    }
+    if (form.phone && !/^[0-9]{10}$/.test(form.phone)) {
+      showToast.error('Invalid Phone', 'Phone number must be exactly 10 digits.')
+      return
+    }
+    if (form.password.length < 6) {
+      showToast.error('Password Too Short', 'Password must be at least 6 characters.')
+      return
+    }
+    if (form.password !== form.confirm) {
+      showToast.error('Passwords Do Not Match', 'Both password fields must be identical.')
+      return
+    }
+
+    setLoading(true)
+    const id = showToast.loading('Creating Account...', 'Setting up your student profile.')
+    const result = await register(form.name.trim(), form.email.trim(), form.password, form.phone.trim())
+    setLoading(false)
+
+    if (!result.success) {
+      showToast.update(id, 'error', 'Registration Failed', result.error || 'Could not create account.')
+      return
+    }
+
+    showToast.update(id, 'success', 'Account Created! 🎉', 'Welcome to HK PG!')
+    setTimeout(() => navigate('/student', { replace: true }), 800)
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-10"
@@ -38,44 +64,58 @@ export default function RegisterPage() {
         </div>
 
         <div className="bg-white rounded-3xl shadow-lg p-8 space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl">
-              ❌ {error}
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                Full Name <span className="text-red-400">*</span>
+              </label>
+              <input type="text" placeholder="e.g. Rahul Sharma"
+                value={form.name} onChange={set('name')} className={inputCls} />
             </div>
-          )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {[
-              { key: 'name',     label: 'Full Name',       type: 'text',     placeholder: 'Rahul Sharma' },
-              { key: 'email',    label: 'Email Address',   type: 'email',    placeholder: 'you@example.com' },
-              { key: 'password', label: 'Password',        type: 'password', placeholder: 'Min 6 characters' },
-              { key: 'confirm',  label: 'Confirm Password',type: 'password', placeholder: 'Repeat password' },
-            ].map(f => (
-              <div key={f.key}>
-                <label className="block text-xs font-semibold text-gray-600 mb-1">{f.label}</label>
-                <input
-                  type={f.type} required placeholder={f.placeholder}
-                  value={form[f.key]} onChange={set(f.key)}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100 transition"
-                />
-              </div>
-            ))}
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                Email Address <span className="text-red-400">*</span>
+              </label>
+              <input type="email" placeholder="you@example.com"
+                value={form.email} onChange={set('email')} className={inputCls} />
+            </div>
 
-            <button
-              type="submit" disabled={loading}
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                Mobile Number <span className="text-gray-400 font-normal">(optional)</span>
+              </label>
+              <input type="tel" placeholder="10-digit mobile number" maxLength={10}
+                value={form.phone} onChange={set('phone')} className={inputCls} />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                Password <span className="text-red-400">*</span>
+              </label>
+              <input type="password" placeholder="Minimum 6 characters"
+                value={form.password} onChange={set('password')} className={inputCls} />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                Confirm Password <span className="text-red-400">*</span>
+              </label>
+              <input type="password" placeholder="Re-enter your password"
+                value={form.confirm} onChange={set('confirm')} className={inputCls} />
+            </div>
+
+            <button type="submit" disabled={loading}
               className="w-full py-3.5 rounded-xl font-extrabold text-white text-sm transition hover:opacity-90 active:scale-95 disabled:opacity-60"
-              style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}
-            >
-              {loading ? 'Creating account...' : 'Create Account →'}
+              style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>
+              {loading ? '⏳ Creating account...' : 'Create Account →'}
             </button>
           </form>
 
           <p className="text-center text-sm text-gray-500">
             Already have an account?{' '}
-            <Link to="/login" className="font-bold hover:underline" style={{ color: '#c026d3' }}>
-              Sign In
-            </Link>
+            <Link to="/login" className="font-bold hover:underline" style={{ color: '#c026d3' }}>Sign In</Link>
           </p>
         </div>
 
