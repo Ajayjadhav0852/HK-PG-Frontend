@@ -34,7 +34,7 @@ async function request(path, options = {}, timeoutMs = 15000) {
 
   let res
   try {
-    res = await fetch(`${BASE_URL}${path}`, {
+    res = await fetch(`${"https://hk-pg-backend.onrender.com"}${path}`, {
       ...options,
       headers,
       signal: controller.signal,

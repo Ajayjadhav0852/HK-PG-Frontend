@@ -28,23 +28,64 @@ function AppRoutes() {
   const [rooms, setRooms]               = useState({})
   const [roomTypeKey, setRoomTypeKey]   = useState(null)
   const [selectedRoom, setSelectedRoom] = useState(null)
+
   const navigate = useNavigate()
   const pollRef  = useRef(null)
+  const fetchingRef = useRef(false) // ✅ prevent duplicate calls
 
   const fetchRooms = useCallback(async () => {
+    if (fetchingRef.current) return // ✅ avoid multiple calls
+    fetchingRef.current = true
+
     try {
       const res = await roomApi.getAll()
-      setRooms(toMap(res.data))
+      setRooms(prev => {
+        const newData = toMap(res.data)
+
+        // ✅ prevent unnecessary re-render
+        if (JSON.stringify(prev) === JSON.stringify(newData)) return prev
+        return newData
+      })
     } catch (e) {
-      // Silent fail — rooms will show skeleton state
+      console.log('Room fetch failed:', e.message)
+    } finally {
+      fetchingRef.current = false
     }
   }, [])
 
-  // Initial load + poll every 30s
+  // ✅ SMART polling (only when tab active)
   useEffect(() => {
     fetchRooms()
-    pollRef.current = setInterval(fetchRooms, 30000)
-    return () => clearInterval(pollRef.current)
+
+    const startPolling = () => {
+      if (!pollRef.current) {
+        pollRef.current = setInterval(fetchRooms, 60000) // 🔥 reduced to 60s
+      }
+    }
+
+    const stopPolling = () => {
+      if (pollRef.current) {
+        clearInterval(pollRef.current)
+        pollRef.current = null
+      }
+    }
+
+    startPolling()
+
+    const handleVisibility = () => {
+      if (document.hidden) stopPolling()
+      else {
+        fetchRooms()
+        startPolling()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibility)
+
+    return () => {
+      stopPolling()
+      document.removeEventListener('visibilitychange', handleVisibility)
+    }
   }, [fetchRooms])
 
   const goToRoomDetail = (typeKey) => {
@@ -60,24 +101,21 @@ function AppRoutes() {
   }
 
   const handleBookingSubmit = useCallback(() => {
-    fetchRooms()
+    fetchRooms() // ✅ refresh only when needed
   }, [fetchRooms])
 
   return (
     <Routes>
-      {/* Public pages */}
       <Route path="/"              element={<><Header /><HomePage /></>} />
       <Route path="/facilities"    element={<><Header /><FacilitiesPage /></>} />
       <Route path="/accommodation" element={<><Header /><AccommodationPage rooms={rooms} onBook={goToRoomDetail} onRoomUpdated={fetchRooms} /></>} />
       <Route path="/testimonials"  element={<><Header /><TestimonialsPage /></>} />
       <Route path="/contact"       element={<><Header /><ContactPage /></>} />
 
-      {/* Room detail — fetches its own live data */}
       <Route path="/room/:typeKey" element={
         <><Header /><RoomDetailPage onBook={goToForm} onBack={() => navigate('/accommodation')} /></>
       } />
 
-      {/* Application form — requires login */}
       <Route path="/apply" element={
         <ProtectedRoute>
           <><Header /><StudentFormPage
@@ -89,19 +127,17 @@ function AppRoutes() {
         </ProtectedRoute>
       } />
 
-      {/* Auth */}
       <Route path="/login"    element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
-      {/* Protected dashboards */}
       <Route path="/student" element={
         <ProtectedRoute role="student"><StudentDashboard /></ProtectedRoute>
       } />
+
       <Route path="/admin" element={
         <ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>
       } />
 
-      {/* 404 fallback */}
       <Route path="*" element={
         <div className="min-h-screen flex flex-col items-center justify-center gap-4"
           style={{ background: 'linear-gradient(135deg,#fff0f6 0%,#fdf3e7 60%,#fff8f0 100%)' }}>
