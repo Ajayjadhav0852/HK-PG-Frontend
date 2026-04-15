@@ -111,3 +111,26 @@ export const adminApi = {
       body: JSON.stringify(data),
     }),
 }
+
+// ── Keep-alive ping ───────────────────────────────────────────────────────────
+// Render free tier spins down after 15 min of inactivity.
+// Call startKeepAlive() once on app boot — pings /health every 10 minutes
+// so the backend never goes cold while someone has the site open.
+export function startKeepAlive() {
+  if (typeof window === 'undefined' || !BASE_URL) return
+
+  const ping = () => {
+    fetch(`${BASE_URL}/health`, { method: 'GET' })
+      .then(() => console.debug('[keep-alive] ping ok'))
+      .catch(() => {}) // silent — don't bother the user
+  }
+
+  // First ping after 30s (give the initial room fetch time to finish)
+  const initial = setTimeout(ping, 30_000)
+
+  // Then every 10 minutes
+  const interval = setInterval(ping, 10 * 60 * 1000)
+
+  // Return cleanup in case it's ever needed
+  return () => { clearTimeout(initial); clearInterval(interval) }
+}

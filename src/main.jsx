@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
+import { startKeepAlive } from './services/api.js'
 
 // ── Session version guard ─────────────────────────────────────────────────────
 // Bump SESSION_VERSION any time you want to force-clear all stored sessions.
@@ -16,6 +17,10 @@ if (sessionStorage.getItem('__hkpg_tab_init') !== SESSION_VERSION) {
   // Mark this tab as initialized so refreshes within the same tab keep the session
   sessionStorage.setItem('__hkpg_tab_init', SESSION_VERSION)
 }
+
+// ── Keep Render backend alive ─────────────────────────────────────────────────
+// Pings /health every 10 min so the free-tier server never cold-starts.
+startKeepAlive()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
