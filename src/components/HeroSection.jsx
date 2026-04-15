@@ -132,13 +132,15 @@ export default function HeroSection({ onBook }) {
           📍 Near Gurudwara, Akurdi Railway Station, Pune
         </p>
 
-        {/* Green capsule with vacant bed count */}
-        <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/90 backdrop-blur-sm">
-          <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-          <span className="text-white font-bold text-sm">
-            {totalVacantBeds} Beds Available
-          </span>
-        </div>
+        {/* Green capsule with vacant bed count — only show if beds > 0 */}
+        {totalVacantBeds > 0 && (
+          <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/90 backdrop-blur-sm">
+            <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+            <span className="text-white font-bold text-sm">
+              {totalVacantBeds} Beds Available
+            </span>
+          </div>
+        )}
 
         {/* Button */}
         <div className="mt-6 flex gap-3 flex-wrap">

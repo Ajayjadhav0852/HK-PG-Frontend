@@ -15,6 +15,7 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
   const [scrollProgress, setScrollProgress] = useState(0)
+  const [scrolled, setScrolled] = useState(false)
 
   const navigate = useNavigate()
   const location = useLocation()
@@ -45,13 +46,14 @@ export default function Header() {
   // ✅ Header always visible — no auto-hide
   // (Removed the hide/show logic — header stays fixed at top always)
 
-  // ✅ Scroll progress bar
+  // ✅ Scroll progress bar + shadow on scroll
   useEffect(() => {
     const handleProgress = () => {
       const scrollTop = window.scrollY
       const docHeight = document.documentElement.scrollHeight - window.innerHeight
       const progress = (scrollTop / docHeight) * 100
       setScrollProgress(progress || 0)
+      setScrolled(scrollTop > 10)
     }
 
     window.addEventListener('scroll', handleProgress, { passive: true })
@@ -83,7 +85,9 @@ export default function Header() {
   return (
     <>
       <header
-        className="fixed top-0 left-0 w-full z-50 shadow-sm backdrop-blur-md"
+        className={`fixed top-0 left-0 w-full z-50 backdrop-blur-md transition-shadow duration-300 ${
+          scrolled ? 'shadow-lg' : 'shadow-sm'
+        }`}
         style={{
           background:
             'linear-gradient(135deg, rgba(255,240,246,0.97) 0%, rgba(253,243,231,0.97) 60%, rgba(255,248,240,0.97) 100%)',
