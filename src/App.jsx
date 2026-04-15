@@ -100,7 +100,18 @@ function AppRoutes() {
     try {
       const res = await roomApi.getAll()
       setRooms(toMap(res.data))
-    } catch {}
+    } catch (err) {
+      // Render free tier cold start can take 30-60s — retry once after 20s
+      console.warn('[fetchRooms] failed, retrying in 20s:', err.message)
+      setTimeout(async () => {
+        try {
+          const res = await roomApi.getAll()
+          setRooms(toMap(res.data))
+        } catch (e) {
+          console.error('[fetchRooms] retry also failed:', e.message)
+        }
+      }, 20000)
+    }
   }, [])
 
   useEffect(() => {

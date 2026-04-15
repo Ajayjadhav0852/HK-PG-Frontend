@@ -1,4 +1,4 @@
-import { useState, memo } from 'react'
+import { useState, memo, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { adminApi } from '../services/api'
 
@@ -65,7 +65,6 @@ const RoomCard = memo(function RoomCard({ slug, rt, onBook, onRoomUpdated, isAdm
       </div>
     )
   }
-
   return (
     <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition flex flex-col relative">
 
@@ -124,12 +123,34 @@ export default function RoomTypesSection({ onBook, roomsState, onRoomUpdated }) 
   const { user } = useAuth()
   const isAdmin = user?.role === 'admin'
 
+  // Show "waking up" hint after 4 seconds if cards still loading
+  // (Render free tier sleeps after inactivity — first request takes ~30-60s)
+  const [showWakeHint, setShowWakeHint] = useState(false)
+  const isLoading = !roomsState || Object.keys(roomsState).length === 0
+
+  useEffect(() => {
+    if (!isLoading) { setShowWakeHint(false); return }
+    const t = setTimeout(() => setShowWakeHint(true), 4000)
+    return () => clearTimeout(t)
+  }, [isLoading])
+
   return (
     <div className="w-full px-6 pt-24 pb-12">
       <div className="max-w-5xl mx-auto">
         <h2 className="text-3xl font-extrabold mb-6 text-pink-600">
           Choose Your Room
         </h2>
+
+        {/* Wake-up hint banner */}
+        {showWakeHint && isLoading && (
+          <div className="mb-5 flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-xl px-4 py-3 text-sm text-orange-700">
+            <span className="text-lg">⏳</span>
+            <span>
+              <strong>Server is waking up</strong> — this takes ~30 seconds on first visit. Hang tight!
+            </span>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {SLUGS.map(slug => (
             <RoomCard

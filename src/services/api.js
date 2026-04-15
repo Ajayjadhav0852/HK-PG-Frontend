@@ -14,7 +14,7 @@ export const setToken   = (t) => localStorage.setItem('hkpg_token', t)
 export const removeToken = () => localStorage.removeItem('hkpg_token')
 
 // ── Core fetch wrapper ────────────────────────────────────────────────────────
-async function request(path, options = {}, timeoutMs = 15000) {
+async function request(path, options = {}, timeoutMs = 60000) {
   if (!BASE_URL) {
     throw new Error('Backend URL not configured. Set VITE_API_URL in environment variables.')
   }
@@ -34,7 +34,7 @@ async function request(path, options = {}, timeoutMs = 15000) {
 
   let res
   try {
-    res = await fetch(`${"https://hk-pg-backend.onrender.com"}${path}`, {
+    res = await fetch(`${BASE_URL}${path}`, {
       ...options,
       headers,
       signal: controller.signal,
