@@ -2,7 +2,7 @@
 // API Client — production-ready fetch wrapper
 // Set VITE_API_URL in .env.local (dev) or Vercel env vars (prod)
 // ─────────────────────────────────────────────────────────────────────────────
-const BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
+const BASE_URL = (import.meta.env.VITE_API_URL || 'https://hk-pg-backend.onrender.com').replace(/\/$/, '')
 
 if (!BASE_URL && import.meta.env.DEV) {
   console.warn('[API] VITE_API_URL not set. Add it to .env.local')
@@ -41,9 +41,10 @@ async function request(path, options = {}, timeoutMs = 60000) {
     })
   } catch (err) {
     if (err.name === 'AbortError') {
-      throw new Error('Request timed out. Please check your connection and try again.')
+      throw new Error('Request timed out. The server is taking too long to respond. Please try again.')
     }
-    throw new Error('Cannot reach the server. Make sure the backend is running.')
+    // More helpful error message
+    throw new Error('Unable to connect to server. Please check your internet connection and try again.')
   } finally {
     clearTimeout(timer)
   }
