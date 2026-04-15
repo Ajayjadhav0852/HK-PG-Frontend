@@ -1,11 +1,22 @@
 @import "tailwindcss";
 
+/* ── Hard reset — kill all browser default margins/padding ─────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 /* ── Base background — no white flash anywhere ─────────────────────────────── */
 html,
 body,
 #root {
   background: linear-gradient(135deg, #fff0f6 0%, #fdf3e7 60%, #fff8f0 100%);
   min-height: 100%;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 /* ── Global interaction polish ─────────────────────────────────────────────── */
