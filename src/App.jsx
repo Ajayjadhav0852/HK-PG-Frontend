@@ -124,7 +124,7 @@ function AppRoutes() {
   }, [fetchRooms])
 
   return (
-    <div className="pt-16">
+    <div className="pt-16" style={{ background: 'linear-gradient(135deg,#fff0f6 0%,#fdf3e7 60%,#fff8f0 100%)' }}>
       <AnimatePresence mode="wait" initial={false}>
         <Routes location={location} key={location.pathname}>
 

@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/* ── Base background — no white flash anywhere ─────────────────────────────── */
+html,
+body,
+#root {
+  background: linear-gradient(135deg, #fff0f6 0%, #fdf3e7 60%, #fff8f0 100%);
+  min-height: 100%;
+}
+
 /* ── Global interaction polish ─────────────────────────────────────────────── */
 
 /* Smooth press-down on every button, link, and clickable element */
