@@ -43,7 +43,7 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // 🚀 Enhanced sticky header with instant accessibility
+  // 🚀 Always sticky header - hides on scroll down, shows instantly on scroll up
   useEffect(() => {
     const updateScrollState = () => {
       const scrollTop = window.scrollY
@@ -53,20 +53,21 @@ export default function Header() {
       setScrollProgress(progress || 0)
       setScrolled(scrollTop > 20)
 
-      // Smart sticky behavior - always accessible when needed
+      // Always sticky behavior - hide on down scroll, show instantly on up scroll
       const scrollDiff = scrollTop - lastScrollY.current
       
-      if (scrollTop < 50) {
-        // Always show header at top of page
+      if (scrollTop <= 0) {
+        // Always show at very top
         setVisible(true)
-      } else if (scrollDiff > 5 && scrollTop > 100) {
-        // Scrolling DOWN - hide header quickly (small threshold for quick hiding)
+      } else if (scrollDiff > 3) {
+        // Scrolling DOWN - hide header
         setVisible(false)
         setMenuOpen(false) // Close mobile menu when hiding
-      } else if (scrollDiff < -2) {
-        // Scrolling UP - show header INSTANTLY (very small threshold for immediate access)
+      } else if (scrollDiff < -1) {
+        // Scrolling UP - show header INSTANTLY
         setVisible(true)
       }
+      // If scrollDiff is between -1 and 3, maintain current state (prevents flickering)
       
       lastScrollY.current = scrollTop
       ticking.current = false
@@ -108,18 +109,17 @@ export default function Header() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 w-full z-50 backdrop-blur-lg transition-all duration-300 ease-out ${
+        className={`fixed top-0 left-0 w-full z-50 backdrop-blur-lg transition-all duration-200 ease-out ${
           scrolled ? 'shadow-2xl' : 'shadow-md'
         }`}
         style={{
           background: scrolled
             ? 'linear-gradient(135deg, rgba(255,240,246,0.97) 0%, rgba(253,243,231,0.97) 60%, rgba(255,248,240,0.97) 100%)'
             : 'linear-gradient(135deg, rgba(255,240,246,0.92) 0%, rgba(253,243,231,0.92) 60%, rgba(255,248,240,0.92) 100%)',
-          transform: visible ? 'translateY(0) scale(1)' : 'translateY(-100%) scale(0.98)',
-          transformOrigin: 'center top',
+          transform: visible ? 'translateY(0)' : 'translateY(-100%)',
           transition: visible 
-            ? 'all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)' // Faster show (immediate access)
-            : 'all 0.35s cubic-bezier(0.55, 0.085, 0.68, 0.53)', // Slightly slower hide
+            ? 'transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)' // Fast show (instant access)
+            : 'transform 0.3s cubic-bezier(0.55, 0.085, 0.68, 0.53)', // Smooth hide
           willChange: 'transform',
         }}
       >
