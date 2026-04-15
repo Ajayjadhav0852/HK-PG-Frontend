@@ -110,6 +110,11 @@ export const adminApi = {
       method: 'PATCH',
       body: JSON.stringify(data),
     }),
+  changePassword: (passwordData) =>
+    request('/api/admin/change-password', {
+      method: 'POST',
+      body: JSON.stringify(passwordData),
+    }),
 }
 
 // ── Keep-alive ping ───────────────────────────────────────────────────────────

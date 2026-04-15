@@ -104,6 +104,15 @@ export default function AdminDashboard() {
   const [searchQuery, setSearchQuery]   = useState('')
   const [statusFilter, setStatusFilter] = useState('ALL')
 
+  // ── Password change state ─────────────────────────────────────────────────
+  const [showPasswordForm, setShowPasswordForm] = useState(false)
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  })
+  const [passwordLoading, setPasswordLoading] = useState(false)
+
   const openRoomEdit = (rt) => {
     setEditingRoom(rt.slug)
     setRoomEditForm({
@@ -132,6 +141,34 @@ export default function AdminDashboard() {
       showToast.update(toastId, 'error', 'Save Failed', e.message || 'Could not save changes.')
     } finally {
       setRoomSaving(false)
+    }
+  }
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault()
+    
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      showToast.error('Password Mismatch', 'New password and confirmation do not match.')
+      return
+    }
+
+    if (passwordForm.newPassword.length < 8) {
+      showToast.error('Password Too Short', 'New password must be at least 8 characters long.')
+      return
+    }
+
+    setPasswordLoading(true)
+    const toastId = showToast.loading('Changing Password...', 'Updating your admin password securely.')
+    
+    try {
+      await adminApi.changePassword(passwordForm)
+      showToast.update(toastId, 'success', 'Password Changed ✅', 'Your admin password has been updated successfully.')
+      setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' })
+      setShowPasswordForm(false)
+    } catch (e) {
+      showToast.update(toastId, 'error', 'Password Change Failed', e.message || 'Could not change password.')
+    } finally {
+      setPasswordLoading(false)
     }
   }
 
@@ -252,6 +289,85 @@ export default function AdminDashboard() {
               <p className="text-xs text-gray-500 font-medium">{c.label} Applications</p>
             </div>
           ))}
+        </div>
+
+        {/* ── Admin Security Settings ──────────────────────────────────────── */}
+        <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="font-extrabold text-gray-800 text-base">🔐 Admin Security</h2>
+            <span className="text-xs text-gray-400">Keep your admin account secure</span>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-semibold text-gray-800 text-sm">Change Admin Password</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Current password: <span className="font-mono bg-gray-100 px-2 py-0.5 rounded text-red-600">admin123</span> 
+                <span className="text-red-500 font-semibold ml-2">⚠️ Not secure for production</span>
+              </p>
+            </div>
+            <button
+              onClick={() => setShowPasswordForm(!showPasswordForm)}
+              className="px-4 py-2 bg-pink-600 text-white text-sm font-semibold rounded-xl hover:bg-pink-700 transition"
+            >
+              {showPasswordForm ? 'Cancel' : '🔑 Change Password'}
+            </button>
+          </div>
+
+          {showPasswordForm && (
+            <form onSubmit={handlePasswordChange} className="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-200">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-2">Current Password</label>
+                  <input
+                    type="password"
+                    required
+                    value={passwordForm.currentPassword}
+                    onChange={(e) => setPasswordForm(prev => ({ ...prev, currentPassword: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+                    placeholder="Enter current password"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-2">New Password</label>
+                  <input
+                    type="password"
+                    required
+                    minLength={8}
+                    value={passwordForm.newPassword}
+                    onChange={(e) => setPasswordForm(prev => ({ ...prev, newPassword: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+                    placeholder="Min 8 characters"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-2">Confirm Password</label>
+                  <input
+                    type="password"
+                    required
+                    value={passwordForm.confirmPassword}
+                    onChange={(e) => setPasswordForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+                    placeholder="Confirm new password"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between mt-4">
+                <div className="text-xs text-gray-500">
+                  <p>• Password must be at least 8 characters</p>
+                  <p>• Use a strong, unique password</p>
+                </div>
+                <button
+                  type="submit"
+                  disabled={passwordLoading}
+                  className="px-6 py-2 bg-green-600 text-white text-sm font-semibold rounded-xl hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {passwordLoading ? 'Changing...' : '✅ Update Password'}
+                </button>
+              </div>
+            </form>
+          )}
         </div>
 
         {/* ── Room Occupancy Map ────────────────────────────────────────────── */}
