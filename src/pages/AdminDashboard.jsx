@@ -100,7 +100,10 @@ export default function AdminDashboard() {
     }
   }
 
-  // ── Room type edit handlers ───────────────────────────────────────────────
+  // ── Search + filter state ─────────────────────────────────────────────────
+  const [searchQuery, setSearchQuery]   = useState('')
+  const [statusFilter, setStatusFilter] = useState('ALL')
+
   const openRoomEdit = (rt) => {
     setEditingRoom(rt.slug)
     setRoomEditForm({
@@ -507,21 +510,65 @@ export default function AdminDashboard() {
         })()}
 
         {/* ── Applications table ────────────────────────────────────────────── */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">          <div className="flex items-center justify-between mb-5">
-            <h2 className="font-extrabold text-gray-800 text-base">📋 All Applications</h2>
-            <span className="text-xs font-semibold text-gray-400 bg-gray-100 px-3 py-1 rounded-full">
-              {applications.length} total
-            </span>
+        <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+            <div className="flex items-center gap-3">
+              <h2 className="font-extrabold text-gray-800 text-base">📋 All Applications</h2>
+              <span className="text-xs font-semibold text-gray-400 bg-gray-100 px-3 py-1 rounded-full">
+                {applications.length} total
+              </span>
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              <input
+                type="text"
+                placeholder="Search name, email, mobile..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="border border-gray-200 rounded-xl px-3 py-2 text-xs outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100 w-48"
+              />
+              <select
+                value={statusFilter}
+                onChange={e => setStatusFilter(e.target.value)}
+                className="border border-gray-200 rounded-xl px-3 py-2 text-xs outline-none focus:border-pink-400 bg-white"
+              >
+                <option value="ALL">All Status</option>
+                <option value="PENDING">Pending</option>
+                <option value="CONFIRMED">Confirmed</option>
+                <option value="REJECTED">Rejected</option>
+              </select>
+            </div>
           </div>
 
-          {applications.length === 0 ? (
-            <div className="text-center py-16 text-gray-400">
-              <p className="text-5xl mb-3">📭</p>
-              <p className="font-semibold text-gray-500">No applications yet</p>
-              <p className="text-xs mt-1">Applications will appear here once students apply.</p>
-            </div>
-          ) : (
-            <>
+          {(() => {
+            const filtered = applications.filter(a => {
+              const q = searchQuery.toLowerCase()
+              const matchesSearch = !q ||
+                a.fullName?.toLowerCase().includes(q) ||
+                a.email?.toLowerCase().includes(q) ||
+                a.mobile?.includes(q) ||
+                a.roomNumber?.toLowerCase().includes(q)
+              const matchesStatus = statusFilter === 'ALL' || a.status === statusFilter
+              return matchesSearch && matchesStatus
+            })
+
+            if (applications.length === 0) return (
+              <div className="text-center py-16 text-gray-400">
+                <p className="text-5xl mb-3">📭</p>
+                <p className="font-semibold text-gray-500">No applications yet</p>
+                <p className="text-xs mt-1">Applications will appear here once students apply.</p>
+              </div>
+            )
+
+            if (filtered.length === 0) return (
+              <div className="text-center py-10 text-gray-400">
+                <p className="text-4xl mb-2">🔍</p>
+                <p className="font-semibold text-gray-500">No results found</p>
+                <p className="text-xs mt-1">Try a different search or filter.</p>
+              </div>
+            )
+
+            return (
+              <>
               {/* Desktop */}
               <div className="hidden sm:block overflow-x-auto">
                 <table className="w-full text-sm">
@@ -533,7 +580,7 @@ export default function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
-                    {applications.map((a, i) => (
+                    {filtered.map((a, i) => (
                       <tr key={a.id} className="hover:bg-gray-50/70 transition">
                         <td className="py-3.5 pr-3 text-xs text-gray-400 font-medium">{i + 1}</td>
                         <td className="py-3.5 pr-3">
@@ -619,7 +666,7 @@ export default function AdminDashboard() {
 
               {/* Mobile */}
               <div className="sm:hidden space-y-3">
-                {applications.map(a => (
+                {filtered.map(a => (
                   <div key={a.id} className="border border-gray-100 rounded-2xl p-4 space-y-3">
                     <div className="flex justify-between items-start">
                       <div>
@@ -675,7 +722,8 @@ export default function AdminDashboard() {
                 ))}
               </div>
             </>
-          )}
+            )
+          })()}
         </div>
       </div>
     </div>

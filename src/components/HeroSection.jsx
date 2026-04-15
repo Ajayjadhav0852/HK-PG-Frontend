@@ -11,16 +11,12 @@ const SLIDES = [
     caption: 'Modern Facilities',
   },
   {
-    url: 'https://res.cloudinary.com/dzr0crkvr/image/upload/w_1200,q_auto,f_auto/v1776062505/WhatsApp_Image_2026-03-27_at_8.37.11_PM_qvrvk4.jpg',
+    url: 'https://res.cloudinary.com/dzr0crkvr/image/upload/w_1200,q_auto,f_auto/v1776062505/IMG_20260413_102220113.jpg_bzsaya.jpg',
     caption: 'Safe & Secure Environment',
   },
   {
-    url: 'https://res.cloudinary.com/dzr0crkvr/image/upload/w_1200,q_auto,f_auto/v1776062505/IMG_20260413_102220113.jpg_bzsaya.jpg',
-    caption: 'Budget-Friendly Options',
-  },
-  {
     url: 'https://res.cloudinary.com/dzr0crkvr/image/upload/w_1200,q_auto,f_auto/v1776062499/IMG_20260413_102118487.jpg_cqtzls.jpg',
-    caption: 'Premium Accommodation',
+    caption: 'Budget-Friendly Options',
   },
 ]
 
@@ -176,17 +172,35 @@ export default function HeroSection({ onBook }) {
       {/* Controls */}
       <button
         onClick={prevSlide}
-        className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/40 text-white w-10 h-10 rounded-full hover:bg-black/60 transition"
+        aria-label="Previous slide"
+        className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/40 text-white w-10 h-10 rounded-full hover:bg-black/60 transition text-xl font-bold"
       >
         ‹
       </button>
 
       <button
         onClick={nextSlide}
-        className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/40 text-white w-10 h-10 rounded-full hover:bg-black/60 transition"
+        aria-label="Next slide"
+        className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/40 text-white w-10 h-10 rounded-full hover:bg-black/60 transition text-xl font-bold"
       >
         ›
       </button>
+
+      {/* Dot indicators */}
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex gap-2">
+        {SLIDES.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrent(i)}
+            aria-label={`Go to slide ${i + 1}`}
+            className={`rounded-full transition-all duration-300 ${
+              i === current
+                ? 'w-6 h-2 bg-white'
+                : 'w-2 h-2 bg-white/50 hover:bg-white/80'
+            }`}
+          />
+        ))}
+      </div>
 
     </div>
   )

@@ -4,7 +4,6 @@ import { adminApi } from '../services/api'
 
 // Full class strings must be written out completely so Tailwind's
 // static scanner includes them in the production CSS bundle.
-// DO NOT build these strings dynamically (e.g. `bg-${color}-100`).
 const TAG_COLORS = {
   '1-sharing': 'bg-purple-100 text-purple-700',
   '2-sharing': 'bg-pink-100 text-pink-700',
@@ -13,23 +12,45 @@ const TAG_COLORS = {
 }
 
 const FALLBACK_IMAGES = {
-  '1-sharing': 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400&q=80',
-  '2-sharing': 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=400&q=80',
-  '3-sharing': 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=400&q=80',
-  '4-sharing': 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=400&q=80',
+  '1-sharing': 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&q=80',
+  '2-sharing': 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=600&q=80',
+  '3-sharing': 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=600&q=80',
+  '4-sharing': 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=600&q=80',
 }
+
+const AMENITY_ICONS = ['📶', '❄️', '🚿', '🪑', '🗄️', '🔋']
 
 const SLUGS = ['1-sharing', '2-sharing', '3-sharing', '4-sharing']
 
+// Skeleton card shown while data loads
+function SkeletonCard() {
+  return (
+    <div className="bg-white rounded-2xl overflow-hidden shadow-sm flex flex-col animate-pulse">
+      <div className="h-52 bg-gray-200" />
+      <div className="p-4 flex flex-col gap-3">
+        <div className="h-4 bg-gray-200 rounded w-2/3" />
+        <div className="h-3 bg-gray-200 rounded w-full" />
+        <div className="h-3 bg-gray-200 rounded w-4/5" />
+        <div className="flex gap-1 mt-1">
+          {[1,2,3,4,5,6].map(i => <div key={i} className="h-6 w-6 bg-gray-200 rounded-full" />)}
+        </div>
+        <div className="h-10 bg-gray-200 rounded-xl mt-1" />
+      </div>
+    </div>
+  )
+}
+
 const RoomCard = memo(function RoomCard({ slug, rt, onBook, onRoomUpdated, isAdmin }) {
   const [loading, setLoading] = useState(false)
+  const [imgLoaded, setImgLoaded] = useState(false)
 
-  const fallback = FALLBACK_IMAGES[slug]
-  const tagColor = TAG_COLORS[slug]
+  const fallback  = FALLBACK_IMAGES[slug]
+  const tagColor  = TAG_COLORS[slug]
   const vacantBeds = rt?.vacantBeds ?? 0
+  const isFull    = vacantBeds === 0
 
   const handleBooking = async () => {
-    if (loading) return
+    if (loading || isFull) return
     setLoading(true)
     await onBook(slug)
     if (onRoomUpdated) await onRoomUpdated()
@@ -41,7 +62,7 @@ const RoomCard = memo(function RoomCard({ slug, rt, onBook, onRoomUpdated, isAdm
     const newImage = prompt('Enter new image URL:', rt.imageUrl)
     if (!newPrice || !newImage) return
     try {
-      await adminApi.updateRoom(slug, {
+      await adminApi.updateRoomType(slug, {
         monthlyPrice: Number(newPrice),
         imageUrl: newImage,
       })
@@ -52,67 +73,104 @@ const RoomCard = memo(function RoomCard({ slug, rt, onBook, onRoomUpdated, isAdm
     }
   }
 
-  if (!rt) {
-    return (
-      <div className="bg-white rounded-2xl overflow-hidden shadow-sm flex flex-col relative animate-pulse">
-        <div className="relative h-44 bg-gray-200" />
-        <div className="p-4 flex flex-col gap-2">
-          <div className="h-5 bg-gray-200 rounded w-3/4" />
-          <div className="h-4 bg-gray-200 rounded w-full" />
-          <div className="h-4 bg-gray-200 rounded w-1/2" />
-          <div className="h-10 bg-gray-200 rounded mt-2" />
-        </div>
-      </div>
-    )
-  }
-  return (
-    <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition flex flex-col relative">
+  if (!rt) return <SkeletonCard />
 
-      {/* Admin edit icon */}
+  return (
+    <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group relative">
+
+      {/* Admin edit */}
       {isAdmin && (
         <button
           onClick={handleEdit}
-          className="absolute top-2 right-2 z-20 bg-white/90 p-2 rounded-full shadow hover:scale-110"
+          aria-label="Edit room"
+          className="absolute top-3 right-3 z-20 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-md hover:scale-110 transition-transform"
         >
           ✏️
         </button>
       )}
 
       {/* Image */}
-      <div className="relative h-44">
-        <img 
-          src={rt.imageUrl || fallback} 
+      <div className="relative h-52 overflow-hidden bg-gray-100 flex-shrink-0">
+        {/* Skeleton shimmer until image loads */}
+        {!imgLoaded && (
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse" />
+        )}
+        <img
+          src={rt.imageUrl || fallback}
           alt={rt.title}
-          className="w-full h-full object-cover"
-          onError={(e) => { e.target.src = fallback }}
+          loading="lazy"
+          onLoad={() => setImgLoaded(true)}
+          className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
+          onError={(e) => { e.target.src = fallback; setImgLoaded(true) }}
         />
-        <span className={`absolute top-2 left-2 text-xs px-2 py-1 rounded ${tagColor}`}>
+
+        {/* Gradient overlay at bottom */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+
+        {/* Tag badge */}
+        <span className={`absolute top-3 left-3 text-xs font-bold px-2.5 py-1 rounded-full ${tagColor}`}>
           {rt.tag}
         </span>
-        {/* Vacant beds indicator — shows only remaining beds */}
-        <span className={`absolute bottom-2 right-2 text-xs px-3 py-1 rounded-full font-bold ${
-          vacantBeds > 0 ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+
+        {/* Vacancy badge */}
+        <span className={`absolute bottom-3 right-3 text-xs font-bold px-3 py-1 rounded-full shadow ${
+          isFull ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
         }`}>
-          {vacantBeds > 0 ? `${vacantBeds} Left` : 'Full'}
+          {isFull ? '🔴 Full' : `🟢 ${vacantBeds} Left`}
         </span>
       </div>
 
       {/* Body */}
-      <div className="p-4 flex flex-col gap-2">
-        <h3 className="font-bold">{rt.title}</h3>
-        <p className="text-sm text-gray-500">{rt.description}</p>
-        <p className="font-bold text-pink-600">
-          ₹{Number(rt.monthlyPrice).toLocaleString('en-IN')}/mo
-        </p>
+      <div className="p-4 flex flex-col gap-2 flex-1">
 
-        {/* Book Now — triggers form → API → saves to DB */}
+        {/* Title + price */}
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="font-extrabold text-gray-800 text-base leading-tight">{rt.title}</h3>
+          <p className="font-extrabold text-pink-600 text-base whitespace-nowrap">
+            ₹{Number(rt.monthlyPrice).toLocaleString('en-IN')}
+            <span className="text-xs font-semibold text-gray-400">/mo</span>
+          </p>
+        </div>
+
+        {/* Description */}
+        <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{rt.description}</p>
+
+        {/* Amenity icons */}
+        <div className="flex gap-1.5 flex-wrap mt-1">
+          {AMENITY_ICONS.map((icon, i) => (
+            <span key={i} className="w-7 h-7 bg-pink-50 rounded-full flex items-center justify-center text-sm" title="">
+              {icon}
+            </span>
+          ))}
+        </div>
+
+        {/* Occupancy bar */}
+        <div className="mt-1">
+          <div className="flex justify-between text-xs text-gray-400 mb-1">
+            <span>{rt.occupiedBeds} occupied</span>
+            <span>{rt.totalBeds} total beds</span>
+          </div>
+          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all duration-500"
+              style={{
+                width: rt.totalBeds > 0 ? `${(rt.occupiedBeds / rt.totalBeds) * 100}%` : '0%',
+                background: 'linear-gradient(90deg, #d63384, #c026d3)',
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Book button */}
         <button
           onClick={handleBooking}
-          disabled={vacantBeds === 0 || loading}
-          className="mt-2 py-2 rounded-xl text-white font-bold disabled:opacity-50 transition-opacity"
-          style={{ background: 'linear-gradient(135deg,#d63384,#c026d3)' }}
+          disabled={isFull || loading}
+          aria-label={isFull ? 'Room fully booked' : `Book ${rt.title}`}
+          title={isFull ? 'This room type is fully booked. Check back later.' : ''}
+          className="mt-2 py-2.5 rounded-xl text-white font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:opacity-90 active:scale-95"
+          style={{ background: isFull ? '#9ca3af' : 'linear-gradient(135deg,#d63384,#c026d3)' }}
         >
-          {loading ? 'Processing...' : (vacantBeds > 0 ? 'Book Now' : 'Full')}
+          {loading ? '⏳ Processing...' : isFull ? 'Fully Booked' : 'Book Now →'}
         </button>
       </div>
     </div>
@@ -124,7 +182,6 @@ export default function RoomTypesSection({ onBook, roomsState, onRoomUpdated }) 
   const isAdmin = user?.role === 'admin'
 
   // Show "waking up" hint after 4 seconds if cards still loading
-  // (Render free tier sleeps after inactivity — first request takes ~30-60s)
   const [showWakeHint, setShowWakeHint] = useState(false)
   const isLoading = !roomsState || Object.keys(roomsState).length === 0
 
@@ -135,15 +192,25 @@ export default function RoomTypesSection({ onBook, roomsState, onRoomUpdated }) 
   }, [isLoading])
 
   return (
-    <div className="w-full px-6 pt-24 pb-12">
+    <div className="w-full px-4 sm:px-6 pt-10 pb-14">
       <div className="max-w-5xl mx-auto">
-        <h2 className="text-3xl font-extrabold mb-6 text-pink-600">
-          Choose Your Room
-        </h2>
+
+        {/* Section header */}
+        <div className="mb-8">
+          <span className="inline-block bg-pink-100 text-pink-600 text-xs font-bold px-3 py-1 rounded-full tracking-widest uppercase mb-3">
+            Accommodation
+          </span>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800">
+            Choose Your <span style={{ color: '#c026d3' }}>Room</span>
+          </h2>
+          <p className="text-gray-500 text-sm mt-2">
+            All rooms include food, WiFi, CCTV, and housekeeping. No hidden charges.
+          </p>
+        </div>
 
         {/* Wake-up hint banner */}
         {showWakeHint && isLoading && (
-          <div className="mb-5 flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-xl px-4 py-3 text-sm text-orange-700">
+          <div className="mb-6 flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-xl px-4 py-3 text-sm text-orange-700">
             <span className="text-lg">⏳</span>
             <span>
               <strong>Server is waking up</strong> — this takes ~30 seconds on first visit. Hang tight!

@@ -1,10 +1,12 @@
+import { useNavigate } from 'react-router-dom'
+
 const quickLinks = [
-  { label: 'Home', href: '#' },
-  { label: 'Room Types', href: '#' },
-  { label: 'Facilities', href: '#' },
-  { label: 'Testimonials', href: '#' },
-  { label: 'Rules & Policies', href: '#' },
-  { label: 'Contact Us', href: '#' },
+  { label: 'Home',            path: '/' },
+  { label: 'Room Types',      path: '/accommodation' },
+  { label: 'Facilities',      path: '/facilities' },
+  { label: 'Testimonials',    path: '/testimonials' },
+  { label: 'Rules & Policies',path: '/contact' },
+  { label: 'Contact Us',      path: '/contact' },
 ]
 
 const facilities = [
@@ -52,6 +54,7 @@ const socialLinks = [
 ]
 
 export default function FooterSection() {
+  const navigate = useNavigate()
   return (
     <footer style={{ background: 'linear-gradient(135deg, #fff0f6 0%, #fdf3e7 60%, #fff8f0 100%)' }}>
 
@@ -87,9 +90,10 @@ export default function FooterSection() {
           <ul className="space-y-2">
             {quickLinks.map(l => (
               <li key={l.label}>
-                <a href={l.href} className="text-gray-500 hover:text-gray-800 text-sm transition flex items-center gap-2">
+                <button onClick={() => { navigate(l.path); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+                  className="text-gray-500 hover:text-gray-800 text-sm transition flex items-center gap-2">
                   <span style={{ color: '#c026d3' }}>›</span> {l.label}
-                </a>
+                </button>
               </li>
             ))}
           </ul>

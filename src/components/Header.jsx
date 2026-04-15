@@ -142,24 +142,68 @@ export default function Header() {
             )}
           </div>
 
-          {/* Mobile */}
-          <button className="md:hidden" onClick={() => setMenuOpen(o => !o)}>
-            ☰
+          {/* Mobile menu */}
+          <button
+            className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl hover:bg-pink-50 transition"
+            onClick={() => setMenuOpen(o => !o)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          >
+            <span className="text-gray-700 text-xl">{menuOpen ? '✕' : '☰'}</span>
           </button>
         </div>
 
         {/* Mobile menu */}
         {menuOpen && (
-          <div className="md:hidden bg-white border-t p-4 flex flex-col gap-2">
+          <div className="md:hidden border-t border-pink-100 bg-white/98 backdrop-blur-md px-4 py-3 flex flex-col gap-1 shadow-lg">
             {navLinks.map(link => (
               <button
                 key={link.path}
                 onClick={() => go(link)}
-                className={`${isActive(link) ? 'text-pink-600 font-bold' : ''}`}
+                className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-semibold transition ${
+                  isActive(link)
+                    ? 'text-white shadow-sm'
+                    : 'text-gray-600 hover:bg-pink-50'
+                }`}
+                style={isActive(link) ? { background: 'linear-gradient(135deg, #d63384, #c026d3)' } : {}}
               >
                 {link.label}
               </button>
             ))}
+            <div className="border-t border-gray-100 mt-2 pt-2 flex flex-col gap-1">
+              {user ? (
+                <>
+                  <button
+                    onClick={() => { navigate(user.role === 'admin' ? '/admin' : '/student'); setMenuOpen(false) }}
+                    className="w-full text-left px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:bg-pink-50 transition"
+                  >
+                    👤 {user.name}
+                  </button>
+                  <button
+                    onClick={() => { handleLogout(); setMenuOpen(false) }}
+                    className="w-full py-2.5 rounded-xl text-sm font-bold text-white transition hover:opacity-90"
+                    style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => { navigate('/login'); setMenuOpen(false) }}
+                    className="w-full py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:bg-pink-50 transition"
+                  >
+                    Login
+                  </button>
+                  <button
+                    onClick={() => { navigate('/register'); setMenuOpen(false) }}
+                    className="w-full py-2.5 rounded-xl text-sm font-bold text-white transition hover:opacity-90"
+                    style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}
+                  >
+                    Sign Up
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         )}
 
