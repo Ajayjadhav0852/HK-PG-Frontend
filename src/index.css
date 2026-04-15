@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/*
+  Safelist — classes used dynamically (via JS objects/variables) that Tailwind's
+  static scanner cannot detect. Without this, they get purged in production builds.
+  @source inline() forces these classes into the production CSS bundle.
+*/
+@source inline("bg-purple-100 text-purple-700 bg-pink-100 text-pink-700 bg-orange-100 text-orange-700 bg-green-100 text-green-700");
+
 /* ── Kill all default browser spacing on root elements ─────────────────────── */
 html {
   margin: 0 !important;

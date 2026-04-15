@@ -2,6 +2,9 @@ import { useState, memo } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { adminApi } from '../services/api'
 
+// Full class strings must be written out completely so Tailwind's
+// static scanner includes them in the production CSS bundle.
+// DO NOT build these strings dynamically (e.g. `bg-${color}-100`).
 const TAG_COLORS = {
   '1-sharing': 'bg-purple-100 text-purple-700',
   '2-sharing': 'bg-pink-100 text-pink-700',
