@@ -102,16 +102,6 @@ export default function Header() {
 
   return (
     <>
-      {/* 🔥 SCROLL PROGRESS BAR */}
-      <div
-        className="fixed top-0 left-0 h-[3px] z-[60]"
-        style={{
-          width: `${scrollProgress}%`,
-          background: 'linear-gradient(90deg, #d63384, #c026d3)',
-          transition: 'width 0.1s linear',
-        }}
-      />
-
       <header
         className="fixed top-0 left-0 w-full z-50 shadow-sm backdrop-blur-md transition-transform duration-300"
         style={{
@@ -189,6 +179,16 @@ export default function Header() {
             ))}
           </div>
         )}
+
+        {/* Scroll progress bar — positioned at bottom of header */}
+        <div
+          className="absolute bottom-0 left-0 h-[3px]"
+          style={{
+            width: `${scrollProgress}%`,
+            background: 'linear-gradient(90deg, #d63384, #c026d3)',
+            transition: 'width 0.1s linear',
+          }}
+        />
       </header>
     </>
   )
