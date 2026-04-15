@@ -13,7 +13,6 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    // Client-side validation
     if (!form.email.trim()) {
       showToast.error('Email Required', 'Please enter your email address.')
       return
@@ -63,14 +62,7 @@ export default function LoginPage() {
 
         <div className="bg-white rounded-3xl shadow-lg p-8 space-y-5">
 
-          {/* Info hint — remove in production if desired */}
-          {import.meta.env.DEV && (
-            <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 space-y-1">
-              <p className="text-xs font-bold text-blue-700">🔐 Dev — Default Admin</p>
-              <p className="text-xs text-blue-600">Email: <span className="font-semibold">admin@hkpg.com</span></p>
-              <p className="text-xs text-blue-600">Password: <span className="font-semibold">admin123</span></p>
-            </div>
-          )}
+          {/* ❌ REMOVED insecure admin info */}
 
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             <div>

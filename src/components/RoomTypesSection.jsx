@@ -1,6 +1,5 @@
 import { useState, memo } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { showToast } from './Toast'
 import { adminApi } from '../services/api'
 
 const TAG_COLORS = {
@@ -19,43 +18,59 @@ const FALLBACK_IMAGES = {
 
 const SLUGS = ['1-sharing', '2-sharing', '3-sharing', '4-sharing']
 
-// ✅ Memoized card (VERY IMPORTANT - prevents re-render)
-const RoomCard = memo(function RoomCard({ slug, rt, isAdmin, onBook, setEditing }) {
+const RoomCard = memo(function RoomCard({ slug, rt, onBook, onRoomUpdated, isAdmin }) {
+  const [loading, setLoading] = useState(false)
+
   const fallback = FALLBACK_IMAGES[slug]
   const tagColor = TAG_COLORS[slug]
-
   const vacantBeds = rt?.vacantBeds ?? 0
-  const totalBeds = rt?.totalBeds ?? 0
-  const vacantRooms = rt?.vacantRooms ?? 0
-  const totalRooms = rt?.totalRooms ?? 0
 
-  if (!rt) {
-    return (
-      <div className="bg-white rounded-2xl overflow-hidden shadow-sm animate-pulse">
-        <div className="h-44 bg-gray-200" />
-      </div>
-    )
+  const handleBooking = async () => {
+    if (loading) return
+    setLoading(true)
+    await onBook(slug)
+    if (onRoomUpdated) await onRoomUpdated()
+    setLoading(false)
   }
 
+  const handleEdit = async () => {
+    const newPrice = prompt('Enter new price:', rt.monthlyPrice)
+    const newImage = prompt('Enter new image URL:', rt.imageUrl)
+    if (!newPrice || !newImage) return
+    try {
+      await adminApi.updateRoom(slug, {
+        monthlyPrice: Number(newPrice),
+        imageUrl: newImage,
+      })
+      if (onRoomUpdated) await onRoomUpdated()
+    } catch (e) {
+      console.error(e)
+      alert('Update failed')
+    }
+  }
+
+  if (!rt) return null
+
   return (
-    <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition flex flex-col group">
+    <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition flex flex-col relative">
+
+      {/* Admin edit icon */}
+      {isAdmin && (
+        <button
+          onClick={handleEdit}
+          className="absolute top-2 right-2 z-20 bg-white/90 p-2 rounded-full shadow hover:scale-110"
+        >
+          ✏️
+        </button>
+      )}
 
       {/* Image */}
-      <div className="relative h-44 bg-gray-100">
-        <img
-          src={rt.imageUrl || fallback}
-          alt={rt.title}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-          loading="lazy"
-          decoding="async"
-          onError={e => (e.target.src = fallback)}
-        />
-
-        <span className={`absolute top-2 left-2 text-xs font-bold px-2 py-1 rounded-full ${tagColor}`}>
+      <div className="relative h-44">
+        <img src={rt.imageUrl || fallback} className="w-full h-full object-cover" />
+        <span className={`absolute top-2 left-2 text-xs px-2 py-1 rounded ${tagColor}`}>
           {rt.tag}
         </span>
-
-        <span className={`absolute top-2 right-2 text-xs font-bold px-2 py-1 rounded-full ${
+        <span className={`absolute bottom-2 right-2 text-xs px-2 py-1 rounded ${
           vacantBeds > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'
         }`}>
           {vacantBeds > 0 ? `🟢 ${vacantBeds}` : 'Full'}
@@ -64,27 +79,20 @@ const RoomCard = memo(function RoomCard({ slug, rt, isAdmin, onBook, setEditing 
 
       {/* Body */}
       <div className="p-4 flex flex-col gap-2">
-        <h3 className="font-bold text-gray-800">{rt.title}</h3>
-
-        <p className="text-gray-500 text-sm line-clamp-2">
-          {rt.description}
-        </p>
-
-        <div className="flex justify-between text-xs text-gray-400">
-          <span>{vacantRooms}/{totalRooms} rooms</span>
-          <span>{vacantBeds}/{totalBeds} beds</span>
-        </div>
-
-        <p className="text-lg font-extrabold text-pink-600">
+        <h3 className="font-bold">{rt.title}</h3>
+        <p className="text-sm text-gray-500">{rt.description}</p>
+        <p className="font-bold text-pink-600">
           ₹{Number(rt.monthlyPrice).toLocaleString('en-IN')}/mo
         </p>
 
+        {/* Book Now — triggers form → API → saves to DB */}
         <button
-          onClick={() => onBook(slug)}
-          className="mt-1 w-full py-2 rounded-xl text-white font-bold"
+          onClick={handleBooking}
+          disabled={vacantBeds === 0 || loading}
+          className="mt-2 py-2 rounded-xl text-white font-bold disabled:opacity-50 transition-opacity"
           style={{ background: 'linear-gradient(135deg,#d63384,#c026d3)' }}
         >
-          {vacantBeds > 0 ? 'Book Now' : 'View'}
+          {loading ? 'Processing...' : (vacantBeds > 0 ? 'Book Now' : 'Full')}
         </button>
       </div>
     </div>
@@ -94,29 +102,24 @@ const RoomCard = memo(function RoomCard({ slug, rt, isAdmin, onBook, setEditing 
 export default function RoomTypesSection({ onBook, roomsState, onRoomUpdated }) {
   const { user } = useAuth()
   const isAdmin = user?.role === 'admin'
-  const [editing, setEditing] = useState(null)
 
   return (
     <div className="w-full px-6 py-12">
       <div className="max-w-5xl mx-auto">
-
         <h2 className="text-3xl font-extrabold mb-6 text-pink-600">
           Choose Your Room
         </h2>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-
           {SLUGS.map(slug => (
             <RoomCard
               key={slug}
               slug={slug}
               rt={roomsState[slug]}
-              isAdmin={isAdmin}
               onBook={onBook}
-              setEditing={setEditing}
+              onRoomUpdated={onRoomUpdated}
+              isAdmin={isAdmin}
             />
           ))}
-
         </div>
       </div>
     </div>

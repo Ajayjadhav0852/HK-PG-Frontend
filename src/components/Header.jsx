@@ -1,147 +1,195 @@
-import { useState } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import hkpgLogo from '../assets/hkpg-logo.png'
 
 const navLinks = [
-  { label: 'Home',          path: '/' },
-  { label: 'Facilities',    path: '/facilities' },
-  { label: 'Accommodation', path: '/accommodation' },
-  { label: 'Testimonials',  path: '/testimonials' },
-  { label: 'Contact Us',    path: '/contact' },
+  { label: 'Home', path: '/', id: 'home' },
+  { label: 'Facilities', path: '/facilities', id: 'facilities' },
+  { label: 'Accommodation', path: '/accommodation', id: 'accommodation' },
+  { label: 'Testimonials', path: '/testimonials', id: 'testimonials' },
+  { label: 'Contact Us', path: '/contact', id: 'contact' },
 ]
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
-  const navigate  = useNavigate()
-  const location  = useLocation()
+  const [activeSection, setActiveSection] = useState('home')
+  const [showHeader, setShowHeader] = useState(true)
+  const [scrollProgress, setScrollProgress] = useState(0)
+
+  const lastScrollY = useRef(0)
+
+  const navigate = useNavigate()
+  const location = useLocation()
   const { user, logout } = useAuth()
-
-  const go = (path) => { setMenuOpen(false); navigate(path); window.scrollTo({ top: 0, behavior: 'smooth' }) }
-
-  const handleLogout = () => { logout(); go('/') }
-
-  const isActive = (path) =>
-    path === '/' ? location.pathname === '/' : location.pathname.startsWith(path)
 
   const btnStyle = { background: 'linear-gradient(135deg, #d63384, #c026d3)' }
 
+  // ✅ Active section
+  useEffect(() => {
+    const handleScroll = () => {
+      let current = 'home'
+
+      navLinks.forEach(link => {
+        const el = document.getElementById(link.id)
+        if (el) {
+          const rect = el.getBoundingClientRect()
+          if (rect.top <= 120) current = link.id
+        }
+      })
+
+      setActiveSection(current)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // ✅ Hide / show header
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScroll = window.scrollY
+
+      if (currentScroll < 50) {
+        setShowHeader(true)
+      } else if (currentScroll > lastScrollY.current) {
+        setShowHeader(false)
+      } else {
+        setShowHeader(true)
+      }
+
+      lastScrollY.current = currentScroll
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // ✅ Scroll progress bar
+  useEffect(() => {
+    const handleProgress = () => {
+      const scrollTop = window.scrollY
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight
+      const progress = (scrollTop / docHeight) * 100
+      setScrollProgress(progress || 0)
+    }
+
+    window.addEventListener('scroll', handleProgress, { passive: true })
+    return () => window.removeEventListener('scroll', handleProgress)
+  }, [])
+
+  const go = useCallback((link) => {
+    const el = document.getElementById(link.id)
+
+    if (el && location.pathname === '/') {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } else {
+      navigate(link.path)
+    }
+
+    setMenuOpen(false)
+  }, [navigate, location.pathname])
+
+  const handleLogout = useCallback(() => {
+    logout()
+    navigate('/')
+  }, [logout, navigate])
+
+  const isActive = (link) => {
+    if (location.pathname === '/') return activeSection === link.id
+    return location.pathname === link.path
+  }
+
   return (
-    <header className="sticky top-0 z-50 shadow-sm backdrop-blur-md"
-      style={{ background: 'linear-gradient(135deg, rgba(255,240,246,0.97) 0%, rgba(253,243,231,0.97) 60%, rgba(255,248,240,0.97) 100%)' }}>
+    <>
+      {/* 🔥 SCROLL PROGRESS BAR */}
+      <div
+        className="fixed top-0 left-0 h-[3px] z-[60]"
+        style={{
+          width: `${scrollProgress}%`,
+          background: 'linear-gradient(90deg, #d63384, #c026d3)',
+          transition: 'width 0.1s linear',
+        }}
+      />
 
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
+      <header
+        className="fixed top-0 left-0 w-full z-50 shadow-sm backdrop-blur-md transition-transform duration-300"
+        style={{
+          transform: showHeader ? 'translateY(0)' : 'translateY(-100%)',
+          background:
+            'linear-gradient(135deg, rgba(255,240,246,0.97) 0%, rgba(253,243,231,0.97) 60%, rgba(255,248,240,0.97) 100%)',
+        }}
+      >
+        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
 
-        {/* Brand */}
-        <button onClick={() => go('/')} className="flex items-center gap-3 flex-shrink-0">
-          <img src={hkpgLogo} alt="HKPG Logo"
-            className="w-12 h-12 rounded-full object-cover shadow-md border-2 border-pink-200 flex-shrink-0" />
-          <div className="leading-tight hidden sm:block text-left">
-            <p className="font-extrabold text-gray-800 text-sm">HK PG</p>
-            <p className="text-xs font-semibold" style={{ color: '#c026d3' }}>Boys Accommodation</p>
-          </div>
-        </button>
+          {/* Logo */}
+          <button onClick={() => go(navLinks[0])} className="flex items-center gap-3">
+            <img src={hkpgLogo} className="w-12 h-12 rounded-full border-2 border-pink-200" />
+            <div className="hidden sm:block">
+              <p className="font-extrabold text-gray-800 text-sm">HK PG</p>
+              <p className="text-xs font-semibold text-pink-600">Boys Accommodation</p>
+            </div>
+          </button>
 
-        {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-1">
-          {navLinks.map(link => (
-            <button key={link.path} onClick={() => go(link.path)}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200
-                ${isActive(link.path) ? 'text-white shadow-md' : 'text-gray-600 hover:text-gray-900 hover:bg-pink-50'}`}
-              style={isActive(link.path) ? btnStyle : {}}>
-              {link.label}
-            </button>
-          ))}
-        </nav>
-
-        {/* Right side — auth buttons */}
-        <div className="hidden md:flex items-center gap-2 flex-shrink-0">
-          {user ? (
-            <>
+          {/* Nav */}
+          <nav className="hidden md:flex items-center gap-1">
+            {navLinks.map(link => (
               <button
-                onClick={() => go(user.role === 'admin' ? '/admin' : '/student')}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold text-gray-700 hover:bg-pink-50 transition">
-                <div className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-white text-xs font-extrabold flex-shrink-0"
-                  style={user.profilePhotoUrl ? {} : btnStyle}>
-                  {user.profilePhotoUrl
-                    ? <img src={user.profilePhotoUrl} alt={user.name} className="w-full h-full object-cover" />
-                    : user.name.charAt(0).toUpperCase()
-                  }
-                </div>
-                <span className="hidden lg:block">{user.name.split(' ')[0]}</span>
+                key={link.path}
+                onClick={() => go(link)}
+                className={`px-4 py-2 rounded-xl text-sm font-semibold
+                  ${isActive(link)
+                    ? 'text-white shadow-md'
+                    : 'text-gray-600 hover:bg-pink-50'}`}
+                style={isActive(link) ? btnStyle : {}}
+              >
+                {link.label}
               </button>
-              <button onClick={handleLogout}
-                className="px-4 py-2 rounded-xl text-sm font-bold text-white hover:opacity-90 transition"
-                style={btnStyle}>
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
-              <button onClick={() => go('/login')}
-                className="px-4 py-2 rounded-xl text-sm font-bold text-gray-700 border border-gray-200 hover:bg-pink-50 transition">
-                Login
-              </button>
-              <button onClick={() => go('/register')}
-                className="px-4 py-2 rounded-xl text-sm font-bold text-white hover:opacity-90 transition"
-                style={btnStyle}>
-                Sign Up
-              </button>
-            </>
-          )}
-        </div>
+            ))}
+          </nav>
 
-        {/* Hamburger */}
-        <button className="md:hidden flex flex-col justify-center gap-1.5 p-2 ml-auto"
-          onClick={() => setMenuOpen(o => !o)} aria-label="Toggle menu">
-          <span className={`block w-6 h-0.5 bg-gray-700 transition-all duration-300 origin-center ${menuOpen ? 'rotate-45 translate-y-2' : ''}`} />
-          <span className={`block w-6 h-0.5 bg-gray-700 transition-opacity duration-300 ${menuOpen ? 'opacity-0' : ''}`} />
-          <span className={`block w-6 h-0.5 bg-gray-700 transition-all duration-300 origin-center ${menuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
-        </button>
-      </div>
-
-      {/* Mobile menu */}
-      <div className={`md:hidden overflow-hidden transition-all duration-300 ${menuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'}`}
-        style={{ background: 'linear-gradient(135deg, #fff0f6, #fff8f0)' }}>
-        <div className="border-t border-pink-100 px-4 py-3 flex flex-col gap-1">
-          {navLinks.map(link => (
-            <button key={link.path} onClick={() => go(link.path)}
-              className={`text-left px-4 py-2.5 rounded-xl text-sm font-semibold transition-all
-                ${isActive(link.path) ? 'text-white' : 'text-gray-700 hover:bg-pink-50'}`}
-              style={isActive(link.path) ? btnStyle : {}}>
-              {link.label}
-            </button>
-          ))}
-
-          <div className="border-t border-pink-100 mt-2 pt-2 flex flex-col gap-2">
+          {/* Auth */}
+          <div className="hidden md:flex items-center gap-2">
             {user ? (
               <>
-                <button onClick={() => go(user.role === 'admin' ? '/admin' : '/student')}
-                  className="text-left px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-700 hover:bg-pink-50 transition">
-                  👤 {user.name} ({user.role})
+                <button onClick={() => navigate(user.role === 'admin' ? '/admin' : '/student')}>
+                  {user.name}
                 </button>
-                <button onClick={handleLogout}
-                  className="flex items-center justify-center px-4 py-3 rounded-xl font-bold text-white text-sm"
-                  style={btnStyle}>
+                <button onClick={handleLogout} style={btnStyle} className="px-4 py-2 text-white rounded-xl">
                   Logout
                 </button>
               </>
             ) : (
               <>
-                <button onClick={() => go('/login')}
-                  className="px-4 py-2.5 rounded-xl text-sm font-bold text-gray-700 border border-gray-200 hover:bg-pink-50 transition text-center">
-                  Login
-                </button>
-                <button onClick={() => go('/register')}
-                  className="flex items-center justify-center px-4 py-3 rounded-xl font-bold text-white text-sm"
-                  style={btnStyle}>
+                <button onClick={() => navigate('/login')}>Login</button>
+                <button onClick={() => navigate('/register')} style={btnStyle} className="px-4 py-2 text-white rounded-xl">
                   Sign Up
                 </button>
               </>
             )}
           </div>
+
+          {/* Mobile */}
+          <button className="md:hidden" onClick={() => setMenuOpen(o => !o)}>
+            ☰
+          </button>
         </div>
-      </div>
-    </header>
+
+        {/* Mobile menu */}
+        {menuOpen && (
+          <div className="md:hidden bg-white border-t p-4 flex flex-col gap-2">
+            {navLinks.map(link => (
+              <button
+                key={link.path}
+                onClick={() => go(link)}
+                className={`${isActive(link) ? 'text-pink-600 font-bold' : ''}`}
+              >
+                {link.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </header>
+    </>
   )
 }
