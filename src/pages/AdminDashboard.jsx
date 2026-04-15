@@ -302,8 +302,7 @@ export default function AdminDashboard() {
             <div>
               <p className="font-semibold text-gray-800 text-sm">Change Admin Password</p>
               <p className="text-xs text-gray-500 mt-1">
-                Current password: <span className="font-mono bg-gray-100 px-2 py-0.5 rounded text-red-600">admin123</span> 
-                <span className="text-red-500 font-semibold ml-2">⚠️ Not secure for production</span>
+                Update your admin password to keep your account secure
               </p>
             </div>
             <button
