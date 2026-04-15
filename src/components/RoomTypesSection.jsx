@@ -18,7 +18,8 @@ const FALLBACK_IMAGES = {
   '4-sharing': 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=600&q=80',
 }
 
-const AMENITY_ICONS = ['📶', '❄️', '🚿', '🪑', '🗄️', '🔋']
+// Amenities shown on each room card — AC, Study Desk, Food removed per owner request
+const AMENITY_ICONS = ['📶', '🚿', '🗄️', '🔋', '📹', '👕']
 
 const SLUGS = ['1-sharing', '2-sharing', '3-sharing', '4-sharing']
 

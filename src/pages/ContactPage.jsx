@@ -12,7 +12,7 @@ export default function ContactPage() {
           'linear-gradient(135deg, #fff0f6 0%, #fdf3e7 60%, #fff8f0 100%)',
       }}
     >
-      <div className="flex-1 max-w-4xl mx-auto w-full px-4 py-10 space-y-8">
+      <div className="flex-1 max-w-4xl mx-auto w-full px-4 pt-20 pb-10 space-y-8">
 
         <div className="text-center mb-4">
           <span className="inline-block bg-pink-100 text-pink-600 text-xs font-bold px-3 py-1 rounded-full tracking-widest uppercase mb-3">

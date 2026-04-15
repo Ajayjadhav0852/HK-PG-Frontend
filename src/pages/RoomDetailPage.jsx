@@ -6,15 +6,13 @@ import { useAuth } from '../context/AuthContext'
 
 const AMENITIES = [
   { icon: '📶', label: 'High-Speed WiFi' },
-  { icon: '❄️', label: 'AC Room' },
   { icon: '🚿', label: 'Attached Bath' },
-  { icon: '🪑', label: 'Study Desk' },
   { icon: '🗄️', label: 'Wardrobe' },
   { icon: '🔋', label: 'Power Backup' },
-  { icon: '🍽️', label: 'Food Included' },
   { icon: '📹', label: '24/7 CCTV' },
   { icon: '👕', label: 'Washing Machine' },
   { icon: '🧹', label: 'Housekeeping' },
+  { icon: '🚗', label: 'Parking' },
 ]
 
 const TAG_COLORS = {

@@ -16,6 +16,8 @@ export default function Header() {
   const [activeSection, setActiveSection] = useState('home')
   const [scrollProgress, setScrollProgress] = useState(0)
   const [scrolled, setScrolled] = useState(false)
+  const [visible, setVisible] = useState(true)
+  const lastScrollY = useRef(0)
 
   const navigate = useNavigate()
   const location = useLocation()
@@ -27,7 +29,6 @@ export default function Header() {
   useEffect(() => {
     const handleScroll = () => {
       let current = 'home'
-
       navLinks.forEach(link => {
         const el = document.getElementById(link.id)
         if (el) {
@@ -35,18 +36,14 @@ export default function Header() {
           if (rect.top <= 120) current = link.id
         }
       })
-
       setActiveSection(current)
     }
-
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // ✅ Header always visible — no auto-hide
-  // (Removed the hide/show logic — header stays fixed at top always)
-
-  // ✅ Scroll progress bar + shadow on scroll
+  // ✅ Hide on scroll down, show on scroll up — Swiggy/Zomato style
+  // Also tracks scroll progress bar + shadow
   useEffect(() => {
     const handleProgress = () => {
       const scrollTop = window.scrollY
@@ -54,6 +51,19 @@ export default function Header() {
       const progress = (scrollTop / docHeight) * 100
       setScrollProgress(progress || 0)
       setScrolled(scrollTop > 10)
+
+      // Hide/show logic: only kick in after scrolling past 80px
+      if (scrollTop < 80) {
+        setVisible(true)
+      } else if (scrollTop > lastScrollY.current + 6) {
+        // Scrolling DOWN — hide
+        setVisible(false)
+        setMenuOpen(false) // close mobile menu when hiding
+      } else if (scrollTop < lastScrollY.current - 4) {
+        // Scrolling UP — show
+        setVisible(true)
+      }
+      lastScrollY.current = scrollTop
     }
 
     window.addEventListener('scroll', handleProgress, { passive: true })
@@ -85,12 +95,13 @@ export default function Header() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 w-full z-50 backdrop-blur-md transition-shadow duration-300 ${
+        className={`fixed top-0 left-0 w-full z-50 backdrop-blur-md transition-all duration-300 ${
           scrolled ? 'shadow-lg' : 'shadow-sm'
         }`}
         style={{
           background:
             'linear-gradient(135deg, rgba(255,240,246,0.97) 0%, rgba(253,243,231,0.97) 60%, rgba(255,248,240,0.97) 100%)',
+          transform: visible ? 'translateY(0)' : 'translateY(-100%)',
         }}
       >
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-3">

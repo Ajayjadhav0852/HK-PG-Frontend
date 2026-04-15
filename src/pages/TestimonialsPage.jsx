@@ -5,8 +5,7 @@ export default function TestimonialsPage() {
   return (
     <div className="min-h-screen flex flex-col">
 
-      {/* ✅ TESTIMONIALS SECTION (IMPORTANT) */}
-      <div id="testimonials" className="flex-1">
+      <div id="testimonials" className="flex-1 pt-16">
         <TestimonialsSection />
       </div>
 

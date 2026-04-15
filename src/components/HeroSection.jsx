@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { roomApi } from '../services/api'
 
 const SLIDES = [
   {
@@ -22,7 +21,6 @@ const SLIDES = [
 
 export default function HeroSection({ onBook }) {
   const [current, setCurrent] = useState(0)
-  const [totalVacantBeds, setTotalVacantBeds] = useState(0)
   const intervalRef = useRef(null)
 
   const nextSlide = useCallback(() => {
@@ -31,21 +29,6 @@ export default function HeroSection({ onBook }) {
 
   const prevSlide = useCallback(() => {
     setCurrent(c => (c === 0 ? SLIDES.length - 1 : c - 1))
-  }, [])
-
-  // Fetch total vacant beds count
-  useEffect(() => {
-    const fetchVacantBeds = async () => {
-      try {
-        const res = await roomApi.getAll()
-        const total = (res.data || []).reduce((sum, room) => sum + (room.vacantBeds || 0), 0)
-        setTotalVacantBeds(total)
-      } catch {}
-    }
-    fetchVacantBeds()
-    // Refresh every 30 seconds for live updates
-    const interval = setInterval(fetchVacantBeds, 30000)
-    return () => clearInterval(interval)
   }, [])
 
   useEffect(() => {
@@ -127,16 +110,6 @@ export default function HeroSection({ onBook }) {
         <p className="text-white mt-3 text-base sm:text-lg">
           📍 Near Gurudwara, Akurdi Railway Station, Pune
         </p>
-
-        {/* Green capsule with vacant bed count — only show if beds > 0 */}
-        {totalVacantBeds > 0 && (
-          <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/90 backdrop-blur-sm">
-            <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-            <span className="text-white font-bold text-sm">
-              {totalVacantBeds} Beds Available
-            </span>
-          </div>
-        )}
 
         {/* Button */}
         <div className="mt-6 flex gap-3 flex-wrap">
