@@ -49,7 +49,19 @@ const RoomCard = memo(function RoomCard({ slug, rt, onBook, onRoomUpdated, isAdm
     }
   }
 
-  if (!rt) return null
+  if (!rt) {
+    return (
+      <div className="bg-white rounded-2xl overflow-hidden shadow-sm flex flex-col relative animate-pulse">
+        <div className="relative h-44 bg-gray-200" />
+        <div className="p-4 flex flex-col gap-2">
+          <div className="h-5 bg-gray-200 rounded w-3/4" />
+          <div className="h-4 bg-gray-200 rounded w-full" />
+          <div className="h-4 bg-gray-200 rounded w-1/2" />
+          <div className="h-10 bg-gray-200 rounded mt-2" />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition flex flex-col relative">
@@ -66,7 +78,12 @@ const RoomCard = memo(function RoomCard({ slug, rt, onBook, onRoomUpdated, isAdm
 
       {/* Image */}
       <div className="relative h-44">
-        <img src={rt.imageUrl || fallback} className="w-full h-full object-cover" />
+        <img 
+          src={rt.imageUrl || fallback} 
+          alt={rt.title}
+          className="w-full h-full object-cover"
+          onError={(e) => { e.target.src = fallback }}
+        />
         <span className={`absolute top-2 left-2 text-xs px-2 py-1 rounded ${tagColor}`}>
           {rt.tag}
         </span>
@@ -104,7 +121,7 @@ export default function RoomTypesSection({ onBook, roomsState, onRoomUpdated }) 
   const isAdmin = user?.role === 'admin'
 
   return (
-    <div className="w-full px-6 py-12">
+    <div className="w-full px-6 pt-24 pb-12">
       <div className="max-w-5xl mx-auto">
         <h2 className="text-3xl font-extrabold mb-6 text-pink-600">
           Choose Your Room

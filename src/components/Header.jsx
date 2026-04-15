@@ -14,10 +14,7 @@ const navLinks = [
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
-  const [showHeader, setShowHeader] = useState(true)
   const [scrollProgress, setScrollProgress] = useState(0)
-
-  const lastScrollY = useRef(0)
 
   const navigate = useNavigate()
   const location = useLocation()
@@ -45,25 +42,8 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // ✅ Hide / show header
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScroll = window.scrollY
-
-      if (currentScroll < 50) {
-        setShowHeader(true)
-      } else if (currentScroll > lastScrollY.current) {
-        setShowHeader(false)
-      } else {
-        setShowHeader(true)
-      }
-
-      lastScrollY.current = currentScroll
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  // ✅ Header always visible — no auto-hide
+  // (Removed the hide/show logic — header stays fixed at top always)
 
   // ✅ Scroll progress bar
   useEffect(() => {
@@ -103,9 +83,8 @@ export default function Header() {
   return (
     <>
       <header
-        className="fixed top-0 left-0 w-full z-50 shadow-sm backdrop-blur-md transition-transform duration-300"
+        className="fixed top-0 left-0 w-full z-50 shadow-sm backdrop-blur-md"
         style={{
-          transform: showHeader ? 'translateY(0)' : 'translateY(-100%)',
           background:
             'linear-gradient(135deg, rgba(255,240,246,0.97) 0%, rgba(253,243,231,0.97) 60%, rgba(255,248,240,0.97) 100%)',
         }}

@@ -1,14 +1,11 @@
 @import "tailwindcss";
 
-/* ── Fix browser default body margin only — do NOT reset * ─────────────────── */
+/* ── Remove browser default spacing on root elements only ──────────────────── */
 html,
-body {
-  margin: 0;
-  padding: 0;
-}
-
 body,
 #root {
+  margin: 0 !important;
+  padding: 0 !important;
   background: linear-gradient(135deg, #fff0f6 0%, #fdf3e7 60%, #fff8f0 100%);
   min-height: 100vh;
   width: 100%;
