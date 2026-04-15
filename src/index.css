@@ -1,1 +1,49 @@
 @import "tailwindcss";
+
+/* ── Global interaction polish ─────────────────────────────────────────────── */
+
+/* Smooth press-down on every button, link, and clickable element */
+button,
+a,
+[role="button"] {
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+button:active,
+a:active,
+[role="button"]:active {
+  transform: scale(0.97);
+  opacity: 0.88;
+}
+
+/* Disabled buttons should never animate */
+button:disabled {
+  transform: none !important;
+  opacity: 0.5 !important;
+  cursor: not-allowed;
+}
+
+/* Subtle hover lift on cards */
+.card-hover {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.09);
+}
+
+/* Smooth focus ring — accessible but not jarring */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #d63384;
+  outline-offset: 2px;
+}
+
+/* Remove default outline for mouse users */
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible) {
+  outline: none;
+}
