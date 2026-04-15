@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom'
+import { AnimatePresence, motion } from 'framer-motion'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import Header from './components/Header'
@@ -18,7 +19,28 @@ import RegisterPage      from './pages/RegisterPage'
 import StudentDashboard  from './pages/StudentDashboard'
 import AdminDashboard    from './pages/AdminDashboard'
 
-// ── Floating WhatsApp Chat Button (chat only, not for booking) ────────────────
+// ── Page transition variant — subtle fade + 6px upward slide ─────────────────
+const pageVariants = {
+  initial:  { opacity: 0, y: 6 },
+  animate:  { opacity: 1, y: 0, transition: { duration: 0.22, ease: 'easeOut' } },
+  exit:     { opacity: 0, y: -4, transition: { duration: 0.15, ease: 'easeIn' } },
+}
+
+function PageWrapper({ children }) {
+  return (
+    <motion.div
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      style={{ willChange: 'opacity, transform' }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+// ── Floating WhatsApp Chat Button ─────────────────────────────────────────────
 const WA_CHAT_LINK = `https://wa.me/919579828996?text=${encodeURIComponent(
   'Hi! I have a question about HK PG Boys Accommodation.'
 )}`
@@ -72,8 +94,8 @@ function AppRoutes() {
   const [roomTypeKey, setRoomTypeKey]   = useState(null)
   const [selectedRoom, setSelectedRoom] = useState(null)
   const navigate = useNavigate()
+  const location = useLocation()
 
-  // ✅ Fetch only when needed
   const fetchRooms = useCallback(async () => {
     try {
       const res = await roomApi.getAll()
@@ -81,7 +103,6 @@ function AppRoutes() {
     } catch {}
   }, [])
 
-  // ✅ Only ONCE on load
   useEffect(() => {
     fetchRooms()
   }, [fetchRooms])
@@ -89,75 +110,101 @@ function AppRoutes() {
   const goToRoomDetail = (typeKey) => {
     setRoomTypeKey(typeKey)
     navigate(`/room/${typeKey}`)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }
 
   const goToForm = (roomTypeDto) => {
     setSelectedRoom(roomTypeDto)
     navigate('/apply')
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }
 
   const handleBookingSubmit = useCallback(() => {
-    fetchRooms() // ✅ refresh only after booking
+    fetchRooms()
   }, [fetchRooms])
 
   return (
     <div className="pt-16">
+      <AnimatePresence mode="wait" initial={false}>
+        <Routes location={location} key={location.pathname}>
 
-      <Routes>
+          {/* Public */}
+          <Route path="/" element={
+            <PageWrapper><Header /><HomePage /></PageWrapper>
+          } />
+          <Route path="/facilities" element={
+            <PageWrapper><Header /><FacilitiesPage /></PageWrapper>
+          } />
+          <Route path="/accommodation" element={
+            <PageWrapper>
+              <Header />
+              <AccommodationPage rooms={rooms} onBook={goToRoomDetail} onRoomUpdated={fetchRooms} />
+            </PageWrapper>
+          } />
+          <Route path="/testimonials" element={
+            <PageWrapper><Header /><TestimonialsPage /></PageWrapper>
+          } />
+          <Route path="/contact" element={
+            <PageWrapper><Header /><ContactPage /></PageWrapper>
+          } />
 
-        {/* Public */}
-        <Route path="/" element={<><Header /><HomePage /></>} />
-        <Route path="/facilities" element={<><Header /><FacilitiesPage /></>} />
-        <Route path="/accommodation" element={<><Header /><AccommodationPage rooms={rooms} onBook={goToRoomDetail} onRoomUpdated={fetchRooms} /></>} />
-        <Route path="/testimonials" element={<><Header /><TestimonialsPage /></>} />
-        <Route path="/contact" element={<><Header /><ContactPage /></>} />
+          {/* Room detail */}
+          <Route path="/room/:typeKey" element={
+            <PageWrapper>
+              <Header />
+              <RoomDetailPage onBook={goToForm} onBack={() => navigate('/accommodation')} />
+            </PageWrapper>
+          } />
 
-        {/* Room */}
-        <Route path="/room/:typeKey" element={
-          <><Header /><RoomDetailPage onBook={goToForm} onBack={() => navigate('/accommodation')} /></>
-        } />
+          {/* Application form */}
+          <Route path="/apply" element={
+            <ProtectedRoute>
+              <PageWrapper>
+                <Header />
+                <StudentFormPage
+                  selectedRoom={selectedRoom}
+                  onBack={() => navigate(roomTypeKey ? `/room/${roomTypeKey}` : '/accommodation')}
+                  onSubmit={handleBookingSubmit}
+                  onAfterSubmit={() => { fetchRooms(); navigate(`/room/${roomTypeKey}`) }}
+                />
+              </PageWrapper>
+            </ProtectedRoute>
+          } />
 
-        {/* Form */}
-        <Route path="/apply" element={
-          <ProtectedRoute>
-            <><Header /><StudentFormPage
-              selectedRoom={selectedRoom}
-              onBack={() => navigate(roomTypeKey ? `/room/${roomTypeKey}` : '/accommodation')}
-              onSubmit={handleBookingSubmit}
-              onAfterSubmit={() => { fetchRooms(); navigate(`/room/${roomTypeKey}`) }}
-            /></>
-          </ProtectedRoute>
-        } />
+          {/* Auth */}
+          <Route path="/login"    element={<PageWrapper><LoginPage /></PageWrapper>} />
+          <Route path="/register" element={<PageWrapper><RegisterPage /></PageWrapper>} />
 
-        {/* Auth */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+          {/* Dashboards */}
+          <Route path="/student" element={
+            <ProtectedRoute role="student">
+              <PageWrapper><StudentDashboard /></PageWrapper>
+            </ProtectedRoute>
+          } />
+          <Route path="/admin" element={
+            <ProtectedRoute role="admin">
+              <PageWrapper><AdminDashboard /></PageWrapper>
+            </ProtectedRoute>
+          } />
 
-        {/* Dashboards */}
-        <Route path="/student" element={
-          <ProtectedRoute role="student"><StudentDashboard /></ProtectedRoute>
-        } />
-        <Route path="/admin" element={
-          <ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>
-        } />
+          {/* 404 */}
+          <Route path="*" element={
+            <PageWrapper>
+              <div className="min-h-screen flex flex-col items-center justify-center gap-4"
+                style={{ background: 'linear-gradient(135deg,#fff0f6 0%,#fdf3e7 60%,#fff8f0 100%)' }}>
+                <p className="text-6xl">🏠</p>
+                <h1 className="text-2xl font-extrabold text-gray-800">Page Not Found</h1>
+                <button onClick={() => navigate('/')}
+                  className="px-6 py-3 rounded-xl font-bold text-white text-sm hover:opacity-90 transition"
+                  style={{ background: 'linear-gradient(135deg,#d63384,#c026d3)' }}>
+                  ← Back to Home
+                </button>
+              </div>
+            </PageWrapper>
+          } />
 
-        {/* 404 */}
-        <Route path="*" element={
-          <div className="min-h-screen flex flex-col items-center justify-center gap-4"
-            style={{ background: 'linear-gradient(135deg,#fff0f6 0%,#fdf3e7 60%,#fff8f0 100%)' }}>
-            <p className="text-6xl">🏠</p>
-            <h1 className="text-2xl font-extrabold text-gray-800">Page Not Found</h1>
-            <button onClick={() => navigate('/')}
-              className="px-6 py-3 rounded-xl font-bold text-white text-sm hover:opacity-90 transition"
-              style={{ background: 'linear-gradient(135deg,#d63384,#c026d3)' }}>
-              ← Back to Home
-            </button>
-          </div>
-        } />
-
-      </Routes>
+        </Routes>
+      </AnimatePresence>
     </div>
   )
 }
