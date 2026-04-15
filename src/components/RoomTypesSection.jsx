@@ -87,10 +87,11 @@ const RoomCard = memo(function RoomCard({ slug, rt, onBook, onRoomUpdated, isAdm
         <span className={`absolute top-2 left-2 text-xs px-2 py-1 rounded ${tagColor}`}>
           {rt.tag}
         </span>
-        <span className={`absolute bottom-2 right-2 text-xs px-2 py-1 rounded ${
-          vacantBeds > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'
+        {/* Vacant beds indicator — shows only remaining beds */}
+        <span className={`absolute bottom-2 right-2 text-xs px-3 py-1 rounded-full font-bold ${
+          vacantBeds > 0 ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
         }`}>
-          {vacantBeds > 0 ? `🟢 ${vacantBeds}` : 'Full'}
+          {vacantBeds > 0 ? `${vacantBeds} Left` : 'Full'}
         </span>
       </div>
 
