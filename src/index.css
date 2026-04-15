@@ -1,29 +1,28 @@
 @import "tailwindcss";
 
-/* ── Universal reset — kill ALL default spacing ────────────────────────────── */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* ── Root elements background ──────────────────────────────────────────────── */
+/* ── Kill all default browser spacing on root elements ─────────────────────── */
 html {
-  background: linear-gradient(135deg, #fff0f6 0%, #fdf3e7 60%, #fff8f0 100%);
+  margin: 0 !important;
+  padding: 0 !important;
+  background: linear-gradient(135deg, #fff0f6 0%, #fdf3e7 60%, #fff8f0 100%) !important;
   min-height: 100vh;
   width: 100%;
   overflow-x: hidden;
 }
 
 body {
-  background: transparent;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
   min-height: 100vh;
   width: 100%;
   overflow-x: hidden;
 }
 
 #root {
-  background: transparent;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
   min-height: 100vh;
   width: 100%;
 }
