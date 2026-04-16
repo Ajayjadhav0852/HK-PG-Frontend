@@ -11,6 +11,8 @@ export default function RegisterPage() {
   const navigate = useNavigate()
   const [form, setForm] = useState({ name: '', email: '', phone: '', password: '', confirm: '' })
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const set = (key) => (e) => setForm(f => ({ ...f, [key]: e.target.value }))
 
@@ -94,16 +96,32 @@ export default function RegisterPage() {
               <label className="block text-xs font-semibold text-gray-600 mb-1.5">
                 Password <span className="text-red-400">*</span>
               </label>
-              <input type="password" placeholder="Minimum 6 characters"
-                value={form.password} onChange={set('password')} className={inputCls} />
+              <div className="relative">
+                <input type={showPassword ? 'text' : 'password'} placeholder="Minimum 6 characters"
+                  value={form.password} onChange={set('password')}
+                  className={`${inputCls} pr-11`} />
+                <button type="button" onClick={() => setShowPassword(v => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-pink-500 transition text-lg"
+                  tabIndex={-1} aria-label={showPassword ? 'Hide password' : 'Show password'}>
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1.5">
                 Confirm Password <span className="text-red-400">*</span>
               </label>
-              <input type="password" placeholder="Re-enter your password"
-                value={form.confirm} onChange={set('confirm')} className={inputCls} />
+              <div className="relative">
+                <input type={showConfirm ? 'text' : 'password'} placeholder="Re-enter your password"
+                  value={form.confirm} onChange={set('confirm')}
+                  className={`${inputCls} pr-11`} />
+                <button type="button" onClick={() => setShowConfirm(v => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-pink-500 transition text-lg"
+                  tabIndex={-1} aria-label={showConfirm ? 'Hide password' : 'Show password'}>
+                  {showConfirm ? '🙈' : '👁️'}
+                </button>
+              </div>
             </div>
 
             <button type="submit" disabled={loading}

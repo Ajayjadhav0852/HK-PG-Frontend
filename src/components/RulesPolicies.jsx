@@ -1,12 +1,11 @@
 import { useState } from 'react'
 
 const rules = [
-  { icon: '🕙', text: 'Entry timing: 6 AM – 10:30 PM' },
   { icon: '👥', text: 'Visitors allowed in common area only (till 9 PM)' },
-  { icon: '🚭', text: 'No smoking or drinking inside premises ,strict action taken if noticed' },
+  { icon: '🚭', text: 'No smoking or drinking inside premises, strict action taken if noticed' },
   { icon: '📅', text: 'Notice period: 30 days before vacating' },
   { icon: '🔇', text: 'No loud music after 10 PM' },
-  { icon: '🧹', text: 'Keep your room clean ' },
+  { icon: '🧹', text: 'Keep your room clean' },
 ]
 
 export default function RulesPolicies() {
