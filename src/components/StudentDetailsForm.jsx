@@ -97,6 +97,8 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
   // All rooms from API
   const [allRooms, setAllRooms]         = useState([])
   const [roomsLoading, setRoomsLoading] = useState(true)
+  // Booked beds for selected room (PENDING + CONFIRMED) — prevents double booking
+  const [bookedBeds, setBookedBeds]     = useState([])
 
   useEffect(() => {
     roomApi.getAllRooms()
@@ -104,6 +106,14 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
       .catch(() => setAllRooms([]))
       .finally(() => setRoomsLoading(false))
   }, [])
+
+  // Fetch booked beds whenever room selection changes
+  useEffect(() => {
+    if (!formData.preferredRoomNumber) { setBookedBeds([]); return }
+    roomApi.getBookedBeds(formData.preferredRoomNumber)
+      .then(res => setBookedBeds(res.data || []))
+      .catch(() => setBookedBeds([]))
+  }, [formData.preferredRoomNumber])
 
   const set = (key) => (e) => {
     setFormData(f => ({ ...f, [key]: e.target.value }))
@@ -441,10 +451,10 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
             const start    = selectedRoomData.bedStart || 1
             const total    = selectedRoomData.bedsPerRoom
             const occupied = selectedRoomData.occupiedBeds
-            // Generate bed numbers for this room
+            // Generate bed numbers — mark as unavailable if confirmed-occupied OR has any PENDING booking
             const beds = Array.from({ length: total }, (_, i) => ({
               num:        start + i,
-              isOccupied: i < occupied,
+              isOccupied: i < occupied || bookedBeds.includes(start + i),
             }))
             return (
               <select

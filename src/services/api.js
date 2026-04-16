@@ -83,9 +83,10 @@ export const authApi = {
 
 // ── Rooms ─────────────────────────────────────────────────────────────────────
 export const roomApi = {
-  getAll:      ()     => request('/api/room-types'),
-  getBySlug:   (slug) => request(`/api/room-types/${slug}`),
-  getAllRooms:  ()     => request('/api/room-types/rooms'),  // all 9 rooms for booking form
+  getAll:        ()           => request('/api/room-types'),
+  getBySlug:     (slug)       => request(`/api/room-types/${slug}`),
+  getAllRooms:    ()           => request('/api/room-types/rooms'),
+  getBookedBeds: (roomNumber) => request(`/api/room-types/booked-beds/${roomNumber}`),
 }
 
 // ── Applications ──────────────────────────────────────────────────────────────
