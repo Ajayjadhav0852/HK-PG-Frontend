@@ -182,13 +182,13 @@ export default function RoomTypesSection({ onBook, roomsState, onRoomUpdated }) 
   const { user } = useAuth()
   const isAdmin = user?.role === 'admin'
 
-  // Show "waking up" hint after 4 seconds if cards still loading
+  // Show "loading" hint after 5 seconds if cards still loading
   const [showWakeHint, setShowWakeHint] = useState(false)
   const isLoading = !roomsState || Object.keys(roomsState).length === 0
 
   useEffect(() => {
     if (!isLoading) { setShowWakeHint(false); return }
-    const t = setTimeout(() => setShowWakeHint(true), 4000)
+    const t = setTimeout(() => setShowWakeHint(true), 5000)
     return () => clearTimeout(t)
   }, [isLoading])
 
@@ -209,13 +209,11 @@ export default function RoomTypesSection({ onBook, roomsState, onRoomUpdated }) 
           </p>
         </div>
 
-        {/* Wake-up hint banner */}
+        {/* Loading hint — only shows if rooms take >5s (very rare with keep-alive) */}
         {showWakeHint && isLoading && (
-          <div className="mb-6 flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-xl px-4 py-3 text-sm text-orange-700">
-            <span className="text-lg">⏳</span>
-            <span>
-              <strong>Server is waking up</strong> — this takes ~30 seconds on first visit. Hang tight!
-            </span>
+          <div className="mb-6 flex items-center gap-3 bg-pink-50 border border-pink-200 rounded-xl px-4 py-3 text-sm text-pink-700">
+            <span className="animate-spin text-lg">⏳</span>
+            <span>Loading room details, please wait a moment...</span>
           </div>
         )}
 

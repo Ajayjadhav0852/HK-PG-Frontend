@@ -97,21 +97,22 @@ function AppRoutes() {
   const location = useLocation()
 
   const fetchRooms = useCallback(async () => {
-    try {
-      const res = await roomApi.getAll()
-      setRooms(toMap(res.data))
-    } catch (err) {
-      // Render free tier cold start can take 30-60s — retry once after 20s
-      console.warn('[fetchRooms] failed, retrying in 20s:', err.message)
-      setTimeout(async () => {
-        try {
-          const res = await roomApi.getAll()
-          setRooms(toMap(res.data))
-        } catch (e) {
-          console.error('[fetchRooms] retry also failed:', e.message)
+    // Retry up to 3 times with increasing delays — silent, no user-facing messages
+    const attempt = async (retryCount = 0) => {
+      try {
+        const res = await roomApi.getAll()
+        setRooms(toMap(res.data))
+      } catch (err) {
+        if (retryCount < 3) {
+          const delay = [5000, 10000, 20000][retryCount] // 5s, 10s, 20s
+          console.warn(`[fetchRooms] attempt ${retryCount + 1} failed, retrying in ${delay/1000}s`)
+          setTimeout(() => attempt(retryCount + 1), delay)
+        } else {
+          console.error('[fetchRooms] all retries failed:', err.message)
         }
-      }, 20000)
+      }
     }
+    attempt()
   }, [])
 
   useEffect(() => {

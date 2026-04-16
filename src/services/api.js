@@ -120,8 +120,8 @@ export const adminApi = {
 
 // ── Keep-alive ping ───────────────────────────────────────────────────────────
 // Render free tier spins down after 15 min of inactivity.
-// Call startKeepAlive() once on app boot — pings /health every 10 minutes
-// so the backend never goes cold while someone has the site open.
+// Pings /health every 8 minutes — well within the 15-min sleep threshold.
+// Also pings immediately on page load to wake the server before user needs it.
 export function startKeepAlive() {
   if (typeof window === 'undefined' || !BASE_URL) return
 
@@ -131,12 +131,12 @@ export function startKeepAlive() {
       .catch(() => {}) // silent — don't bother the user
   }
 
-  // First ping after 30s (give the initial room fetch time to finish)
-  const initial = setTimeout(ping, 30_000)
+  // Ping immediately on page load — wakes server right away
+  ping()
 
-  // Then every 10 minutes
-  const interval = setInterval(ping, 10 * 60 * 1000)
+  // Then ping every 8 minutes (Render sleeps after 15 min — 8 min is safe margin)
+  const interval = setInterval(ping, 8 * 60 * 1000)
 
   // Return cleanup in case it's ever needed
-  return () => { clearTimeout(initial); clearInterval(interval) }
+  return () => { clearInterval(interval) }
 }
