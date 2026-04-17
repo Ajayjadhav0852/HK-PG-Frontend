@@ -137,33 +137,33 @@ function AppRoutes() {
 
   return (
     <div className="pt-16">
+      {/* Header rendered ONCE here — outside AnimatePresence/motion.div stacking context */}
+      <Header />
       <AnimatePresence mode="wait" initial={false}>
         <Routes location={location} key={location.pathname}>
 
           {/* Public */}
           <Route path="/" element={
-            <PageWrapper><Header /><HomePage /></PageWrapper>
+            <PageWrapper><HomePage /></PageWrapper>
           } />
           <Route path="/facilities" element={
-            <PageWrapper><Header /><FacilitiesPage /></PageWrapper>
+            <PageWrapper><FacilitiesPage /></PageWrapper>
           } />
           <Route path="/accommodation" element={
             <PageWrapper>
-              <Header />
               <AccommodationPage rooms={rooms} onBook={goToRoomDetail} onRoomUpdated={fetchRooms} />
             </PageWrapper>
           } />
           <Route path="/testimonials" element={
-            <PageWrapper><Header /><TestimonialsPage /></PageWrapper>
+            <PageWrapper><TestimonialsPage /></PageWrapper>
           } />
           <Route path="/contact" element={
-            <PageWrapper><Header /><ContactPage /></PageWrapper>
+            <PageWrapper><ContactPage /></PageWrapper>
           } />
 
           {/* Room detail */}
           <Route path="/room/:typeKey" element={
             <PageWrapper>
-              <Header />
               <RoomDetailPage onBook={goToForm} onBack={() => navigate('/accommodation')} />
             </PageWrapper>
           } />
@@ -172,7 +172,6 @@ function AppRoutes() {
           <Route path="/apply" element={
             <ProtectedRoute>
               <PageWrapper>
-                <Header />
                 <StudentFormPage
                   selectedRoom={selectedRoom}
                   onBack={() => navigate(roomTypeKey ? `/room/${roomTypeKey}` : '/accommodation')}
