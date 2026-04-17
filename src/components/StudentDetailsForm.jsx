@@ -129,6 +129,13 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
       .catch(() => setBookedBeds([]))
   }, [formData.preferredRoomNumber])
 
+  // Auto-fill deposit amount from selected room type
+  useEffect(() => {
+    if (selectedRoom?.securityDeposit && !formData.depositAmount) {
+      setFormData(f => ({ ...f, depositAmount: String(selectedRoom.securityDeposit) }))
+    }
+  }, [selectedRoom])
+
   const set = (key) => (e) => {
     setFormData(f => ({ ...f, [key]: e.target.value }))
     if (fieldErrors[key]) setFieldErrors(fe => ({ ...fe, [key]: '' }))
@@ -148,7 +155,6 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
     const errs = {}
     if (!formData.fullName.trim())                                        errs.fullName         = 'Full name is required'
     if (!/^[0-9]{10}$/.test(formData.mobile))                            errs.mobile           = 'Enter a valid 10-digit mobile number'
-    if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email)) errs.email            = 'Enter a valid email address'
     if (!formData.address.trim())                                         errs.address          = 'Address is required'
     if (!formData.city.trim())                                            errs.city             = 'City is required'
     if (!formData.state.trim())                                           errs.state            = 'State is required'
@@ -334,11 +340,6 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
         <Field label="Alternate Number">
           <input type="tel" placeholder="Optional" maxLength={10} className={inputCls}
             value={formData.alternateMobile} onChange={set('alternateMobile')} />
-        </Field>
-        <Field label="Email ID" required error={fe.email}>
-          <input id="email" type="email" placeholder="example@email.com"
-            className={`${inputCls} ${fe.email ? errCls : ''}`}
-            value={formData.email} onChange={set('email')} />
         </Field>
       </Section>
 
@@ -551,10 +552,6 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
             <option value="UPI">UPI</option>
             <option value="ONLINE_TRANSFER">Online Transfer</option>
           </select>
-        </Field>
-        <Field label="Transaction ID (if online)">
-          <input type="text" placeholder="UPI / Bank transaction ID" className={inputCls}
-            value={formData.transactionId} onChange={set('transactionId')} />
         </Field>
       </Section>
 
