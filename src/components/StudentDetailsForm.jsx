@@ -5,9 +5,9 @@ import { useAuth } from '../context/AuthContext'
 import UPIPaymentScreen from './UPIPaymentScreen'
 import BookingSuccessScreen from './BookingSuccessScreen'
 
-// ── UPI Config — change these to owner's actual UPI details ──────────────────
-const UPI_ID      = 'hkpgakurdi@upi'   // ← Replace with actual UPI ID
-const UPI_NAME    = 'HK PG Akurdi'
+// ── UPI Config — Owner's actual UPI details ──────────────────────────────────
+const UPI_ID      = '9579828996@ybl'        // Owner's PhonePe UPI ID
+const UPI_NAME    = 'Krishna Pandurang Pawar' // Owner's name as on PhonePe
 // QR code generated via UPI deep link using a free QR API
 const UPI_DEEP_LINK = (amount) =>
   `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}${amount ? `&am=${amount}` : ''}&cu=INR&tn=${encodeURIComponent('HK PG Security Deposit')}`
