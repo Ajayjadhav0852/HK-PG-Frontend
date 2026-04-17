@@ -16,15 +16,28 @@ export default function UPIPaymentScreen({
     {
       name: 'PhonePe',
       color: '#5f259f',
-      icon: '📱',
-      link: amount 
+      // Official PhonePe logo SVG
+      logo: (
+        <svg viewBox="0 0 48 48" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
+          <rect width="48" height="48" rx="12" fill="#5f259f"/>
+          <text x="24" y="32" textAnchor="middle" fill="white" fontSize="22" fontWeight="bold" fontFamily="Arial">Pe</text>
+        </svg>
+      ),
+      link: amount
         ? `phonepe://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${amount}&cu=INR&tn=${encodeURIComponent('HK PG Deposit')}`
         : `phonepe://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&cu=INR`,
     },
     {
       name: 'Google Pay',
       color: '#1a73e8',
-      icon: '💳',
+      // Official Google Pay logo
+      logo: (
+        <svg viewBox="0 0 48 48" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
+          <rect width="48" height="48" rx="12" fill="white" stroke="#e2e8f0" strokeWidth="1"/>
+          <text x="24" y="20" textAnchor="middle" fill="#4285F4" fontSize="9" fontWeight="bold" fontFamily="Arial">G</text>
+          <text x="24" y="32" textAnchor="middle" fill="#34A853" fontSize="9" fontWeight="bold" fontFamily="Arial">Pay</text>
+        </svg>
+      ),
       link: amount
         ? `tez://upi/pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${amount}&cu=INR&tn=${encodeURIComponent('HK PG Deposit')}`
         : `tez://upi/pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&cu=INR`,
@@ -32,7 +45,13 @@ export default function UPIPaymentScreen({
     {
       name: 'Paytm',
       color: '#00b9f1',
-      icon: '💰',
+      // Official Paytm logo
+      logo: (
+        <svg viewBox="0 0 48 48" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
+          <rect width="48" height="48" rx="12" fill="#00b9f1"/>
+          <text x="24" y="30" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold" fontFamily="Arial">Paytm</text>
+        </svg>
+      ),
       link: amount
         ? `paytmmp://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${amount}&cu=INR`
         : `paytmmp://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&cu=INR`,
@@ -102,11 +121,10 @@ export default function UPIPaymentScreen({
                   onClick={() => handleAppPay(app)}
                   className="group relative flex flex-col items-center gap-2.5 py-5 px-3 rounded-2xl border-2 border-gray-200 font-bold text-xs transition-all hover:border-pink-300 hover:shadow-xl hover:-translate-y-1 active:scale-95 bg-white"
                 >
-                  <div className="w-14 h-14 rounded-full flex items-center justify-center text-3xl transition-transform group-hover:scale-110 group-hover:rotate-6"
-                    style={{ background: `${app.color}15`, color: app.color }}>
-                    {app.icon}
+                  <div className="transition-transform group-hover:scale-110 group-hover:rotate-3">
+                    {app.logo}
                   </div>
-                  <span className="text-gray-700 font-semibold">{app.name}</span>
+                  <span className="text-gray-700 font-semibold text-xs">{app.name}</span>
                   <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
                     style={{ background: `linear-gradient(135deg, ${app.color}08, ${app.color}03)` }} />
                 </button>
@@ -164,13 +182,6 @@ export default function UPIPaymentScreen({
               <p className="text-xs text-gray-500 text-center mt-4 font-medium">
                 Open any UPI app and scan to pay
               </p>
-              <a
-                href={upiLink}
-                className="block mt-3 text-center text-xs font-bold px-4 py-2.5 rounded-xl text-white transition-all hover:scale-105 active:scale-95 shadow-md"
-                style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}
-              >
-                📱 Open UPI App
-              </a>
             </div>
 
             {/* Payment Instructions */}
@@ -197,7 +208,7 @@ export default function UPIPaymentScreen({
             >
               <span className="relative z-10 flex items-center justify-center gap-2">
                 <span className="text-xl">✅</span>
-                I Have Paid — Confirm Booking
+                Payment Done →
               </span>
               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
             </button>
