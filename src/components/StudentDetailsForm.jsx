@@ -2,14 +2,15 @@ import { useState, useEffect } from 'react'
 import { showToast } from '../components/Toast'
 import { applicationApi, roomApi } from '../services/api'
 import { useAuth } from '../context/AuthContext'
+import UPIPaymentScreen from './UPIPaymentScreen'
+import BookingSuccessScreen from './BookingSuccessScreen'
 
 // ── UPI Config — change these to owner's actual UPI details ──────────────────
-const UPI_ID       = 'hkpgakurdi@upi'          // ← Replace with actual UPI ID
-const UPI_NAME     = 'HK PG Akurdi'
-const ADVANCE_AMT  = 500                         // ₹500 advance booking amount
+const UPI_ID      = 'hkpgakurdi@upi'   // ← Replace with actual UPI ID
+const UPI_NAME    = 'HK PG Akurdi'
 // QR code generated via UPI deep link using a free QR API
 const UPI_DEEP_LINK = (amount) =>
-  `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR&tn=${encodeURIComponent('HK PG Advance Booking')}`
+  `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}${amount ? `&am=${amount}` : ''}&cu=INR&tn=${encodeURIComponent('HK PG Security Deposit')}`
 const QR_URL = (amount) =>
   `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(UPI_DEEP_LINK(amount))}`
 
@@ -171,6 +172,7 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
       }
     }
     if (!formData.selectedBedNumber)                                      errs.selectedBedNumber   = 'Please enter a bed number'
+    if (!formData.depositAmount)                                          errs.depositAmount       = 'Please enter deposit amount'
     if (!formData.idProofType)                                            errs.idProofType      = 'ID type is required'
     if (!idProofFile)                                                     errs.idProofFile      = 'ID proof upload is required'
     return errs
@@ -245,254 +247,32 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
 
   // ── UPI Payment Screen ────────────────────────────────────────────────────
   if (showUPI) {
-    const upiLink = UPI_DEEP_LINK(ADVANCE_AMT)
-    const qrUrl   = QR_URL(ADVANCE_AMT)
-
-    // Payment app deep links
-    const payApps = [
-      {
-        name: 'PhonePe',
-        color: '#5f259f',
-        icon: '📱',
-        // PhonePe UPI deep link
-        link: `phonepe://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${ADVANCE_AMT}&cu=INR&tn=${encodeURIComponent('HK PG Advance')}`,
-        fallback: `https://phon.pe/ru_${UPI_ID}`,
-      },
-      {
-        name: 'Google Pay',
-        color: '#1a73e8',
-        icon: '💳',
-        link: `tez://upi/pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${ADVANCE_AMT}&cu=INR&tn=${encodeURIComponent('HK PG Advance')}`,
-        fallback: `https://pay.google.com/`,
-      },
-      {
-        name: 'Paytm',
-        color: '#00b9f1',
-        icon: '💰',
-        link: `paytmmp://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${ADVANCE_AMT}&cu=INR`,
-        fallback: `https://paytm.com/`,
-      },
-    ]
-
-    const handleAppPay = (app) => {
-      // Try deep link first — if app not installed, fallback to web
-      const iframe = document.createElement('iframe')
-      iframe.style.display = 'none'
-      document.body.appendChild(iframe)
-      iframe.src = app.link
-      setTimeout(() => {
-        document.body.removeChild(iframe)
-      }, 1500)
-      // Fallback after 2s if app didn't open
-      setTimeout(() => {
-        window.open(app.fallback, '_blank')
-      }, 2000)
-    }
-
-    const handleIPaid = () => {
-      setShowUPI(false)
-      setSubmitted(true)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-
+    const depositAmt = formData.depositAmount ? parseFloat(formData.depositAmount) : null
     return (
-      <div className="space-y-4">
-        {/* Header */}
-        <div className="text-center">
-          <div className="text-5xl mb-2">💳</div>
-          <h2 className="text-2xl font-extrabold text-gray-800">Complete Your Payment</h2>
-          <p className="text-gray-500 text-sm mt-1">Pay advance to confirm your bed booking</p>
-        </div>
-
-        {/* Amount Card */}
-        <div className="rounded-2xl p-5 text-center border-2 border-pink-200"
-          style={{ background: 'linear-gradient(135deg, #fff0f6, #fdf3e7)' }}>
-          <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Advance Amount</p>
-          <p className="text-5xl font-extrabold" style={{ color: '#c026d3' }}>
-            ₹{ADVANCE_AMT.toLocaleString('en-IN')}
-          </p>
-          <p className="text-xs text-gray-500 mt-2">One-time advance to confirm your booking</p>
-          <p className="text-xs text-gray-400 mt-1">Remaining amount payable on joining day</p>
-        </div>
-
-        {/* UPI ID */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-          <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 text-center">Pay to UPI ID</p>
-          <div className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3 border border-gray-200">
-            <span className="font-mono font-bold text-gray-800 text-base">{UPI_ID}</span>
-            <button
-              type="button"
-              onClick={() => {
-                navigator.clipboard?.writeText(UPI_ID)
-                showToast.success('Copied!', 'UPI ID copied to clipboard')
-              }}
-              className="text-xs font-bold px-3 py-1.5 rounded-lg transition"
-              style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)', color: 'white' }}
-            >
-              Copy
-            </button>
-          </div>
-          <p className="text-xs text-center text-gray-400 mt-2">Name: <strong>{UPI_NAME}</strong></p>
-        </div>
-
-        {/* Pay via App Buttons */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-          <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 text-center">
-            Pay Directly via App
-          </p>
-          <div className="grid grid-cols-3 gap-3">
-            {payApps.map(app => (
-              <button
-                key={app.name}
-                type="button"
-                onClick={() => handleAppPay(app)}
-                className="flex flex-col items-center gap-2 py-4 px-2 rounded-2xl border-2 font-bold text-white text-xs transition-all hover:scale-105 active:scale-95 shadow-sm"
-                style={{ background: app.color, borderColor: app.color }}
-              >
-                <span className="text-2xl">{app.icon}</span>
-                <span>{app.name}</span>
-              </button>
-            ))}
-          </div>
-          <p className="text-xs text-center text-gray-400 mt-3">
-            Tap to open app → Pay ₹{ADVANCE_AMT} → Come back here
-          </p>
-        </div>
-
-        {/* QR Code */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 text-center">
-          <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">
-            Or Scan QR Code
-          </p>
-          <div className="flex justify-center">
-            <div className="p-3 bg-white rounded-2xl border-2 border-pink-100 shadow-sm inline-block">
-              <img
-                src={qrUrl}
-                alt="UPI QR Code"
-                className="w-44 h-44"
-                onError={e => { e.target.style.display = 'none' }}
-              />
-            </div>
-          </div>
-          <p className="text-xs text-gray-400 mt-2">Scan with any UPI app</p>
-          {/* Direct UPI link for mobile */}
-          <a
-            href={upiLink}
-            className="inline-block mt-3 text-xs font-bold px-4 py-2 rounded-xl text-white transition hover:opacity-90"
-            style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}
-          >
-            Open UPI App →
-          </a>
-        </div>
-
-        {/* Steps */}
-        <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4">
-          <p className="text-xs font-bold text-blue-700 mb-2">📋 Steps to Pay:</p>
-          <ol className="text-xs text-blue-600 space-y-1 list-decimal list-inside">
-            <li>Tap any payment app button above</li>
-            <li>Pay ₹{ADVANCE_AMT} to <strong>{UPI_ID}</strong></li>
-            <li>Come back to this page</li>
-            <li>Click <strong>"I Have Paid"</strong> below</li>
-          </ol>
-        </div>
-
-        {/* I Paid Button */}
-        <button
-          type="button"
-          onClick={handleIPaid}
-          className="w-full py-4 rounded-2xl font-extrabold text-white text-base shadow-lg transition hover:opacity-90 active:scale-95"
-          style={{ background: 'linear-gradient(135deg, #16a34a, #15803d)' }}
-        >
-          ✅ I Have Paid — Confirm Booking
-        </button>
-
-        <p className="text-center text-xs text-gray-400">
-          Having trouble? Call us:{' '}
-          <a href="tel:9579828996" className="text-pink-600 font-bold">9579828996</a>
-        </p>
-      </div>
+      <UPIPaymentScreen
+        amount={depositAmt}
+        upiId={UPI_ID}
+        upiName={UPI_NAME}
+        selectedRoom={selectedRoom}
+        showToast={showToast}
+        onIPaid={() => {
+          setShowUPI(false)
+          setSubmitted(true)
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+        }}
+      />
     )
   }
 
   // ── Final Success Screen ──────────────────────────────────────────────────
   if (submitted) {
+    const depositAmt = formData.depositAmount ? parseFloat(formData.depositAmount) : null
     return (
-      <div className="text-center space-y-5">
-        {/* Animated checkmark */}
-        <div className="flex justify-center">
-          <div className="w-24 h-24 rounded-full flex items-center justify-center text-5xl shadow-lg"
-            style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>
-            🎉
-          </div>
-        </div>
-
-        <div>
-          <h2 className="text-2xl font-extrabold text-gray-800">Booking Received!</h2>
-          <p className="text-gray-500 text-sm mt-1">Thanks for choosing us 🙏</p>
-        </div>
-
-        {/* Status message */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-5">
-          <p className="text-yellow-800 font-bold text-sm mb-1">⏳ Pending Verification</p>
-          <p className="text-yellow-700 text-sm leading-relaxed">
-            Your booking will be <strong>confirmed after payment verification</strong> by our team.
-            We'll contact you within <strong>24 hours</strong>.
-          </p>
-        </div>
-
-        {/* Room info */}
-        {selectedRoom && (
-          <div className="bg-white rounded-2xl border border-pink-100 shadow-sm p-4">
-            <p className="text-xs text-gray-400 font-semibold uppercase tracking-widest mb-2">Your Selected Room</p>
-            <p className="font-extrabold text-gray-800">{selectedRoom.title}</p>
-            <p className="font-bold text-lg mt-1" style={{ color: '#c026d3' }}>
-              ₹{Number(selectedRoom.monthlyPrice || 0).toLocaleString('en-IN')}/mo
-            </p>
-          </div>
-        )}
-
-        {/* What happens next */}
-        <div className="bg-green-50 border border-green-100 rounded-2xl p-4 text-left">
-          <p className="text-xs font-bold text-green-700 mb-2">✅ What happens next:</p>
-          <ol className="text-xs text-green-600 space-y-1.5 list-decimal list-inside">
-            <li>Our team verifies your payment</li>
-            <li>We confirm your bed is reserved</li>
-            <li>You receive a call/WhatsApp confirmation</li>
-            <li>Visit us on your joining date with documents</li>
-          </ol>
-        </div>
-
-        {/* Contact */}
-        <div className="flex justify-center gap-3 flex-wrap">
-          <a href="tel:9579828996"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-white text-sm transition hover:opacity-90"
-            style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>
-            📞 9579828996
-          </a>
-          <a href="tel:9096398032"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-white text-sm transition hover:opacity-90"
-            style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>
-            📞 9096398032
-          </a>
-          <a href={`https://wa.me/919579828996?text=${encodeURIComponent('Hi! I just paid the advance for HK PG booking. Please confirm my booking.')}`}
-            target="_blank" rel="noreferrer"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-white text-sm transition hover:opacity-90"
-            style={{ background: 'linear-gradient(135deg, #25d366, #128c7e)' }}>
-            💬 WhatsApp
-          </a>
-        </div>
-
-        <button
-          onClick={onAfterSubmit}
-          className="w-full py-3 rounded-2xl font-bold text-sm border-2 border-pink-200 text-pink-600 hover:bg-pink-50 transition"
-        >
-          View Room Status →
-        </button>
-
-        <p className="text-xs text-gray-400 italic">
-          "Have a nice day! We look forward to welcoming you at HK PG 🏠"
-        </p>
-      </div>
+      <BookingSuccessScreen
+        selectedRoom={selectedRoom}
+        advanceAmount={depositAmt}
+        onAfterSubmit={onAfterSubmit}
+      />
     )
   }
 
@@ -749,9 +529,20 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
 
       {/* 7. Payment */}
       <Section title="💰 Payment Info">
-        <Field label="Deposit Amount (₹)">
-          <input type="number" placeholder="e.g. 5000" className={inputCls}
-            value={formData.depositAmount} onChange={set('depositAmount')} />
+        <Field label="Security Deposit Amount (₹)" required error={fe.depositAmount}>
+          <input
+            id="depositAmount"
+            type="number"
+            placeholder="One month deposit (e.g. ₹6000)"
+            className={`${inputCls} ${fe.depositAmount ? errCls : ''}`}
+            value={formData.depositAmount}
+            onChange={set('depositAmount')}
+          />
+          {selectedRoom && (
+            <p className="text-xs text-gray-400 mt-1">
+              Security deposit for {selectedRoom.title}: ₹{Number(selectedRoom.securityDeposit || 0).toLocaleString('en-IN')}
+            </p>
+          )}
         </Field>
         <Field label="Payment Mode">
           <select className={selectCls} value={formData.paymentMode} onChange={set('paymentMode')}>
