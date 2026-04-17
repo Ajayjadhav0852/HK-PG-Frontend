@@ -105,10 +105,17 @@ export default function StudentDashboard() {
       {/* Top bar */}
       <div className="sticky top-0 z-40 shadow-sm px-4 h-16 flex items-center justify-between bg-white border-b border-gray-100">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-extrabold text-sm"
-            style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>
-            {user?.name?.charAt(0).toUpperCase()}
-          </div>
+          {(user?.profilePhotoUrl || myApplications[0]?.profilePhotoUrl) ? (
+            <img
+              src={user?.profilePhotoUrl || myApplications[0]?.profilePhotoUrl}
+              alt={user?.name}
+              className="w-9 h-9 rounded-full object-cover border-2 border-pink-200" />
+          ) : (
+            <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-extrabold text-sm"
+              style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>
+              {user?.name?.charAt(0).toUpperCase()}
+            </div>
+          )}
           <div>
             <p className="font-extrabold text-gray-800 text-sm">{user?.name}</p>
             <p className="text-xs text-gray-400">Student Dashboard</p>
@@ -150,8 +157,11 @@ export default function StudentDashboard() {
           <div className="flex items-start gap-4">
             {/* Avatar / Photo */}
             <div className="relative flex-shrink-0">
-              {user?.profilePhotoUrl ? (
-                <img src={user.profilePhotoUrl} alt={user.name}
+              {/* Show user profile photo OR photo from latest application */}
+              {(user?.profilePhotoUrl || myApplications[0]?.profilePhotoUrl) ? (
+                <img
+                  src={user?.profilePhotoUrl || myApplications[0]?.profilePhotoUrl}
+                  alt={user.name}
                   className="w-16 h-16 rounded-full object-cover border-2 border-pink-200 shadow" />
               ) : (
                 <div className="w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl font-extrabold shadow"

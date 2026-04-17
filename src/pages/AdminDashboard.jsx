@@ -699,8 +699,21 @@ export default function AdminDashboard() {
                       <tr key={a.id} className="hover:bg-gray-50/70 transition">
                         <td className="py-3.5 pr-3 text-xs text-gray-400 font-medium">{i + 1}</td>
                         <td className="py-3.5 pr-3">
-                          <p className="font-bold text-gray-800">{a.fullName}</p>
-                          <p className="text-xs text-gray-400">{a.email}</p>
+                          <div className="flex items-center gap-2">
+                            {a.profilePhotoUrl ? (
+                              <img src={a.profilePhotoUrl} alt={a.fullName}
+                                className="w-8 h-8 rounded-full object-cover border border-pink-200 flex-shrink-0" />
+                            ) : (
+                              <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-extrabold flex-shrink-0"
+                                style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>
+                                {a.fullName?.charAt(0).toUpperCase()}
+                              </div>
+                            )}
+                            <div>
+                              <p className="font-bold text-gray-800">{a.fullName}</p>
+                              <p className="text-xs text-gray-400">{a.mobile}</p>
+                            </div>
+                          </div>
                         </td>
                         <td className="py-3.5 pr-3 text-gray-600 text-xs font-medium">{a.roomTypeTitle}</td>
                         <td className="py-3.5 pr-3">
@@ -784,9 +797,20 @@ export default function AdminDashboard() {
                 {filtered.map(a => (
                   <div key={a.id} className="border border-gray-100 rounded-2xl p-4 space-y-3">
                     <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-bold text-gray-800 text-sm">{a.fullName}</p>
-                        <p className="text-xs text-gray-400">{a.email}</p>
+                      <div className="flex items-center gap-2">
+                        {a.profilePhotoUrl ? (
+                          <img src={a.profilePhotoUrl} alt={a.fullName}
+                            className="w-10 h-10 rounded-full object-cover border border-pink-200 flex-shrink-0" />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-extrabold flex-shrink-0"
+                            style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>
+                            {a.fullName?.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        <div>
+                          <p className="font-bold text-gray-800 text-sm">{a.fullName}</p>
+                          <p className="text-xs text-gray-400">{a.mobile}</p>
+                        </div>
                       </div>
                       <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${statusBadge[a.status] || 'bg-gray-100 text-gray-600'}`}>
                         {a.status}
