@@ -1,4 +1,3 @@
-// Professional UPI Payment Gateway Screen
 import { useState } from 'react'
 
 export default function UPIPaymentScreen({
@@ -11,28 +10,22 @@ export default function UPIPaymentScreen({
 }) {
   const [copied, setCopied] = useState(false)
 
-  // Detect mobile device
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
 
-  // Universal UPI deep link — phone picks the right app
   const upiLink = amount
     ? `upi://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${amount}&cu=INR&tn=${encodeURIComponent('HK PG Security Deposit')}`
     : `upi://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&cu=INR&tn=${encodeURIComponent('HK PG Security Deposit')}`
 
-  // QR code for desktop scanning
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiLink)}&bgcolor=ffffff&color=1a1a2e&margin=10`
 
-  // App-specific deep links
   const payApps = [
     {
       name: 'PhonePe',
-      textColor: 'white',
-      bg: '#5f259f',
       link: amount
-        ? `phonepe://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${amount}&cu=INR&tn=${encodeURIComponent('HK PG Deposit')}`
+        ? `phonepe://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${amount}&cu=INR`
         : `phonepe://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&cu=INR`,
       logo: (
-        <svg viewBox="0 0 50 50" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 50 50" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
           <rect width="50" height="50" rx="12" fill="#5f259f"/>
           <text x="25" y="33" textAnchor="middle" fill="white" fontSize="18" fontWeight="900" fontFamily="Arial,sans-serif">Pe</text>
         </svg>
@@ -40,14 +33,11 @@ export default function UPIPaymentScreen({
     },
     {
       name: 'Google Pay',
-      textColor: '#1a1a2e',
-      bg: '#ffffff',
-      border: '2px solid #e2e8f0',
       link: amount
-        ? `tez://upi/pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${amount}&cu=INR&tn=${encodeURIComponent('HK PG Deposit')}`
+        ? `tez://upi/pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${amount}&cu=INR`
         : `tez://upi/pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&cu=INR`,
       logo: (
-        <svg viewBox="0 0 50 50" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 50 50" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
           <rect width="50" height="50" rx="12" fill="white" stroke="#e2e8f0" strokeWidth="2"/>
           <text x="25" y="22" textAnchor="middle" fill="#4285F4" fontSize="12" fontWeight="900" fontFamily="Arial,sans-serif">G</text>
           <text x="25" y="36" textAnchor="middle" fill="#34A853" fontSize="10" fontWeight="700" fontFamily="Arial,sans-serif">Pay</text>
@@ -56,13 +46,11 @@ export default function UPIPaymentScreen({
     },
     {
       name: 'Paytm',
-      textColor: 'white',
-      bg: '#002970',
       link: amount
         ? `paytmmp://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${amount}&cu=INR`
         : `paytmmp://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&cu=INR`,
       logo: (
-        <svg viewBox="0 0 50 50" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 50 50" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
           <rect width="50" height="50" rx="12" fill="#002970"/>
           <text x="25" y="24" textAnchor="middle" fill="#00b9f1" fontSize="10" fontWeight="900" fontFamily="Arial,sans-serif">Pay</text>
           <text x="25" y="37" textAnchor="middle" fill="white" fontSize="10" fontWeight="900" fontFamily="Arial,sans-serif">tm</text>
@@ -71,26 +59,6 @@ export default function UPIPaymentScreen({
     },
   ]
 
-  // WhatsApp message with booking details
-  const waMessage = encodeURIComponent(
-    `Hi! I have completed the UPI payment for HK PG booking.\n\n` +
-    `Name: (your name)\n` +
-    `Room: ${selectedRoom?.title || 'As selected'}\n` +
-    `Amount Paid: ${amount ? `₹${Number(amount).toLocaleString('en-IN')}` : 'As agreed'}\n\n` +
-    `Please find attached payment screenshot for verification.\n` +
-    `Kindly confirm my booking. Thank you! 🙏`
-  )
-  const waLink = `https://wa.me/919579828996?text=${waMessage}`
-
-  const handlePaid = () => {
-    // Open WhatsApp with pre-filled message
-    window.open(waLink, '_blank')
-    // Then show success screen
-    setTimeout(() => {
-      onIPaid()
-    }, 500)
-  }
-
   const handleAppClick = (app) => {
     if (isMobile) {
       window.location.href = app.link
@@ -98,18 +66,35 @@ export default function UPIPaymentScreen({
       showToast?.info('Use Mobile', 'Please scan the QR code with your phone to pay.')
     }
   }
+
+  const handleCopy = () => {
     navigator.clipboard?.writeText(upiId).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     })
   }
 
+  const waMessage = encodeURIComponent(
+    `Hi! I have completed the UPI payment for HK PG booking.\n\n` +
+    `Room: ${selectedRoom?.title || 'As selected'}\n` +
+    `Amount Paid: ${amount ? `\u20B9${Number(amount).toLocaleString('en-IN')}` : 'As agreed'}\n\n` +
+    `Please find attached payment screenshot for verification.\n` +
+    `Kindly confirm my booking. Thank you!`
+  )
+  const waLink = `https://wa.me/919579828996?text=${waMessage}`
+
+  const handlePaid = () => {
+    window.open(waLink, '_blank')
+    setTimeout(() => { onIPaid() }, 500)
+  }
+
+  const amtDisplay = amount ? `\u20B9${Number(amount).toLocaleString('en-IN')}` : 'As agreed'
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-8"
       style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)' }}>
       <div className="w-full max-w-md">
 
-        {/* Card */}
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
 
           {/* Header */}
@@ -133,7 +118,7 @@ export default function UPIPaymentScreen({
                 <div>
                   <p className="text-xs text-gray-500 font-semibold">Security Deposit</p>
                   <p className="text-3xl font-extrabold mt-0.5" style={{ color: '#c026d3' }}>
-                    {amount ? `₹${Number(amount).toLocaleString('en-IN')}` : 'As agreed'}
+                    {amtDisplay}
                   </p>
                 </div>
                 <div className="text-right">
@@ -158,12 +143,12 @@ export default function UPIPaymentScreen({
               <div className="flex items-start gap-3 p-3 bg-amber-50 border border-amber-200 rounded-xl">
                 <span className="text-xl flex-shrink-0">📱</span>
                 <p className="text-xs text-amber-700 font-semibold leading-relaxed">
-                  You're on a desktop. Please <strong>scan the QR code</strong> below using your phone's camera or UPI app to pay.
+                  You're on a desktop. Please <strong>scan the QR code</strong> below using your phone to pay.
                 </p>
               </div>
             )}
 
-            {/* Mobile: Pay Now button (most prominent) */}
+            {/* Mobile: Pay Now button */}
             {isMobile && (
               <a
                 href={upiLink}
@@ -249,15 +234,17 @@ export default function UPIPaymentScreen({
                 {isMobile ? (
                   <>
                     <li>Tap <strong>"Pay Now"</strong> or choose an app above</li>
-                    <li>Complete payment of {amount ? `₹${Number(amount).toLocaleString('en-IN')}` : 'deposit amount'}</li>
+                    <li>Complete payment of <strong>{amtDisplay}</strong></li>
                     <li>Come back here and tap <strong>"Payment Done"</strong></li>
+                    <li>WhatsApp opens — send your payment screenshot</li>
                   </>
                 ) : (
                   <>
                     <li>Open PhonePe / GPay / Paytm on your phone</li>
                     <li>Scan the QR code above</li>
-                    <li>Complete payment of {amount ? `₹${Number(amount).toLocaleString('en-IN')}` : 'deposit amount'}</li>
+                    <li>Complete payment of <strong>{amtDisplay}</strong></li>
                     <li>Come back here and click <strong>"Payment Done"</strong></li>
+                    <li>WhatsApp opens — send your payment screenshot</li>
                   </>
                 )}
               </ol>
@@ -265,15 +252,13 @@ export default function UPIPaymentScreen({
 
           </div>
 
-          {/* Footer — Payment Done button */}
+          {/* Footer */}
           <div className="px-5 pb-5">
-
-            {/* WhatsApp proof instruction */}
             <div className="flex items-start gap-3 p-3 bg-green-50 border border-green-200 rounded-xl mb-3">
               <span className="text-xl flex-shrink-0">💬</span>
               <p className="text-xs text-green-700 font-semibold leading-relaxed">
-                After payment, click below — WhatsApp will open automatically.
-                <strong> Send your payment screenshot</strong> to confirm your booking.
+                After payment, click below — WhatsApp opens automatically.
+                <strong> Send your payment screenshot</strong> to confirm booking.
               </p>
             </div>
 
@@ -289,6 +274,7 @@ export default function UPIPaymentScreen({
               </span>
               <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
             </button>
+
             <p className="text-center text-xs text-gray-400 mt-3">
               Need help?{' '}
               <a href="tel:9579828996" className="text-pink-600 font-bold hover:underline">
