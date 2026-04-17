@@ -71,17 +71,33 @@ export default function UPIPaymentScreen({
     },
   ]
 
+  // WhatsApp message with booking details
+  const waMessage = encodeURIComponent(
+    `Hi! I have completed the UPI payment for HK PG booking.\n\n` +
+    `Name: (your name)\n` +
+    `Room: ${selectedRoom?.title || 'As selected'}\n` +
+    `Amount Paid: ${amount ? `₹${Number(amount).toLocaleString('en-IN')}` : 'As agreed'}\n\n` +
+    `Please find attached payment screenshot for verification.\n` +
+    `Kindly confirm my booking. Thank you! 🙏`
+  )
+  const waLink = `https://wa.me/919579828996?text=${waMessage}`
+
+  const handlePaid = () => {
+    // Open WhatsApp with pre-filled message
+    window.open(waLink, '_blank')
+    // Then show success screen
+    setTimeout(() => {
+      onIPaid()
+    }, 500)
+  }
+
   const handleAppClick = (app) => {
-    // On mobile: try deep link directly
     if (isMobile) {
       window.location.href = app.link
     } else {
-      // On desktop: show message to use mobile
       showToast?.info('Use Mobile', 'Please scan the QR code with your phone to pay.')
     }
   }
-
-  const handleCopy = () => {
     navigator.clipboard?.writeText(upiId).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
@@ -251,15 +267,25 @@ export default function UPIPaymentScreen({
 
           {/* Footer — Payment Done button */}
           <div className="px-5 pb-5">
+
+            {/* WhatsApp proof instruction */}
+            <div className="flex items-start gap-3 p-3 bg-green-50 border border-green-200 rounded-xl mb-3">
+              <span className="text-xl flex-shrink-0">💬</span>
+              <p className="text-xs text-green-700 font-semibold leading-relaxed">
+                After payment, click below — WhatsApp will open automatically.
+                <strong> Send your payment screenshot</strong> to confirm your booking.
+              </p>
+            </div>
+
             <button
               type="button"
-              onClick={onIPaid}
+              onClick={handlePaid}
               className="w-full py-4 rounded-2xl font-extrabold text-white text-base shadow-xl transition-all hover:shadow-2xl hover:scale-[1.02] active:scale-95 relative overflow-hidden group"
               style={{ background: 'linear-gradient(135deg, #16a34a, #15803d)' }}
             >
               <span className="relative z-10 flex items-center justify-center gap-2">
                 <span className="text-xl">✅</span>
-                Payment Done →
+                Payment Done → Send Proof on WhatsApp
               </span>
               <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
             </button>
