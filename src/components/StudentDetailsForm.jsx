@@ -211,7 +211,7 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
         fullName:            formData.fullName.trim(),
         mobile:              formData.mobile.trim(),
         alternateMobile:     formData.alternateMobile.trim() || null,
-        email:               formData.email.trim(),
+        email:               user?.email || formData.email?.trim() || '',  // use logged-in user's email
         address:             formData.address.trim(),
         city:                formData.city.trim(),
         state:               formData.state.trim(),
