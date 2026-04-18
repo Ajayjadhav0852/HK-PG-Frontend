@@ -16,6 +16,7 @@ import RoomDetailPage    from './pages/RoomDetailPage'
 import StudentFormPage   from './pages/StudentFormPage'
 import LoginPage         from './pages/LoginPage'
 import RegisterPage      from './pages/RegisterPage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import StudentDashboard  from './pages/StudentDashboard'
 import AdminDashboard    from './pages/AdminDashboard'
 
@@ -183,8 +184,9 @@ function AppRoutes() {
           } />
 
           {/* Auth */}
-          <Route path="/login"    element={<PageWrapper><LoginPage /></PageWrapper>} />
-          <Route path="/register" element={<PageWrapper><RegisterPage /></PageWrapper>} />
+          <Route path="/login"            element={<PageWrapper><LoginPage /></PageWrapper>} />
+          <Route path="/register"         element={<PageWrapper><RegisterPage /></PageWrapper>} />
+          <Route path="/forgot-password"  element={<PageWrapper><ForgotPasswordPage /></PageWrapper>} />
 
           {/* Dashboards */}
           <Route path="/student" element={
