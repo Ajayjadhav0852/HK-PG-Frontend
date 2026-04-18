@@ -123,6 +123,71 @@ export default function AdminDashboard() {
     })
   }
 
+  // ── Export single application to CSV ─────────────────────────────────────
+  const exportApplication = (a) => {
+    const rows = [
+      ['Field', 'Value'],
+      ['Application ID', a.id],
+      ['Full Name', a.fullName],
+      ['Mobile', a.mobile],
+      ['Alternate Mobile', a.alternateMobile || ''],
+      ['Email', a.email || ''],
+      ['Address', a.address || ''],
+      ['City', a.city || ''],
+      ['State', a.state || ''],
+      ['Occupation', a.occupation || ''],
+      ['Institution / Company', a.institutionName || ''],
+      ['Course / Job Role', a.courseOrRole || ''],
+      ['Guardian Name', a.guardianName || ''],
+      ['Guardian Contact', a.guardianContact || ''],
+      ['Guardian Relation', a.guardianRelation || ''],
+      ['Joining Date', a.joiningDate || ''],
+      ['Duration (months)', a.durationMonths || ''],
+      ['Room Type', a.roomTypeTitle || ''],
+      ['Room Number', a.roomNumber || ''],
+      ['Bed Number', a.bedNumber || ''],
+      ['Deposit Amount', a.depositAmount || ''],
+      ['Payment Mode', a.paymentMode || ''],
+      ['Transaction ID', a.transactionId || ''],
+      ['ID Proof Type', a.idProofType || ''],
+      ['ID Proof URL', a.idProofUrl || ''],
+      ['Profile Photo URL', a.profilePhotoUrl || ''],
+      ['Status', a.status],
+      ['Admin Notes', a.adminNotes || ''],
+      ['Applied On', a.createdAt ? new Date(a.createdAt).toLocaleString() : ''],
+    ]
+    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `HKPG_Application_${a.fullName?.replace(/\s+/g, '_')}_${a.id}.csv`
+    link.click()
+    URL.revokeObjectURL(url)
+  }
+
+  // ── Export ALL applications to CSV ────────────────────────────────────────
+  const exportAllApplications = (apps) => {
+    if (!apps.length) return
+    const headers = ['ID','Name','Mobile','Email','Room Type','Room','Bed','Joining','Duration','Status','Deposit','Payment Mode','ID Proof URL','Photo URL','Applied On']
+    const rows = apps.map(a => [
+      a.id, a.fullName, a.mobile, a.email || '',
+      a.roomTypeTitle || '', a.roomNumber || '', a.bedNumber || '',
+      a.joiningDate || '', a.durationMonths || '', a.status,
+      a.depositAmount || '', a.paymentMode || '',
+      a.idProofUrl || '', a.profilePhotoUrl || '',
+      a.createdAt ? new Date(a.createdAt).toLocaleString() : ''
+    ])
+    const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `HKPG_All_Applications_${new Date().toISOString().slice(0,10)}.csv`
+    link.click()
+    URL.revokeObjectURL(url)
+  }
+
   const handleRoomSave = async (slug) => {
     setRoomSaving(true)
     const toastId = showToast.loading('Saving...', 'Updating room type details.')
@@ -651,6 +716,14 @@ export default function AdminDashboard() {
                 <option value="CONFIRMED">Confirmed</option>
                 <option value="REJECTED">Rejected</option>
               </select>
+              <button
+                onClick={() => exportAllApplications(applications)}
+                className="px-3 py-2 rounded-xl text-xs font-bold text-white transition hover:opacity-90 flex items-center gap-1.5"
+                style={{ background: 'linear-gradient(135deg, #16a34a, #15803d)' }}
+                title="Export all applications to Excel/CSV"
+              >
+                📊 Export All
+              </button>
             </div>
           </div>
 
@@ -784,6 +857,33 @@ export default function AdminDashboard() {
                             >
                               🗑️ Delete
                             </button>
+                            {/* Export single application */}
+                            <button
+                              onClick={() => exportApplication(a)}
+                              title="Export to Excel/CSV"
+                              className="text-xs px-2.5 py-1.5 bg-green-50 text-green-700 rounded-lg font-bold hover:bg-green-100 transition"
+                            >
+                              📊
+                            </button>
+                            {/* View documents */}
+                            {(a.idProofUrl || a.profilePhotoUrl) && (
+                              <div className="flex gap-1">
+                                {a.profilePhotoUrl && (
+                                  <a href={a.profilePhotoUrl} target="_blank" rel="noreferrer"
+                                    title="View profile photo"
+                                    className="text-xs px-2.5 py-1.5 bg-blue-50 text-blue-600 rounded-lg font-bold hover:bg-blue-100 transition">
+                                    🖼️
+                                  </a>
+                                )}
+                                {a.idProofUrl && (
+                                  <a href={a.idProofUrl} target="_blank" rel="noreferrer"
+                                    title="View ID proof"
+                                    className="text-xs px-2.5 py-1.5 bg-purple-50 text-purple-600 rounded-lg font-bold hover:bg-purple-100 transition">
+                                    📄
+                                  </a>
+                                )}
+                              </div>
+                            )}
                           </div>
                         </td>
                       </tr>

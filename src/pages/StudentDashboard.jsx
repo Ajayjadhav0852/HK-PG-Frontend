@@ -201,12 +201,21 @@ export default function StudentDashboard() {
               </div>
             ) : (
               <form onSubmit={handleSaveProfile} className="flex-1 space-y-2">
-                <input type="text" placeholder="Full Name" value={editForm.name}
-                  onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-pink-400" />
+                {/* Name only editable if no confirmed booking */}
+                {!myApplications.some(a => a.status === 'CONFIRMED') && (
+                  <input type="text" placeholder="Full Name" value={editForm.name}
+                    onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))}
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-pink-400" />
+                )}
+                {/* Mobile always editable */}
                 <input type="tel" placeholder="10-digit mobile" maxLength={10} value={editForm.phone}
                   onChange={e => setEditForm(f => ({ ...f, phone: e.target.value }))}
                   className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-pink-400" />
+                {myApplications.some(a => a.status === 'CONFIRMED') && (
+                  <p className="text-xs text-amber-600 bg-amber-50 rounded-lg px-2 py-1">
+                    ⚠️ Name locked after booking confirmed. Only mobile & photo can be updated.
+                  </p>
+                )}
                 <div className="flex gap-2">
                   <button type="submit" disabled={saving}
                     className="flex-1 py-2 rounded-xl text-xs font-bold text-white disabled:opacity-60"
@@ -323,7 +332,7 @@ export default function StudentDashboard() {
 
         {/* Notice */}
         <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 text-sm text-yellow-800">
-          📢 <strong>Notice:</strong> Rent for May 2026 is due by 5th May. Please pay on time to avoid late fees.
+          📢 <strong>Notice:</strong> Rent for every month is due before the <strong>5th day of the month</strong>. Please pay on time to avoid late fees.
         </div>
 
         {/* ── Pay Rent ─────────────────────────────────────────────────────── */}

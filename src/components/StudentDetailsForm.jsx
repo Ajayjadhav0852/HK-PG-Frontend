@@ -93,9 +93,20 @@ const INIT = {
   selectedBedNumber: '',   // bed number within the selected room
 }
 
+const STORAGE_KEY = 'hkpg_application_draft'
+
 export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubmit }) {
   const { user }                      = useAuth()
   const isAdmin                       = user?.role === 'admin'
+
+  // Load saved draft from localStorage on mount
+  const loadDraft = () => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY)
+      if (saved) return { ...INIT, ...JSON.parse(saved) }
+    } catch {}
+    return INIT
+  }
 
   const [agreed, setAgreed]           = useState(false)
   const [submitted, setSubmitted]     = useState(false)
@@ -103,7 +114,7 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
   const [upiConfirmed, setUpiConfirmed] = useState(false) // user clicked "I Paid"
   const [savedAppId, setSavedAppId]   = useState(null)    // saved application ID
   const [loading, setLoading]         = useState(false)
-  const [formData, setFormData]       = useState(INIT)
+  const [formData, setFormData]       = useState(() => loadDraft())
   const [fieldErrors, setFieldErrors] = useState({})
   const [idProofFile, setIdProofFile] = useState(null)
   const [photoFile, setPhotoFile]     = useState(null)
@@ -135,6 +146,13 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
       setFormData(f => ({ ...f, depositAmount: String(selectedRoom.securityDeposit) }))
     }
   }, [selectedRoom])
+
+  // Save draft to localStorage whenever form changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(formData))
+    } catch {}
+  }, [formData])
 
   const set = (key) => (e) => {
     setFormData(f => ({ ...f, [key]: e.target.value }))
@@ -240,6 +258,8 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
 
       const res = await applicationApi.submit(fd)
       setSavedAppId(res?.data?.id || null)
+      // Clear saved draft after successful submission
+      localStorage.removeItem(STORAGE_KEY)
       showToast.update(toastId, 'success', 'Details Saved! 💳', 'Now complete your advance payment.')
       onSubmit?.()
       setShowUPI(true)   // Show UPI payment screen
