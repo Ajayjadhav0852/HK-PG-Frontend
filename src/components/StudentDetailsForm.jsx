@@ -151,6 +151,17 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(formData))
+      // Show a subtle indication that data is being saved
+      if (formData.fullName || formData.mobile) {
+        // Only show save indicator if user has started filling the form
+        const saveIndicator = document.getElementById('save-indicator')
+        if (saveIndicator) {
+          saveIndicator.style.opacity = '1'
+          setTimeout(() => {
+            if (saveIndicator) saveIndicator.style.opacity = '0'
+          }, 1000)
+        }
+      }
     } catch {}
   }, [formData])
 
@@ -206,7 +217,7 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!agreed) {
-      showToast.warning('Agreement Required', 'Please read and accept the PG Rules & Policies.')
+      showToast.warning('Rules Acceptance Required', 'Please read the complete Rules & Regulations and check the agreement box to proceed.')
       return
     }
 
@@ -310,9 +321,24 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
   return (
     <form onSubmit={handleSubmit} className="space-y-4" noValidate>
 
+      {/* Auto-save indicator */}
+      <div 
+        id="save-indicator"
+        className="fixed top-20 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold opacity-0 transition-opacity duration-300 z-50"
+      >
+        ✅ Draft Saved
+      </div>
+
       <div className="text-center mb-2">
         <h1 className="text-2xl font-extrabold text-gray-800">🧑‍🎓 Admission Application</h1>
         <p className="text-gray-400 text-xs mt-1">HK PG – Boys Accommodation · Akurdi, Pune</p>
+        
+        {/* Data persistence notice */}
+        <div className="mt-2 bg-blue-50 border border-blue-200 rounded-xl px-3 py-2">
+          <p className="text-xs text-blue-700">
+            💾 <strong>Your data is automatically saved</strong> - You can safely navigate to read rules and return without losing your progress
+          </p>
+        </div>
       </div>
 
       {/* Selected Room Type Banner */}
@@ -635,23 +661,51 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
         </button>
       )}
 
-      {/* 9. Rules & Policies — visible inline before agreement */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-          <h3 className="font-bold text-gray-800 text-sm flex items-center gap-2">
-            📜 PG Rules & Policies
-            <span className="text-xs font-normal text-gray-400">(Please read before submitting)</span>
-          </h3>
+      {/* 9. Mandatory Rules & Regulations */}
+      <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-5">
+        <div className="flex items-center gap-3 mb-4">
+          <span className="text-2xl">⚠️</span>
+          <div>
+            <h3 className="font-bold text-red-800 text-base">Mandatory: Read Complete Rules & Regulations</h3>
+            <p className="text-red-600 text-sm">You must read and accept all rules before submitting your application</p>
+          </div>
         </div>
-        <div className="px-5 py-4 space-y-2">
+        
+        <div className="bg-white rounded-xl p-4 border border-red-200 mb-4">
+          <p className="text-sm text-gray-700 mb-3">
+            <strong>Important:</strong> The rules shown below are just a summary. Complete rules include payment policies, 
+            security guidelines, visitor policies, and legal terms that are mandatory for all residents.
+          </p>
+          
+          <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
+            <p className="text-xs text-green-700 font-semibold">
+              💾 <strong>Don't worry about your form data!</strong> All your filled information is automatically saved. 
+              You can safely read the complete rules and return - your progress will be preserved.
+            </p>
+          </div>
+          
+          <a
+            href="/rules-and-regulations"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-600 to-pink-600 text-white font-bold rounded-xl hover:opacity-90 transition-all transform hover:scale-105 shadow-lg"
+          >
+            📋 Read Complete Rules & Regulations
+            <span className="text-xs bg-white/20 px-2 py-1 rounded-full">MANDATORY</span>
+          </a>
+        </div>
+
+        {/* Summary Rules */}
+        <div className="space-y-2">
+          <h4 className="font-semibold text-gray-800 text-sm mb-2">📝 Quick Summary (Full details in complete rules):</h4>
           {[
+            { icon: '💰', text: 'Rent due by 5th of every month (₹100/day late fee)' },
+            { icon: '📅', text: '15-day advance notice required for vacating (online only)' },
             { icon: '👥', text: 'Visitors allowed in common area only (till 9 PM)' },
-            { icon: '🚭', text: 'No smoking or drinking inside premises — strict action if noticed' },
-            { icon: '📅', text: 'Notice period: 30 days before vacating' },
+            { icon: '🚭', text: 'No smoking or drinking inside premises' },
             { icon: '🔇', text: 'No loud music after 10 PM' },
             { icon: '🧹', text: 'Keep your room and common areas clean' },
-            { icon: '💰', text: 'Rent due by 5th of every month — late fees apply' },
-            { icon: '🔑', text: 'Room keys must not be shared with outsiders' },
+            { icon: '⚠️', text: 'Violence or misconduct leads to immediate termination' },
           ].map((r, i) => (
             <div key={i} className="flex items-start gap-3 bg-gray-50 rounded-xl px-4 py-2.5">
               <span className="text-base flex-shrink-0">{r.icon}</span>
@@ -668,8 +722,9 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
             className="mt-0.5 w-4 h-4 accent-pink-600" />
           <span className="text-sm text-gray-700">
             I have read and agree to all the{' '}
-            <span className="text-pink-600 font-semibold">PG Rules & Policies</span>{' '}
-            listed above, including visitor rules, notice period, and payment terms.
+            <strong className="text-pink-600">Complete Rules & Regulations</strong>{' '}
+            including payment policies, security guidelines, visitor rules, notice periods, and all terms and conditions.
+            I understand that violation of any rule may result in termination of accommodation without refund.
           </span>
         </label>
       </div>

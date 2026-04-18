@@ -263,6 +263,7 @@ function SectionCard({ section, isExpanded, onToggle }) {
 
 export default function RulesAndRegulationsPage() {
   const [expandedSections, setExpandedSections] = useState(new Set(['payment', 'notice', 'security']))
+  const [rulesAccepted, setRulesAccepted] = useState(false)
   const navigate = useNavigate()
 
   const toggleSection = (sectionId) => {
@@ -298,6 +299,17 @@ export default function RulesAndRegulationsPage() {
           <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-6">
             Please read all rules carefully before booking. Acceptance of these rules is mandatory for accommodation.
           </p>
+          
+          {/* Data safety notice */}
+          <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 max-w-2xl mx-auto">
+            <div className="flex items-center gap-2 text-green-800 mb-2">
+              <span className="text-lg">💾</span>
+              <p className="font-semibold">Your Application Data is Safe!</p>
+            </div>
+            <p className="text-sm text-green-700">
+              Don't worry - all your filled form data is automatically saved. You can read these rules and return to complete your booking without losing any information.
+            </p>
+          </div>
           
           {/* Action buttons */}
           <div className="flex flex-wrap gap-3 justify-center mb-8">
@@ -350,6 +362,76 @@ export default function RulesAndRegulationsPage() {
               onToggle={() => toggleSection(section.id)}
             />
           ))}
+        </div>
+      </div>
+
+      {/* Rules Acceptance Declaration */}
+      <div className="w-full px-4 sm:px-6 pb-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200 rounded-2xl p-6">
+            <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+              ✅ Rules Acceptance Declaration
+            </h3>
+            
+            <div className="bg-white rounded-xl p-4 border border-green-200 mb-4">
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  checked={rulesAccepted} 
+                  onChange={e => setRulesAccepted(e.target.checked)}
+                  className="mt-1 w-5 h-5 accent-green-600" 
+                />
+                <div className="text-sm text-gray-700 leading-relaxed">
+                  <p className="font-semibold text-gray-800 mb-2">
+                    📋 I hereby declare that:
+                  </p>
+                  <ul className="space-y-1 text-sm">
+                    <li>• I have carefully read and understood all the Rules & Regulations mentioned above</li>
+                    <li>• I agree to comply with all payment policies, security guidelines, and conduct rules</li>
+                    <li>• I understand that violation of any rule may result in immediate termination without refund</li>
+                    <li>• I accept full responsibility for my actions and those of my visitors</li>
+                    <li>• I agree to the notice periods, deposit policies, and all terms and conditions</li>
+                  </ul>
+                  <p className="font-semibold text-green-700 mt-3">
+                    I want to proceed with my accommodation booking by accepting all the above rules and regulations.
+                  </p>
+                </div>
+              </label>
+            </div>
+
+            {rulesAccepted && (
+              <div className="bg-green-100 border border-green-300 rounded-xl p-4 mb-4">
+                <div className="flex items-center gap-2 text-green-800">
+                  <span className="text-xl">✅</span>
+                  <p className="font-semibold">Thank you for accepting the rules!</p>
+                </div>
+                <p className="text-sm text-green-700 mt-1">
+                  You can now proceed with your booking. Please return to the application form to complete your submission.
+                </p>
+              </div>
+            )}
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={() => navigate('/accommodation')}
+                disabled={!rulesAccepted}
+                className={`px-8 py-3 font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg ${
+                  rulesAccepted 
+                    ? 'bg-gradient-to-r from-green-600 to-blue-600 text-white hover:opacity-90' 
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                {rulesAccepted ? '🏠 Back to Booking Page' : '📋 Please Accept Rules First'}
+              </button>
+              
+              <button
+                onClick={() => window.open('tel:+919579828996', '_self')}
+                className="px-8 py-3 bg-white border-2 border-green-300 text-green-600 font-bold rounded-xl hover:bg-green-50 transition-all"
+              >
+                📞 Call for Questions
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
