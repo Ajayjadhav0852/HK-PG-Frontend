@@ -36,6 +36,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -135,6 +136,24 @@ export default function LoginPage() {
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
                   {showPassword ? <EyeOffIcon /> : <EyeIcon />}
                 </button>
+              </div>
+
+              {/* Remember Me + Forgot Password — same row below password */}
+              <div className="flex items-center justify-between mt-3">
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={e => setRememberMe(e.target.checked)}
+                    className="w-4 h-4 rounded accent-pink-600"
+                  />
+                  <span className="text-sm text-gray-600 font-medium">Remember me</span>
+                </label>
+                <Link to="/forgot-password"
+                  className="text-sm font-semibold hover:underline transition"
+                  style={{ color: '#c026d3' }}>
+                  Forgot password?
+                </Link>
               </div>
             </div>
 

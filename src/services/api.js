@@ -73,6 +73,8 @@ export const authApi = {
     request('/api/auth/register', { method: 'POST', body: JSON.stringify({ name, email, password, phone }) }),
   googleLogin: (token) =>
     request('/api/auth/google',   { method: 'POST', body: JSON.stringify({ token }) }),
+  forgotPassword: (email) =>
+    request('/api/auth/forgot-password', { method: 'POST', body: JSON.stringify({ email }) }),
   getMe:    () => request('/api/users/me'),
   updateProfile: (data) =>
     request('/api/users/me', { method: 'PUT', body: JSON.stringify(data) }),
