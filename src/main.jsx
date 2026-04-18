@@ -1,8 +1,11 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { GoogleOAuthProvider } from '@react-oauth/google'
 import './index.css'
 import App from './App.jsx'
 import { startKeepAlive } from './services/api.js'
+
+const GOOGLE_CLIENT_ID = '87232370070-giptjv43leuec5tief2bvlr6v1kf937s.apps.googleusercontent.com'
 
 // ── Session version guard ─────────────────────────────────────────────────────
 // Bump SESSION_VERSION any time you want to force-clear all stored sessions.
@@ -24,6 +27,8 @@ startKeepAlive()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <App />
+    </GoogleOAuthProvider>
   </StrictMode>,
 )

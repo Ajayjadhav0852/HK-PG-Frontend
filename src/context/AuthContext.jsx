@@ -66,15 +66,25 @@ export function AuthProvider({ children }) {
     try {
       const res = await authApi.login(email, password)
       const { token, ...userData } = res.data
-
       setToken(token)
-
       const u = buildUser(userData)
       saveUser(u)
-
       return { success: true, role: u.role }
     } catch (err) {
       return { success: false, error: err.message || 'Invalid email or password' }
+    }
+  }, [saveUser])
+
+  const googleLogin = useCallback(async (googleToken) => {
+    try {
+      const res = await authApi.googleLogin(googleToken)
+      const { token, ...userData } = res.data
+      setToken(token)
+      const u = buildUser(userData)
+      saveUser(u)
+      return { success: true, role: u.role }
+    } catch (err) {
+      return { success: false, error: err.message || 'Google login failed' }
     }
   }, [saveUser])
 
@@ -142,7 +152,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, login, register, logout, updateProfile, uploadPhoto }}
+      value={{ user, login, googleLogin, register, logout, updateProfile, uploadPhoto }}
     >
       {children}
     </AuthContext.Provider>

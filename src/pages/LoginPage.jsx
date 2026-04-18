@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { useGoogleLogin } from '@react-oauth/google'
 import { useAuth } from '../context/AuthContext'
 import { showToast } from '../components/Toast'
 import hkpgLogo from '../assets/hkpg-logo.png'
@@ -33,10 +34,11 @@ const GoogleIcon = () => (
 )
 
 export default function LoginPage() {
-  const { login } = useAuth()
+  const { login, googleLogin } = useAuth()
   const navigate = useNavigate()
   const [form, setForm] = useState({ email: '', password: '' })
   const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
   const handleSubmit = async (e) => {
@@ -61,9 +63,27 @@ export default function LoginPage() {
     setTimeout(() => navigate(result.role === 'admin' ? '/admin' : '/student', { replace: true }), 800)
   }
 
-  const handleGoogleLogin = () => {
-    showToast.info('Coming Soon', 'Google Sign-In will be available soon.')
-  }
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setGoogleLoading(true)
+      const id = showToast.loading('Signing in with Google...', 'Please wait.')
+      try {
+        const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+        }).then(r => r.json())
+        const result = await googleLogin(tokenResponse.access_token)
+        setGoogleLoading(false)
+        if (!result.success) { showToast.update(id, 'error', 'Google Login Failed', result.error); return }
+        showToast.update(id, 'success', `Welcome, ${userInfo.name || 'User'}! 👋`, 'Signed in with Google.')
+        setTimeout(() => navigate(result.role === 'admin' ? '/admin' : '/student', { replace: true }), 800)
+      } catch {
+        setGoogleLoading(false)
+        showToast.update(id, 'error', 'Google Login Failed', 'Please try again.')
+      }
+    },
+    onError: () => showToast.error('Google Login Failed', 'Could not sign in with Google.'),
+    flow: 'implicit',
+  })
 
   const inputBase = 'w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none transition bg-white placeholder-gray-400 focus:border-pink-400 focus:ring-2 focus:ring-pink-100'
 
@@ -110,11 +130,18 @@ export default function LoginPage() {
           {/* Google Sign In */}
           <button
             type="button"
-            onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border-2 border-gray-200 bg-white font-semibold text-gray-700 text-sm transition-all hover:border-gray-300 hover:shadow-md active:scale-95 mb-6"
+            onClick={() => handleGoogleLogin()}
+            disabled={googleLoading}
+            className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border-2 border-gray-200 bg-white font-semibold text-gray-700 text-sm transition-all hover:border-gray-300 hover:shadow-md active:scale-95 mb-6 disabled:opacity-60"
           >
-            <GoogleIcon />
-            Continue with Google
+            {googleLoading
+              ? <svg className="animate-spin w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                </svg>
+              : <GoogleIcon />
+            }
+            {googleLoading ? 'Signing in...' : 'Continue with Google'}
           </button>
 
           {/* Divider */}
