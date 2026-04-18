@@ -195,13 +195,21 @@ export default function RoomTypesSection({ onBook, roomsState, onRoomUpdated }) 
 
   // Show "loading" hint after 5 seconds if cards still loading
   const [showWakeHint, setShowWakeHint] = useState(false)
+  const [wakeSeconds, setWakeSeconds] = useState(0)
   const isLoading = !roomsState || Object.keys(roomsState).length === 0
 
   useEffect(() => {
-    if (!isLoading) { setShowWakeHint(false); return }
+    if (!isLoading) { setShowWakeHint(false); setWakeSeconds(0); return }
     const t = setTimeout(() => setShowWakeHint(true), 5000)
     return () => clearTimeout(t)
   }, [isLoading])
+
+  // Count seconds while wake hint is showing
+  useEffect(() => {
+    if (!showWakeHint || !isLoading) return
+    const t = setInterval(() => setWakeSeconds(s => s + 1), 1000)
+    return () => clearInterval(t)
+  }, [showWakeHint, isLoading])
 
   return (
     <div className="w-full px-4 sm:px-6 pt-10 pb-14">
@@ -220,11 +228,24 @@ export default function RoomTypesSection({ onBook, roomsState, onRoomUpdated }) 
           </p>
         </div>
 
-        {/* Loading hint — only shows if rooms take >5s (very rare with keep-alive) */}
+        {/* Loading hint — shows if rooms take >5s (server cold start) */}
         {showWakeHint && isLoading && (
-          <div className="mb-6 flex items-center gap-3 bg-pink-50 border border-pink-200 rounded-xl px-4 py-3 text-sm text-pink-700">
-            <span className="animate-spin text-lg">⏳</span>
-            <span>Loading room details, please wait a moment...</span>
+          <div className="mb-6 bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-2xl animate-spin">⏳</span>
+              <div>
+                <p className="text-sm font-bold text-amber-800">Server is waking up... ({wakeSeconds}s)</p>
+                <p className="text-xs text-amber-600 mt-0.5">
+                  Our free server sleeps when idle. It takes ~30–60 seconds to wake up. Please wait.
+                </p>
+              </div>
+            </div>
+            <div className="h-1.5 bg-amber-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-amber-500 rounded-full transition-all duration-1000"
+                style={{ width: `${Math.min((wakeSeconds / 60) * 100, 95)}%` }}
+              />
+            </div>
           </div>
         )}
 
