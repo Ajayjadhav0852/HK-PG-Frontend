@@ -7,12 +7,12 @@ import { useAuth } from '../context/AuthContext'
 const AMENITIES = [
   { icon: '📶', label: 'High-Speed WiFi' },
   { icon: '🚿', label: 'Attached Bath' },
-  { icon: '🗄️', label: 'Wardrobe' },
+  { icon: '🗄️', label: 'Wardrobe with Inner Locker' },
   { icon: '🔋', label: 'Power Backup' },
   { icon: '📹', label: '24/7 CCTV' },
   { icon: '👕', label: 'Washing Machine' },
-  { icon: '🧹', label: 'Housekeeping' },
-  { icon: '🚗', label: 'Parking' },
+  { icon: '🧹', label: 'Daily Housekeeping' },
+  { icon: '🏍️', label: 'Two Wheeler Parking' },
 ]
 
 const TAG_COLORS = {
@@ -229,9 +229,11 @@ export default function RoomDetailPage({ onBook, onBack }) {
             {[
               { label: 'Monthly Rent',      value: `₹${Number(typeData.monthlyPrice).toLocaleString('en-IN')}` },
               { label: 'Security Deposit',  value: typeData.securityDeposit > 0 ? `₹${Number(typeData.securityDeposit).toLocaleString('en-IN')} (refundable)` : 'N/A' },
-              { label: 'Food',              value: 'Included ✅' },
               { label: 'Electricity',       value: 'Included (fair use) ✅' },
               { label: 'WiFi',              value: 'Included ✅' },
+              { label: 'Daily Housekeeping', value: 'Included ✅' },
+              { label: 'Two Wheeler Parking', value: 'Included ✅' },
+              { label: 'Maintenance Charges', value: 'Zero ✅' },
               { label: 'Hidden Charges',    value: 'None 🎉', highlight: true },
             ].map(p => (
               <div key={p.label}
@@ -252,12 +254,15 @@ export default function RoomDetailPage({ onBook, onBack }) {
           <h2 className="font-extrabold text-gray-800 text-base mb-3">House Rules</h2>
           <div className="space-y-2">
             {[
-              { icon: '🕙', text: 'Entry timing: 6 AM – 10:30 PM' },
+              { icon: '🕙', text: 'IN and OUT time: As per your work schedule' },
               { icon: '👥', text: 'Visitors in common area only (till 9 PM)' },
               { icon: '🚭', text: 'No smoking or drinking on premises' },
-              { icon: '📅', text: '30-day notice period before vacating' },
+              { icon: '📅', text: '30-day notice period before vacating and must filled form on website from student dashbord'},
               { icon: '🔇', text: 'No loud music after 10 PM' },
-              { icon: '🧹', text: 'Keep your room clean' },
+              { icon: '🧹', text: 'Keep your room clean and use dustbins' },
+              { icon: '🗑️', text: 'All dirty dishes, leftovers and garbage must be thrown in appropriate dustbins' },
+              { icon: '💰', text: 'Any property damage will be recovered from security deposit' },
+              { icon: '⚠️', text: 'Violence or misconduct leads to immediate termination of accommodation' },
             ].map((r, i) => (
               <div key={i} className="flex items-center gap-3 bg-gray-50 rounded-xl px-4 py-2.5">
                 <span className="text-lg">{r.icon}</span>

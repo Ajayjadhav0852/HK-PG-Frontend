@@ -4,8 +4,9 @@ const quickLinks = [
   { label: 'Home',            path: '/' },
   { label: 'Room Types',      path: '/accommodation' },
   { label: 'Facilities',      path: '/facilities' },
+  { label: 'Special Offers',  path: '/offers' },
+  { label: 'Rules & Regulations', path: '/rules-and-regulations' },
   { label: 'Testimonials',    path: '/testimonials' },
-  { label: 'Rules & Policies',path: '/contact' },
   { label: 'Contact Us',      path: '/contact' },
 ]
 

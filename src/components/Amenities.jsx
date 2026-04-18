@@ -1,11 +1,10 @@
 const amenities = [
   { icon: '📶', label: 'WiFi' },
-  { icon: '🍽️', label: 'Food' },
-  { icon: '🚗', label: 'Parking' },
+  { icon: '🏍️', label: 'Two Wheeler Parking' },
   { icon: '👕', label: 'Laundry' },
   { icon: '📹', label: 'CCTV' },
   { icon: '🔋', label: 'Power Backup' },
-  { icon: '🧹', label: 'Housekeeping' },
+  { icon: '🧹', label: 'Daily Housekeeping' },
   { icon: '❄️', label: 'AC Rooms' },
   { icon: '🏋️', label: 'Gym' },
   { icon: '🛗', label: 'Lift' },

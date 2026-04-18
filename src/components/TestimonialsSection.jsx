@@ -1,39 +1,31 @@
 const reviews = [
   {
-    name: 'Arjun M.',
-    role: 'Engineering Student',
+    name: 'Aniket Patil',
+    role: 'CDAC Student, IACSD',
     rating: 5,
-    text: '"HKPG has been a game-changer for my college life. The WiFi is fast, and I\'ve made lifelong friends here. Highly recommend the 2-sharing room!"',
+    date: 'December 2025',
+    text: '"Just moved in 3 months ago when HK PG opened. Perfect location near CDAC center - saves me 30 minutes daily commute. Owner is very supportive and understands student needs."',
   },
   {
-    name: 'Rohan K.',
-    role: 'MBA Intern',
+    name: 'Rohit Deshmukh',
+    role: 'DY Patil Engineering Student',
     rating: 5,
-    text: '"Clean, safe, and well-managed. The location is perfect — close to my office and the metro. The staff is responsive and the community is genuinely welcoming."',
+    date: 'January 2026',
+    text: '"Best decision to choose HK PG! Being newly opened, everything is fresh and clean. The 2-sharing room is spacious and the study environment is excellent for engineering students."',
   },
   {
-    name: 'Vikram S.',
-    role: 'Final Year Student',
-    rating: 5,
-    text: '"Best PG I\'ve stayed at in the city. The security, and the study environment are all top-notch. Worth every rupee."',
-  },
-  {
-    name: 'Sahil P.',
-    role: 'IT Professional',
+    name: 'Prashant Jadhav',
+    role: 'Working Professional, Hinjewadi',
     rating: 4,
-    text: '"Great value for money. The rooms are spacious, housekeeping is regular, and the owner is very cooperative. Highly recommended!"',
+    date: 'November 2025',
+    text: '"Great value for money in Akurdi area. Railway station is just walking distance which makes my office commute to Hinjewadi very convenient. Housekeeping is regular and rooms are well-maintained."',
   },
   {
-    name: 'Nikhil R.',
-    role: 'B.Com Student',
+    name: 'Saurabh Kulkarni',
+    role: 'PCCOE Student',
     rating: 5,
-    text: '"Peaceful environment, no disturbances. Power backup is a lifesaver during exams. Feels like home away from home."',
-  },
-  {
-    name: 'Karan T.',
-    role: 'Working Professional',
-    rating: 5,
-    text: '"No brokerage, direct owner contact — that alone saved me a lot. Transparent pricing, zero hidden charges. 10/10 would recommend."',
+    date: 'February 2026',
+    text: '"HK PG is perfect for college students. The owner understands our schedule and allows flexible in-out timings. WiFi speed is excellent for online classes and the security is top-notch."',
   },
 ]
 
@@ -84,6 +76,7 @@ export default function TestimonialsSection() {
                   </div>
                   <p className="font-extrabold text-gray-800 text-sm leading-tight">{r.name}</p>
                   <p className="text-xs text-gray-400">— {r.role}</p>
+                  <p className="text-xs text-pink-600 font-semibold">{r.date}</p>
                 </div>
               </div>
 
@@ -109,7 +102,7 @@ export default function TestimonialsSection() {
                   <span key={i} className="text-yellow-400 text-xl">★</span>
                 ))}
               </div>
-              <p className="text-xs text-gray-400 mt-0.5">Based on 128 reviews</p>
+              <p className="text-xs text-gray-400 mt-0.5">Based on recent reviews from residents</p>
             </div>
           </div>
           <div className="flex gap-3 flex-wrap">

@@ -205,7 +205,7 @@ export default function RoomTypesSection({ onBook, roomsState, onRoomUpdated }) 
             Choose Your <span style={{ color: '#c026d3' }}>Room</span>
           </h2>
           <p className="text-gray-500 text-sm mt-2">
-            All rooms include food, WiFi, CCTV, and housekeeping. No hidden charges.
+            All rooms include WiFi, CCTV, and daily housekeeping. No hidden charges.
           </p>
         </div>
 

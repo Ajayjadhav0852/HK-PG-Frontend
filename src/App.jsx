@@ -11,6 +11,7 @@ import HomePage          from './pages/HomePage'
 import FacilitiesPage    from './pages/FacilitiesPage'
 import AccommodationPage from './pages/AccommodationPage'
 import OffersPage        from './pages/OffersPage'
+import RulesAndRegulationsPage from './pages/RulesAndRegulationsPage'
 import TestimonialsPage  from './pages/TestimonialsPage'
 import ContactPage       from './pages/ContactPage'
 import RoomDetailPage    from './pages/RoomDetailPage'
@@ -158,6 +159,9 @@ function AppRoutes() {
           } />
           <Route path="/offers" element={
             <PageWrapper><OffersPage /></PageWrapper>
+          } />
+          <Route path="/rules-and-regulations" element={
+            <PageWrapper><RulesAndRegulationsPage /></PageWrapper>
           } />
           <Route path="/testimonials" element={
             <PageWrapper><TestimonialsPage /></PageWrapper>

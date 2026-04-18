@@ -1,10 +1,10 @@
 const pricing = [
-  { label: 'Monthly Rent', value: '₹5,500 – ₹8,500', highlight: false },
-  { label: 'Security Deposit', value: '₹10,000 (refundable)', highlight: false },
-  { label: 'Maintenance', value: '₹500 / month', highlight: false },
+  { label: 'Monthly Rent', value: '₹4,000 – ₹7,000', highlight: false },
+  { label: 'Security Deposit', value: 'Same as monthly rent (refundable)', highlight: false },
+  { label: 'Maintenance Charges', value: 'Zero ✅', highlight: false },
   { label: 'Electricity', value: 'Included (fair use)', highlight: false },
-  { label: 'Food Charges', value: 'Included in rent', highlight: false },
-  { label: 'Extra Charges', value: 'None 🎉', highlight: true },
+  { label: 'WiFi & Internet', value: 'Included', highlight: false },
+  { label: 'Hidden Charges', value: 'None 🎉', highlight: true },
 ]
 
 export default function PricingBreakdown() {

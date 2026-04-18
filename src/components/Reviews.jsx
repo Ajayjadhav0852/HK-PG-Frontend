@@ -2,13 +2,13 @@ const reviews = [
   {
     name: 'Rahul S.',
     rating: 5,
-    text: 'Great place! Clean rooms, good food, and very cooperative staff. Highly recommend.',
+    text: 'Great place! Clean rooms, excellent facilities, and very cooperative staff. Highly recommend.',
     date: 'March 2026',
   },
   {
     name: 'Arjun M.',
     rating: 4,
-    text: 'Good location, near IT park. WiFi is fast. Food is decent. Value for money.',
+    text: 'Good location, near IT park. WiFi is fast. Zero maintenance charges. Value for money.',
     date: 'Feb 2026',
   },
   {
