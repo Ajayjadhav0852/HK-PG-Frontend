@@ -318,39 +318,6 @@ export default function StudentDashboard() {
           </div>
         </div>
 
-        {/* Contact Owner & Support */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
-          <h2 className="font-extrabold text-gray-800 text-base mb-4">📞 Contact Owner & Support</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <a href="tel:9579828996"
-              className="border border-gray-100 rounded-xl p-4 flex items-center gap-3 hover:shadow-md transition group">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0"
-                style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>📞</div>
-              <div>
-                <p className="text-xs text-gray-400">Owner Direct</p>
-                <p className="font-extrabold text-gray-800 text-sm group-hover:text-pink-600 transition">9579828996</p>
-              </div>
-            </a>
-            <a href="tel:9096398032"
-              className="border border-gray-100 rounded-xl p-4 flex items-center gap-3 hover:shadow-md transition group">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0"
-                style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>📞</div>
-              <div>
-                <p className="text-xs text-gray-400">Warden Direct</p>
-                <p className="font-extrabold text-gray-800 text-sm group-hover:text-pink-600 transition">9096398032</p>
-              </div>
-            </a>
-            <a href="https://wa.me/919579828996" target="_blank" rel="noreferrer"
-              className="border border-green-100 rounded-xl p-4 flex items-center gap-3 hover:shadow-md transition group">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0 bg-green-500">💬</div>
-              <div>
-                <p className="text-xs text-gray-400">WhatsApp</p>
-                <p className="font-extrabold text-gray-800 text-sm group-hover:text-green-600 transition">Chat with Owner</p>
-              </div>
-            </a>
-          </div>
-        </div>
-
         {/* Notice */}
         <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 text-sm text-yellow-800">
           📢 <strong>Notice:</strong> Rent for May 2026 is due by 5th May. Please pay on time to avoid late fees.
@@ -383,7 +350,6 @@ export default function StudentDashboard() {
                   return
                 }
                 setVacateLoading(true)
-                // Send via WhatsApp to admin (no backend endpoint needed)
                 const msg = encodeURIComponent(
                   `🚪 *Vacating Application*\n\n` +
                   `*Student:* ${user?.name}\n` +
@@ -408,9 +374,7 @@ export default function StudentDashboard() {
                   <label className="block text-xs font-semibold text-gray-700 mb-1.5">
                     Vacating Date <span className="text-red-400">*</span>
                   </label>
-                  <input
-                    type="date"
-                    required
+                  <input type="date" required
                     min={new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
                     value={vacateForm.vacatingDate}
                     onChange={e => setVacateForm(f => ({ ...f, vacatingDate: e.target.value }))}
@@ -422,12 +386,9 @@ export default function StudentDashboard() {
                   <label className="block text-xs font-semibold text-gray-700 mb-1.5">
                     Reason <span className="text-red-400">*</span>
                   </label>
-                  <select
-                    required
-                    value={vacateForm.reason}
+                  <select required value={vacateForm.reason}
                     onChange={e => setVacateForm(f => ({ ...f, reason: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100 bg-white"
-                  >
+                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100 bg-white">
                     <option value="">Select reason</option>
                     <option value="Course Completed">Course Completed</option>
                     <option value="Job Change / Relocation">Job Change / Relocation</option>
@@ -439,50 +400,73 @@ export default function StudentDashboard() {
                   </select>
                 </div>
               </div>
-
               <div>
                 <label className="block text-xs font-semibold text-gray-700 mb-1.5">
                   Detailed Message <span className="text-red-400">*</span>
                 </label>
-                <textarea
-                  rows={4}
-                  required
-                  placeholder="Please explain your reason for vacating in detail. Include any special requests or information the management should know..."
+                <textarea rows={4} required
+                  placeholder="Please explain your reason for vacating in detail..."
                   value={vacateForm.message}
                   onChange={e => setVacateForm(f => ({ ...f, message: e.target.value }))}
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100 bg-white resize-none"
                 />
                 <p className="text-xs text-gray-400 mt-1">{vacateForm.message.length}/500 characters</p>
               </div>
-
-              {/* Notice info */}
               <div className="flex items-start gap-3 p-3 bg-amber-50 border border-amber-200 rounded-xl">
                 <span className="text-base flex-shrink-0">⚠️</span>
                 <div className="text-xs text-amber-700 space-y-1">
                   <p className="font-bold">Important Notice:</p>
                   <p>• 30 days notice period is mandatory as per PG rules</p>
-                  <p>• Security deposit will be refunded after room inspection</p>
+                  <p>• Security deposit refunded after room inspection</p>
                   <p>• All dues must be cleared before vacating</p>
                   <p>• Room keys must be returned on vacating day</p>
                 </div>
               </div>
-
-              <button
-                type="submit"
-                disabled={vacateLoading}
+              <button type="submit" disabled={vacateLoading}
                 className="w-full py-3 rounded-xl font-bold text-white text-sm transition hover:opacity-90 active:scale-95 disabled:opacity-60 flex items-center justify-center gap-2"
-                style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}
-              >
+                style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>
                 {vacateLoading
                   ? <><svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
                     </svg> Sending...</>
-                  : '📤 Submit Vacating Notice via WhatsApp'
-                }
+                  : '📤 Submit Vacating Notice via WhatsApp'}
               </button>
             </form>
           )}
+        </div>
+
+        {/* Contact Owner & Support — always last */}
+        <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+          <h2 className="font-extrabold text-gray-800 text-base mb-4">📞 Contact Owner & Support</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <a href="tel:9579828996"
+              className="border border-gray-100 rounded-xl p-4 flex items-center gap-3 hover:shadow-md transition group">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0"
+                style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>📞</div>
+              <div>
+                <p className="text-xs text-gray-400">Owner Direct</p>
+                <p className="font-extrabold text-gray-800 text-sm group-hover:text-pink-600 transition">9579828996</p>
+              </div>
+            </a>
+            <a href="tel:9096398032"
+              className="border border-gray-100 rounded-xl p-4 flex items-center gap-3 hover:shadow-md transition group">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0"
+                style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>📞</div>
+              <div>
+                <p className="text-xs text-gray-400">Warden Direct</p>
+                <p className="font-extrabold text-gray-800 text-sm group-hover:text-pink-600 transition">9096398032</p>
+              </div>
+            </a>
+            <a href="https://wa.me/919579828996" target="_blank" rel="noreferrer"
+              className="border border-green-100 rounded-xl p-4 flex items-center gap-3 hover:shadow-md transition group">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0 bg-green-500">💬</div>
+              <div>
+                <p className="text-xs text-gray-400">WhatsApp</p>
+                <p className="font-extrabold text-gray-800 text-sm group-hover:text-green-600 transition">Chat with Owner</p>
+              </div>
+            </a>
+          </div>
         </div>
 
       </div>
