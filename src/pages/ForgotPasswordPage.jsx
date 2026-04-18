@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { showToast } from '../components/Toast'
+import { authApi } from '../services/api'
 import hkpgLogo from '../assets/hkpg-logo.png'
 
 export default function ForgotPasswordPage() {
@@ -15,11 +16,15 @@ export default function ForgotPasswordPage() {
       return
     }
     setLoading(true)
-    // Simulate — actual reset email requires backend endpoint
-    await new Promise(r => setTimeout(r, 1200))
-    setLoading(false)
-    setSent(true)
-    showToast.success('Email Sent', 'Check your inbox for reset instructions.')
+    try {
+      await authApi.forgotPassword(email.trim().toLowerCase())
+      setSent(true)
+      showToast.success('Email Sent', 'Check your inbox for reset instructions.')
+    } catch (err) {
+      showToast.error('Failed', err.message || 'Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const inputBase = 'w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none transition bg-white placeholder-gray-400 focus:border-pink-400 focus:ring-2 focus:ring-pink-100'

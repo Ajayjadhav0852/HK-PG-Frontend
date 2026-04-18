@@ -4,7 +4,7 @@ const reviews = [
     role: 'CDAC Student, IACSD',
     rating: 5,
     date: 'December 2025',
-    text: '"Just moved in 3 months ago when HK PG opened. Perfect location near CDAC center - saves me 30 minutes daily commute. Owner is very supportive and understands student needs."',
+    text: '"Just moved in 3 months ago when HK PG opened. Perfect location near CDAC IACSD center - saves me 30 minutes daily commute. Owner is very supportive and understands cdac student needs and he provide me precat ND CDAC placement material too."',
   },
   {
     name: 'Rohit Deshmukh',
@@ -18,14 +18,14 @@ const reviews = [
     role: 'Working Professional, Hinjewadi',
     rating: 4,
     date: 'November 2025',
-    text: '"Great value for money in Akurdi area. Railway station is just walking distance which makes my office commute to Hinjewadi very convenient. Housekeeping is regular and rooms are well-maintained."',
+    text: '"Great value for money in Akurdi area. Railway station is just infront of PG so it is very convenient for me bus stop is there . Housekeeping is regular and newly open so rooms are well-maintained."',
   },
   {
     name: 'Saurabh Kulkarni',
     role: 'PCCOE Student',
     rating: 5,
     date: 'February 2026',
-    text: '"HK PG is perfect for college students. The owner understands our schedule and allows flexible in-out timings. WiFi speed is excellent for online classes and the security is top-notch."',
+    text: '"HK PG is perfect for college students like me. The owner understands our schedule and allows flexible in-out timings. WiFi speed is excellent for online classes."',
   },
 ]
 
