@@ -16,6 +16,14 @@ export default function StudentDashboard() {
   const [editMode, setEditMode]   = useState(false)
   const [editForm, setEditForm]   = useState({ name: '', phone: '' })
   const [saving, setSaving]       = useState(false)
+  // Vacating form state
+  const [showVacateForm, setShowVacateForm] = useState(false)
+  const [vacateForm, setVacateForm] = useState({
+    vacatingDate: '',
+    reason: '',
+    message: '',
+  })
+  const [vacateLoading, setVacateLoading] = useState(false)
   const pollRef = useRef(null)
 
   const fetchRooms = useCallback(async () => {
@@ -346,6 +354,135 @@ export default function StudentDashboard() {
         {/* Notice */}
         <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 text-sm text-yellow-800">
           📢 <strong>Notice:</strong> Rent for May 2026 is due by 5th May. Please pay on time to avoid late fees.
+        </div>
+
+        {/* ── Vacating / Leave Application ─────────────────────────────────── */}
+        <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="font-extrabold text-gray-800 text-base">🚪 Apply to Vacate PG</h2>
+              <p className="text-xs text-gray-400 mt-0.5">Submit a formal notice before leaving</p>
+            </div>
+            <button
+              onClick={() => setShowVacateForm(v => !v)}
+              className="px-4 py-2 rounded-xl text-xs font-bold text-white transition hover:opacity-90"
+              style={{ background: showVacateForm ? '#6b7280' : 'linear-gradient(135deg, #d63384, #c026d3)' }}
+            >
+              {showVacateForm ? 'Cancel' : '+ Apply to Vacate'}
+            </button>
+          </div>
+
+          {showVacateForm && (
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault()
+                if (!vacateForm.vacatingDate) { showToast.error('Date Required', 'Please select your vacating date.'); return }
+                if (!vacateForm.reason) { showToast.error('Reason Required', 'Please select a reason.'); return }
+                if (!vacateForm.message.trim() || vacateForm.message.trim().length < 20) {
+                  showToast.error('Message Too Short', 'Please write at least 20 characters explaining your reason.')
+                  return
+                }
+                setVacateLoading(true)
+                // Send via WhatsApp to admin (no backend endpoint needed)
+                const msg = encodeURIComponent(
+                  `🚪 *Vacating Application*\n\n` +
+                  `*Student:* ${user?.name}\n` +
+                  `*Email:* ${user?.email}\n` +
+                  `*Phone:* ${user?.phone || 'N/A'}\n` +
+                  `*Vacating Date:* ${vacateForm.vacatingDate}\n` +
+                  `*Reason:* ${vacateForm.reason}\n\n` +
+                  `*Message:*\n${vacateForm.message}\n\n` +
+                  `Please acknowledge this notice. Thank you.`
+                )
+                window.open(`https://wa.me/919579828996?text=${msg}`, '_blank')
+                await new Promise(r => setTimeout(r, 500))
+                setVacateLoading(false)
+                showToast.success('Notice Sent ✅', 'Your vacating notice has been sent to the admin via WhatsApp.')
+                setVacateForm({ vacatingDate: '', reason: '', message: '' })
+                setShowVacateForm(false)
+              }}
+              className="space-y-4 mt-4 p-4 bg-gray-50 rounded-2xl border border-gray-200"
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+                    Vacating Date <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    min={new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                    value={vacateForm.vacatingDate}
+                    onChange={e => setVacateForm(f => ({ ...f, vacatingDate: e.target.value }))}
+                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100 bg-white"
+                  />
+                  <p className="text-xs text-gray-400 mt-1">Minimum 30 days notice required</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+                    Reason <span className="text-red-400">*</span>
+                  </label>
+                  <select
+                    required
+                    value={vacateForm.reason}
+                    onChange={e => setVacateForm(f => ({ ...f, reason: e.target.value }))}
+                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100 bg-white"
+                  >
+                    <option value="">Select reason</option>
+                    <option value="Course Completed">Course Completed</option>
+                    <option value="Job Change / Relocation">Job Change / Relocation</option>
+                    <option value="Personal Reasons">Personal Reasons</option>
+                    <option value="Financial Reasons">Financial Reasons</option>
+                    <option value="Found Other Accommodation">Found Other Accommodation</option>
+                    <option value="Family Emergency">Family Emergency</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+                  Detailed Message <span className="text-red-400">*</span>
+                </label>
+                <textarea
+                  rows={4}
+                  required
+                  placeholder="Please explain your reason for vacating in detail. Include any special requests or information the management should know..."
+                  value={vacateForm.message}
+                  onChange={e => setVacateForm(f => ({ ...f, message: e.target.value }))}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100 bg-white resize-none"
+                />
+                <p className="text-xs text-gray-400 mt-1">{vacateForm.message.length}/500 characters</p>
+              </div>
+
+              {/* Notice info */}
+              <div className="flex items-start gap-3 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                <span className="text-base flex-shrink-0">⚠️</span>
+                <div className="text-xs text-amber-700 space-y-1">
+                  <p className="font-bold">Important Notice:</p>
+                  <p>• 30 days notice period is mandatory as per PG rules</p>
+                  <p>• Security deposit will be refunded after room inspection</p>
+                  <p>• All dues must be cleared before vacating</p>
+                  <p>• Room keys must be returned on vacating day</p>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={vacateLoading}
+                className="w-full py-3 rounded-xl font-bold text-white text-sm transition hover:opacity-90 active:scale-95 disabled:opacity-60 flex items-center justify-center gap-2"
+                style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}
+              >
+                {vacateLoading
+                  ? <><svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                    </svg> Sending...</>
+                  : '📤 Submit Vacating Notice via WhatsApp'
+                }
+              </button>
+            </form>
+          )}
         </div>
 
       </div>

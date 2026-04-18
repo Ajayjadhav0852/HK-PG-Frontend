@@ -179,6 +179,7 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
     }
     if (!formData.selectedBedNumber)                                      errs.selectedBedNumber   = 'Please enter a bed number'
     if (!formData.depositAmount)                                          errs.depositAmount       = 'Please enter deposit amount'
+    if (!photoFile)                                                       errs.photoFile           = 'Profile photo is required'
     if (!formData.idProofType)                                            errs.idProofType      = 'ID type is required'
     if (!idProofFile)                                                     errs.idProofFile      = 'ID proof upload is required'
     return errs
@@ -324,9 +325,36 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
             className={`${inputCls} ${fe.fullName ? errCls : ''}`}
             value={formData.fullName} onChange={set('fullName')} />
         </Field>
-        <Field label="Profile Photo">
-          <input type="file" accept="image/*" onChange={e => setPhotoFile(e.target.files[0])}
-            className="w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-pink-50 file:text-pink-700 file:font-semibold hover:file:bg-pink-100" />
+        <Field label="Profile Photo" required error={fe.photoFile}>
+          <div className="space-y-2">
+            {/* Preview */}
+            {photoFile && (
+              <div className="flex items-center gap-3 p-2 bg-pink-50 rounded-xl border border-pink-100">
+                <img
+                  src={URL.createObjectURL(photoFile)}
+                  alt="Preview"
+                  className="w-14 h-14 rounded-full object-cover border-2 border-pink-200 shadow"
+                />
+                <div>
+                  <p className="text-xs font-semibold text-gray-700">{photoFile.name}</p>
+                  <p className="text-xs text-green-600 font-medium mt-0.5">✓ Photo selected</p>
+                </div>
+                <button type="button" onClick={() => setPhotoFile(null)}
+                  className="ml-auto text-gray-400 hover:text-red-500 transition text-lg">×</button>
+              </div>
+            )}
+            <input
+              id="photoFile"
+              type="file"
+              accept="image/*"
+              onChange={e => {
+                setPhotoFile(e.target.files[0] || null)
+                if (fieldErrors.photoFile) setFieldErrors(fe => ({ ...fe, photoFile: '' }))
+              }}
+              className={`w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-pink-50 file:text-pink-700 file:font-semibold hover:file:bg-pink-100 ${fe.photoFile ? 'border border-red-400 rounded-xl p-1' : ''}`}
+            />
+            <p className="text-xs text-gray-400">JPG or PNG, max 5MB. This photo will appear on your dashboard.</p>
+          </div>
         </Field>
       </Section>
 
@@ -587,20 +615,46 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
         </button>
       )}
 
-      {/* 9. Agreement */}
+      {/* 9. Rules & Policies — visible inline before agreement */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+          <h3 className="font-bold text-gray-800 text-sm flex items-center gap-2">
+            📜 PG Rules & Policies
+            <span className="text-xs font-normal text-gray-400">(Please read before submitting)</span>
+          </h3>
+        </div>
+        <div className="px-5 py-4 space-y-2">
+          {[
+            { icon: '👥', text: 'Visitors allowed in common area only (till 9 PM)' },
+            { icon: '🚭', text: 'No smoking or drinking inside premises — strict action if noticed' },
+            { icon: '📅', text: 'Notice period: 30 days before vacating' },
+            { icon: '🔇', text: 'No loud music after 10 PM' },
+            { icon: '🧹', text: 'Keep your room and common areas clean' },
+            { icon: '💰', text: 'Rent due by 5th of every month — late fees apply' },
+            { icon: '🔑', text: 'Room keys must not be shared with outsiders' },
+          ].map((r, i) => (
+            <div key={i} className="flex items-start gap-3 bg-gray-50 rounded-xl px-4 py-2.5">
+              <span className="text-base flex-shrink-0">{r.icon}</span>
+              <span className="text-xs text-gray-700 leading-relaxed">{r.text}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 10. Agreement */}
       <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4">
         <label className="flex items-start gap-3 cursor-pointer">
           <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)}
             className="mt-0.5 w-4 h-4 accent-pink-600" />
           <span className="text-sm text-gray-700">
-            I have read and agree to the{' '}
-            <span className="text-pink-600 font-semibold">PG Rules & Policies</span>,
-            including entry timings, visitor rules, notice period, and payment terms.
+            I have read and agree to all the{' '}
+            <span className="text-pink-600 font-semibold">PG Rules & Policies</span>{' '}
+            listed above, including visitor rules, notice period, and payment terms.
           </span>
         </label>
       </div>
 
-      {/* 10. Submit */}
+      {/* 11. Submit */}
       <button type="submit" disabled={loading}
         className="w-full font-extrabold py-4 rounded-2xl text-white text-base shadow-lg transition hover:opacity-90 active:scale-95 disabled:opacity-60"
         style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>
