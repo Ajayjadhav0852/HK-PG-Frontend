@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { showToast } from '../components/Toast'
 import { roomApi, applicationApi } from '../services/api'
+import UPIPaymentScreen from '../components/UPIPaymentScreen'
 
 const ROOM_TYPES  = ['1-sharing', '2-sharing', '3-sharing', '4-sharing']
 const ROOM_LABELS = { '1-sharing': '1 Sharing', '2-sharing': '2 Sharing', '3-sharing': '3 Sharing', '4-sharing': '4 Sharing' }
@@ -24,6 +25,8 @@ export default function StudentDashboard() {
     message: '',
   })
   const [vacateLoading, setVacateLoading] = useState(false)
+  // Pay Rent state
+  const [showPayRent, setShowPayRent] = useState(false)
   const pollRef = useRef(null)
 
   const fetchRooms = useCallback(async () => {
@@ -322,6 +325,94 @@ export default function StudentDashboard() {
         <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 text-sm text-yellow-800">
           📢 <strong>Notice:</strong> Rent for May 2026 is due by 5th May. Please pay on time to avoid late fees.
         </div>
+
+        {/* ── Pay Rent ─────────────────────────────────────────────────────── */}
+        {(() => {
+          // Find confirmed application to get room & monthly price
+          const confirmedApp = myApplications.find(a => a.status === 'CONFIRMED')
+          const confirmedRoom = confirmedApp ? rooms[confirmedApp.roomTypeSlug] : null
+          const monthlyRent = confirmedRoom?.monthlyPrice || confirmedApp?.monthlyPrice || null
+          const isEligible = !!confirmedApp  // only show if admin confirmed
+
+          if (showPayRent && confirmedApp) {
+            return (
+              <div>
+                <button
+                  onClick={() => setShowPayRent(false)}
+                  className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-gray-700 transition"
+                >
+                  ← Back to Dashboard
+                </button>
+                <UPIPaymentScreen
+                  amount={monthlyRent}
+                  upiId="9579828996@ybl"
+                  upiName="Krishna Pandurang Pawar"
+                  selectedRoom={confirmedRoom ? {
+                    title: confirmedApp.roomTypeTitle,
+                    monthlyPrice: monthlyRent,
+                  } : null}
+                  showToast={showToast}
+                  onIPaid={() => {
+                    setShowPayRent(false)
+                    showToast.success('Rent Payment Done ✅', 'Your payment has been sent to admin via WhatsApp for verification.')
+                  }}
+                  rentMode={true}
+                />
+              </div>
+            )
+          }
+
+          return (
+            <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="font-extrabold text-gray-800 text-base">💸 Pay Monthly Rent</h2>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    {isEligible
+                      ? `${confirmedApp.roomTypeTitle} · ₹${Number(monthlyRent || 0).toLocaleString('en-IN')}/month`
+                      : 'Available after admin confirms your booking'
+                    }
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    if (!isEligible) {
+                      showToast.warning('Not Available', 'Pay Rent is available only after admin confirms your booking.')
+                      return
+                    }
+                    setShowPayRent(true)
+                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                  }}
+                  disabled={!isEligible}
+                  className="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+                  style={{ background: isEligible ? 'linear-gradient(135deg, #d63384, #c026d3)' : '#9ca3af' }}
+                >
+                  {isEligible ? '💳 Pay Rent' : '🔒 Locked'}
+                </button>
+              </div>
+
+              {/* Status indicator */}
+              {!isEligible && (
+                <div className="mt-3 flex items-center gap-2 text-xs text-gray-500 bg-gray-50 rounded-xl px-3 py-2">
+                  <span>🔒</span>
+                  <span>
+                    {myApplications.length === 0
+                      ? 'No booking found. Apply for a room first.'
+                      : 'Your booking is pending admin approval. Pay Rent unlocks after confirmation.'
+                    }
+                  </span>
+                </div>
+              )}
+
+              {isEligible && (
+                <div className="mt-3 flex items-center gap-2 text-xs text-green-600 bg-green-50 rounded-xl px-3 py-2">
+                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  <span>Booking confirmed · Room {confirmedApp.roomNumber} · Bed {confirmedApp.bedNumber}</span>
+                </div>
+              )}
+            </div>
+          )
+        })()}
 
         {/* ── Vacating / Leave Application ─────────────────────────────────── */}
         <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">

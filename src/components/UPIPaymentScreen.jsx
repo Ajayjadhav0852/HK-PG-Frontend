@@ -6,7 +6,8 @@ export default function UPIPaymentScreen({
   upiName,
   selectedRoom,
   onIPaid,
-  showToast
+  showToast,
+  rentMode = false   // true = paying rent, false = paying deposit
 }) {
   const [copied, setCopied] = useState(false)
 
@@ -75,11 +76,17 @@ export default function UPIPaymentScreen({
   }
 
   const waMessage = encodeURIComponent(
-    `Hi! I have completed the UPI payment for HK PG booking.\n\n` +
-    `Room: ${selectedRoom?.title || 'As selected'}\n` +
-    `Amount Paid: ${amount ? `\u20B9${Number(amount).toLocaleString('en-IN')}` : 'As agreed'}\n\n` +
-    `Please find attached payment screenshot for verification.\n` +
-    `Kindly confirm my booking. Thank you!`
+    rentMode
+      ? `Hi! I have completed the monthly rent payment for HK PG.\n\n` +
+        `Room: ${selectedRoom?.title || 'As selected'}\n` +
+        `Amount Paid: ${amount ? `\u20B9${Number(amount).toLocaleString('en-IN')}` : 'As agreed'}\n\n` +
+        `Please find attached payment screenshot for verification.\n` +
+        `Kindly acknowledge receipt. Thank you!`
+      : `Hi! I have completed the UPI payment for HK PG booking.\n\n` +
+        `Room: ${selectedRoom?.title || 'As selected'}\n` +
+        `Amount Paid: ${amount ? `\u20B9${Number(amount).toLocaleString('en-IN')}` : 'As agreed'}\n\n` +
+        `Please find attached payment screenshot for verification.\n` +
+        `Kindly confirm my booking. Thank you!`
   )
   const waLink = `https://wa.me/919579828996?text=${waMessage}`
 
@@ -104,8 +111,12 @@ export default function UPIPaymentScreen({
               style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px)', backgroundSize: '18px 18px' }} />
             <div className="relative">
               <span className="text-4xl">🔒</span>
-              <h2 className="text-xl font-extrabold text-white mt-2">Secure Payment</h2>
-              <p className="text-white/80 text-xs mt-1">Complete your security deposit</p>
+              <h2 className="text-xl font-extrabold text-white mt-2">
+                {rentMode ? 'Pay Monthly Rent' : 'Secure Payment'}
+              </h2>
+              <p className="text-white/80 text-xs mt-1">
+                {rentMode ? 'Pay your monthly rent securely via UPI' : 'Complete your security deposit payment'}
+              </p>
             </div>
           </div>
 
@@ -116,7 +127,9 @@ export default function UPIPaymentScreen({
               style={{ background: 'linear-gradient(135deg, #fff0f6, #fdf3e7)' }}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-gray-500 font-semibold">Security Deposit</p>
+                  <p className="text-xs text-gray-500 font-semibold">
+                    {rentMode ? 'Monthly Rent' : 'Security Deposit'}
+                  </p>
                   <p className="text-3xl font-extrabold mt-0.5" style={{ color: '#c026d3' }}>
                     {amtDisplay}
                   </p>
