@@ -123,6 +123,12 @@ export const adminApi = {
     }),
 }
 
+// ── Rent Payments ─────────────────────────────────────────────────────────────
+export const rentApi = {
+  submitPayment: (fd) => request('/api/rent/submit', { method: 'POST', body: fd }, 30000),
+  confirmPayment: (token) => request(`/api/rent/confirm/${token}`, { method: 'POST' }),
+}
+
 // ── Keep-alive ping ───────────────────────────────────────────────────────────
 // Render free tier spins down after 15 min of inactivity.
 // Pings /health every 8 minutes — well within the 15-min sleep threshold.

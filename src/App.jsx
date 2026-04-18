@@ -12,6 +12,7 @@ import FacilitiesPage    from './pages/FacilitiesPage'
 import AccommodationPage from './pages/AccommodationPage'
 import OffersPage        from './pages/OffersPage'
 import RulesAndRegulationsPage from './pages/RulesAndRegulationsPage'
+import PayRentPage       from './pages/PayRentPage'
 import TestimonialsPage  from './pages/TestimonialsPage'
 import ContactPage       from './pages/ContactPage'
 import RoomDetailPage    from './pages/RoomDetailPage'
@@ -200,6 +201,11 @@ function AppRoutes() {
           <Route path="/student" element={
             <ProtectedRoute role="student">
               <PageWrapper><StudentDashboard /></PageWrapper>
+            </ProtectedRoute>
+          } />
+          <Route path="/pay-rent" element={
+            <ProtectedRoute role="student">
+              <PageWrapper><PayRentPage /></PageWrapper>
             </ProtectedRoute>
           } />
           <Route path="/admin" element={

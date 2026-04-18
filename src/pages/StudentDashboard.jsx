@@ -370,7 +370,6 @@ export default function StudentDashboard() {
               </div>
             )
           }
-
           return (
             <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
               <div className="flex items-center justify-between">
@@ -389,8 +388,13 @@ export default function StudentDashboard() {
                       showToast.warning('Not Available', 'Pay Rent is available only after admin confirms your booking.')
                       return
                     }
-                    setShowPayRent(true)
-                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                    navigate('/pay-rent', {
+                      state: {
+                        confirmedApp,
+                        monthlyRent,
+                        confirmedRoom,
+                      }
+                    })
                   }}
                   disabled={!isEligible}
                   className="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
