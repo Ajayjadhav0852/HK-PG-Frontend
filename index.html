@@ -27,9 +27,21 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    
+
+    <!-- ── Cloudinary CDN: preconnect + DNS prefetch for instant image loading ── -->
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+    <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+
+    <!-- ── Preload first hero image (LCP) ─────────────────────────────────────── -->
+    <link
+      rel="preload"
+      as="image"
+      href="https://res.cloudinary.com/dzr0crkvr/image/upload/w_1400,q_auto,f_auto,fl_progressive,dpr_auto/v1776062518/IMG_20260328_195806.jpg_exlqfb.jpg"
+      fetchpriority="high"
+    />
+
     <title>HK PG Akurdi - Premium Boys Accommodation | Near Akurdi Railway Station, Pune</title>
-    <!-- build: 2026-04-18 -->
+    <!-- build: 2026-04-19 -->
   </head>
   <body>
     <div id="root"></div>

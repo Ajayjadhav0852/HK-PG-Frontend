@@ -1,20 +1,32 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 
+// ── Cloudinary CDN optimizer ─────────────────────────────────────────────────
+// Injects optimal transforms: auto format (WebP/AVIF), auto quality,
+// progressive rendering, and correct width for the viewport.
+function cdnUrl(url, width = 800) {
+  if (!url || !url.includes('res.cloudinary.com')) return url
+  // Already has transforms — replace them with our optimised set
+  return url.replace(
+    /\/upload\/([^/]*\/)?/,
+    `/upload/w_${width},q_auto,f_auto,fl_progressive,dpr_auto/`
+  )
+}
+
 const SLIDES = [
   {
-    url: 'https://res.cloudinary.com/dzr0crkvr/image/upload/w_1200,q_auto,f_auto/v1776062518/IMG_20260328_195806.jpg_exlqfb.jpg',
+    url: 'https://res.cloudinary.com/dzr0crkvr/image/upload/v1776062518/IMG_20260328_195806.jpg_exlqfb.jpg',
     caption: 'Comfortable & Spacious Rooms',
   },
   {
-    url: 'https://res.cloudinary.com/dzr0crkvr/image/upload/w_1200,q_auto,f_auto/v1776062505/WhatsApp_Image_2026-03-27_at_8.37.11_PM_qvrvk4.jpg',
+    url: 'https://res.cloudinary.com/dzr0crkvr/image/upload/v1776062505/WhatsApp_Image_2026-03-27_at_8.37.11_PM_qvrvk4.jpg',
     caption: 'Modern Facilities',
   },
   {
-    url: 'https://res.cloudinary.com/dzr0crkvr/image/upload/w_1200,q_auto,f_auto/v1776062505/IMG_20260413_102220113.jpg_bzsaya.jpg',
+    url: 'https://res.cloudinary.com/dzr0crkvr/image/upload/v1776062505/IMG_20260413_102220113.jpg_bzsaya.jpg',
     caption: 'Safe & Secure Environment',
   },
   {
-    url: 'https://res.cloudinary.com/dzr0crkvr/image/upload/w_1200,q_auto,f_auto/v1776062499/IMG_20260413_102118487.jpg_cqtzls.jpg',
+    url: 'https://res.cloudinary.com/dzr0crkvr/image/upload/v1776062499/IMG_20260413_102118487.jpg_cqtzls.jpg',
     caption: 'Budget-Friendly Options',
   },
 ]
@@ -22,6 +34,19 @@ const SLIDES = [
 export default function HeroSection({ onBook }) {
   const [current, setCurrent] = useState(0)
   const intervalRef = useRef(null)
+  const touchStartX = useRef(0)
+
+  // Preload all hero images immediately via link tags injected into <head>
+  useEffect(() => {
+    SLIDES.forEach((slide, i) => {
+      const link = document.createElement('link')
+      link.rel = i === 0 ? 'preload' : 'prefetch'
+      link.as = 'image'
+      link.href = cdnUrl(slide.url, 1400)
+      link.fetchPriority = i === 0 ? 'high' : 'low'
+      document.head.appendChild(link)
+    })
+  }, [])
 
   const nextSlide = useCallback(() => {
     setCurrent(c => (c + 1) % SLIDES.length)
@@ -70,12 +95,12 @@ export default function HeroSection({ onBook }) {
         {SLIDES.map((slide, i) => (
           <div key={i} className="min-w-full h-full flex-shrink-0">
             <img
-              src={slide.url}
+              src={cdnUrl(slide.url, 1400)}
               alt={slide.caption}
               className="w-full h-full object-cover"
               loading={i === 0 ? 'eager' : 'lazy'}
               fetchPriority={i === 0 ? 'high' : 'low'}
-              decoding="async"
+              decoding={i === 0 ? 'sync' : 'async'}
             />
           </div>
         ))}

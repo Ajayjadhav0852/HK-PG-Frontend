@@ -29,9 +29,15 @@ const FALLBACK_IMAGES = {
   '4-sharing': 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800&q=80',
 }
 
-function optimizeImage(url) {
+// ── Cloudinary CDN optimizer ──────────────────────────────────────────────────
+// Strips any existing transforms and injects optimal ones:
+// WebP/AVIF auto-format, auto quality, progressive, correct width.
+function cdnUrl(url, width = 1000) {
   if (!url || !url.includes('res.cloudinary.com')) return url
-  return url.replace('/upload/', '/upload/w_1000,q_auto,f_auto/')
+  return url.replace(
+    /\/upload\/([^/]*\/)?/,
+    `/upload/w_${width},q_auto,f_auto,fl_progressive,dpr_auto/`
+  )
 }
 
 export default function RoomDetailPage({ onBook, onBack }) {
@@ -115,10 +121,11 @@ export default function RoomDetailPage({ onBook, onBack }) {
       <div className="max-w-3xl mx-auto px-4 mt-4">
         <div className="relative rounded-3xl overflow-hidden h-60 md:h-80 bg-gray-100 shadow-md">
           <img
-            src={optimizeImage(typeData.imageUrl) || fallback}
+            src={cdnUrl(typeData.imageUrl) || fallback}
             alt={typeData.title}
             loading="eager"
-            decoding="async"
+            fetchPriority="high"
+            decoding="sync"
             className="w-full h-full object-cover"
             onError={e => { e.target.src = fallback }}
           />

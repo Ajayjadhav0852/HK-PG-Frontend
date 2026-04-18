@@ -2,6 +2,17 @@ import { useState, memo, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { adminApi } from '../services/api'
 
+// ── Cloudinary CDN optimizer ──────────────────────────────────────────────────
+// Injects w_, q_auto, f_auto, fl_progressive so the browser gets
+// the smallest possible WebP/AVIF from Cloudinary's edge CDN.
+function cdnUrl(url, width = 600) {
+  if (!url || !url.includes('res.cloudinary.com')) return url
+  return url.replace(
+    /\/upload\/([^/]*\/)?/,
+    `/upload/w_${width},q_auto,f_auto,fl_progressive,dpr_auto/`
+  )
+}
+
 // Full class strings must be written out completely so Tailwind's
 // static scanner includes them in the production CSS bundle.
 const TAG_COLORS = {
@@ -97,7 +108,7 @@ const RoomCard = memo(function RoomCard({ slug, rt, onBook, onRoomUpdated, isAdm
           <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse" />
         )}
         <img
-          src={rt.imageUrl || fallback}
+          src={cdnUrl(rt.imageUrl) || fallback}
           alt={rt.title}
           loading="lazy"
           onLoad={() => setImgLoaded(true)}
