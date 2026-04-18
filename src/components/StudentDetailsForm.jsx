@@ -292,6 +292,8 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
         upiId={UPI_ID}
         upiName={UPI_NAME}
         selectedRoom={selectedRoom}
+        bedNumber={formData.selectedBedNumber}
+        roomNumber={formData.preferredRoomNumber}
         showToast={showToast}
         onIPaid={() => {
           setShowUPI(false)

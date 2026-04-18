@@ -5,9 +5,11 @@ export default function UPIPaymentScreen({
   upiId,
   upiName,
   selectedRoom,
+  bedNumber,
+  roomNumber,
   onIPaid,
   showToast,
-  rentMode = false   // true = paying rent, false = paying deposit
+  rentMode = false
 }) {
   const [copied, setCopied] = useState(false)
 
@@ -78,12 +80,14 @@ export default function UPIPaymentScreen({
   const waMessage = encodeURIComponent(
     rentMode
       ? `Hi! I have completed the monthly rent payment for HK PG.\n\n` +
-        `Room: ${selectedRoom?.title || 'As selected'}\n` +
+        `Room: ${selectedRoom?.title || 'As selected'}${roomNumber ? ` (Room No. ${roomNumber})` : ''}\n` +
+        `${bedNumber ? `Bed Number: ${bedNumber}\n` : ''}` +
         `Amount Paid: ${amount ? `\u20B9${Number(amount).toLocaleString('en-IN')}` : 'As agreed'}\n\n` +
         `Please find attached payment screenshot for verification.\n` +
         `Kindly acknowledge receipt. Thank you!`
       : `Hi! I have completed the UPI payment for HK PG booking.\n\n` +
-        `Room: ${selectedRoom?.title || 'As selected'}\n` +
+        `Room: ${selectedRoom?.title || 'As selected'}${roomNumber ? ` (Room No. ${roomNumber})` : ''}\n` +
+        `${bedNumber ? `Bed Number: ${bedNumber}\n` : ''}` +
         `Amount Paid: ${amount ? `\u20B9${Number(amount).toLocaleString('en-IN')}` : 'As agreed'}\n\n` +
         `Please find attached payment screenshot for verification.\n` +
         `Kindly confirm my booking. Thank you!`
@@ -114,8 +118,10 @@ export default function UPIPaymentScreen({
               <h2 className="text-xl font-extrabold text-white mt-2">
                 {rentMode ? 'Pay Monthly Rent' : 'Secure Payment'}
               </h2>
-              <p className="text-white/80 text-xs mt-1">
-                {rentMode ? 'Pay your monthly rent securely via UPI' : 'Complete your security deposit payment'}
+              <p className="text-white/90 text-sm mt-1 font-semibold">
+                {rentMode
+                  ? 'Pay your monthly rent securely via UPI'
+                  : 'Send your payment screenshot to confirm booking'}
               </p>
             </div>
           </div>
@@ -267,12 +273,17 @@ export default function UPIPaymentScreen({
 
           {/* Footer */}
           <div className="px-5 pb-5">
-            <div className="flex items-start gap-3 p-3 bg-green-50 border border-green-200 rounded-xl mb-3">
-              <span className="text-xl flex-shrink-0">💬</span>
-              <p className="text-xs text-green-700 font-semibold leading-relaxed">
-                After payment, click below — WhatsApp opens automatically.
-                <strong> Send your payment screenshot</strong> to confirm booking.
-              </p>
+            <div className="flex items-start gap-3 p-4 bg-green-50 border-2 border-green-300 rounded-xl mb-4">
+              <span className="text-2xl flex-shrink-0">💬</span>
+              <div>
+                <p className="text-sm font-bold text-green-800 mb-1">
+                  Send payment screenshot to confirm booking
+                </p>
+                <p className="text-xs text-green-700 leading-relaxed">
+                  After paying, click the button below — WhatsApp opens automatically with your booking details.
+                  <strong> Attach your payment screenshot</strong> and send to confirm.
+                </p>
+              </div>
             </div>
 
             <button
@@ -283,7 +294,7 @@ export default function UPIPaymentScreen({
             >
               <span className="relative z-10 flex items-center justify-center gap-2">
                 <span className="text-xl">✅</span>
-                Payment Done → Send Proof on WhatsApp
+                Payment Done → Send Screenshot on WhatsApp
               </span>
               <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
             </button>
