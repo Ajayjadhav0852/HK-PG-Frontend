@@ -229,6 +229,27 @@ export default function RoomTypesSection({ onBook, roomsState, onRoomUpdated }) 
             />
           ))}
         </div>
+
+        {/* Special Offers Button */}
+        <div className="mt-12 text-center">
+          <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-8 border border-purple-100">
+            <div className="max-w-2xl mx-auto">
+              <h3 className="text-2xl font-bold text-gray-800 mb-3">
+                🎯 Special Offers & Packages
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Discover exclusive offers for CDAC students, degree students, and flexible stay options. 
+                Save money with our special packages designed for your needs.
+              </p>
+              <button
+                onClick={() => window.location.href = '/offers'}
+                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl hover:opacity-90 transition-all transform hover:scale-105 shadow-lg"
+              >
+                🎁 Explore Special Offers →
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

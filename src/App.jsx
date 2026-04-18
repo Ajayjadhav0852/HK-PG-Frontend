@@ -10,6 +10,7 @@ import { roomApi } from './services/api'
 import HomePage          from './pages/HomePage'
 import FacilitiesPage    from './pages/FacilitiesPage'
 import AccommodationPage from './pages/AccommodationPage'
+import OffersPage        from './pages/OffersPage'
 import TestimonialsPage  from './pages/TestimonialsPage'
 import ContactPage       from './pages/ContactPage'
 import RoomDetailPage    from './pages/RoomDetailPage'
@@ -154,6 +155,9 @@ function AppRoutes() {
             <PageWrapper>
               <AccommodationPage rooms={rooms} onBook={goToRoomDetail} onRoomUpdated={fetchRooms} />
             </PageWrapper>
+          } />
+          <Route path="/offers" element={
+            <PageWrapper><OffersPage /></PageWrapper>
           } />
           <Route path="/testimonials" element={
             <PageWrapper><TestimonialsPage /></PageWrapper>
