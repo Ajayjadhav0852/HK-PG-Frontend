@@ -10,6 +10,18 @@ const statusBadge = {
   REJECTED:  'bg-red-100 text-red-600 border border-red-200',
 }
 
+const BOOKING_STATUSES = [
+  { value: 'PENDING',   label: '⏳ Pending',   color: 'text-yellow-700 bg-yellow-50 border-yellow-200' },
+  { value: 'CONFIRMED', label: '✅ Confirmed',  color: 'text-green-700 bg-green-50 border-green-200' },
+  { value: 'REJECTED',  label: '❌ Rejected',   color: 'text-red-600 bg-red-50 border-red-200' },
+]
+
+const PAYMENT_STATUSES = [
+  { value: 'PENDING',  label: '⏳ Pending',  color: 'text-yellow-700 bg-yellow-50 border-yellow-200' },
+  { value: 'RECEIVED', label: '✅ Received', color: 'text-green-700 bg-green-50 border-green-200' },
+  { value: 'OVERDUE',  label: '🔴 Overdue',  color: 'text-red-600 bg-red-50 border-red-200' },
+]
+
 export default function AdminDashboard() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
@@ -78,6 +90,22 @@ export default function AdminDashboard() {
     } catch (e) {
       showToast.update(toastId, 'error', 'Update Failed',
         e.message || 'Could not update status. Please try again.')
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handlePaymentStatusChange = async (appId, field, value, applicantName) => {
+    setActionLoading(`pay-${appId}-${field}`)
+    try {
+      const payload = field === 'deposit'
+        ? { depositStatus: value }
+        : { rentStatus: value }
+      await adminApi.updatePaymentStatus(appId, payload.depositStatus, payload.rentStatus)
+      await fetchData(true)
+      showToast.success('Payment Status Updated', `${applicantName}'s ${field} → ${value}`)
+    } catch (e) {
+      showToast.error('Update Failed', e.message || 'Could not update payment status.')
     } finally {
       setActionLoading(null)
     }
@@ -762,7 +790,7 @@ export default function AdminDashboard() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b-2 border-gray-100">
-                      {['#', 'Applicant', 'Room Type', 'Room', 'Bed No.', 'Joining', 'Mobile', 'Status', 'Actions'].map(h => (
+                      {['#', 'Applicant', 'Room Type', 'Room', 'Bed No.', 'Joining', 'Mobile', 'Booking Status', 'Deposit', 'Rent', 'Actions'].map(h => (
                         <th key={h} className="text-left text-xs font-bold text-gray-400 pb-3 pr-3 uppercase tracking-wide">{h}</th>
                       ))}
                     </tr>
@@ -808,81 +836,76 @@ export default function AdminDashboard() {
                           </a>
                         </td>
                         <td className="py-3.5 pr-3">
-                          <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${statusBadge[a.status] || 'bg-gray-100 text-gray-600'}`}>
-                            {a.status}
-                          </span>
+                          {/* Booking Status dropdown */}
+                          <select
+                            disabled={actionLoading === a.id}
+                            value={a.status}
+                            onChange={e => handleStatusChange(a.id, e.target.value, a.fullName)}
+                            className={`text-xs font-bold px-2 py-1.5 rounded-lg border cursor-pointer outline-none transition ${
+                              a.status === 'CONFIRMED' ? 'bg-green-50 text-green-700 border-green-200' :
+                              a.status === 'REJECTED'  ? 'bg-red-50 text-red-600 border-red-200' :
+                              'bg-yellow-50 text-yellow-700 border-yellow-200'
+                            }`}
+                          >
+                            {BOOKING_STATUSES.map(s => (
+                              <option key={s.value} value={s.value}>{s.label}</option>
+                            ))}
+                          </select>
                         </td>
+
+                        {/* Deposit Status */}
+                        <td className="py-3.5 pr-3">
+                          <select
+                            disabled={!!actionLoading}
+                            value={a.depositStatus || 'PENDING'}
+                            onChange={e => handlePaymentStatusChange(a.id, 'deposit', e.target.value, a.fullName)}
+                            className={`text-xs font-bold px-2 py-1.5 rounded-lg border cursor-pointer outline-none transition ${
+                              a.depositStatus === 'RECEIVED' ? 'bg-green-50 text-green-700 border-green-200' :
+                              a.depositStatus === 'OVERDUE'  ? 'bg-red-50 text-red-600 border-red-200' :
+                              'bg-yellow-50 text-yellow-700 border-yellow-200'
+                            }`}
+                          >
+                            {PAYMENT_STATUSES.map(s => (
+                              <option key={s.value} value={s.value}>{s.label}</option>
+                            ))}
+                          </select>
+                        </td>
+
+                        {/* Rent Status */}
+                        <td className="py-3.5 pr-3">
+                          <select
+                            disabled={!!actionLoading}
+                            value={a.rentStatus || 'PENDING'}
+                            onChange={e => handlePaymentStatusChange(a.id, 'rent', e.target.value, a.fullName)}
+                            className={`text-xs font-bold px-2 py-1.5 rounded-lg border cursor-pointer outline-none transition ${
+                              a.rentStatus === 'RECEIVED' ? 'bg-green-50 text-green-700 border-green-200' :
+                              a.rentStatus === 'OVERDUE'  ? 'bg-red-50 text-red-600 border-red-200' :
+                              'bg-yellow-50 text-yellow-700 border-yellow-200'
+                            }`}
+                          >
+                            {PAYMENT_STATUSES.map(s => (
+                              <option key={s.value} value={s.value}>{s.label}</option>
+                            ))}
+                          </select>
+                        </td>
+
                         <td className="py-3.5">
-                          <div className="flex gap-1.5 flex-wrap items-center">
-                            {a.status === 'PENDING' && (
-                              <>
-                                <button disabled={actionLoading === a.id}
-                                  onClick={() => handleStatusChange(a.id, 'CONFIRMED', a.fullName)}
-                                  className="text-xs px-2.5 py-1.5 bg-green-100 text-green-700 rounded-lg font-bold hover:bg-green-200 transition disabled:opacity-50">
-                                  {actionLoading === a.id ? '...' : '✓ Confirm'}
-                                </button>
-                                <button disabled={actionLoading === a.id}
-                                  onClick={() => handleStatusChange(a.id, 'REJECTED', a.fullName)}
-                                  className="text-xs px-2.5 py-1.5 bg-red-100 text-red-600 rounded-lg font-bold hover:bg-red-200 transition disabled:opacity-50">
-                                  ✗ Reject
-                                </button>
-                              </>
-                            )}
-                            {a.status === 'CONFIRMED' && (
-                              <>
-                                <span className="text-xs text-green-600 font-semibold">✅ Confirmed</span>
-                                <button disabled={actionLoading === a.id}
-                                  onClick={() => handleStatusChange(a.id, 'REJECTED', a.fullName)}
-                                  className="text-xs px-2 py-1 bg-red-50 text-red-500 rounded-lg font-bold hover:bg-red-100 transition disabled:opacity-50">
-                                  Reject
-                                </button>
-                              </>
-                            )}
-                            {a.status === 'REJECTED' && (
-                              <>
-                                <span className="text-xs text-red-500 font-semibold">❌ Rejected</span>
-                                <button disabled={actionLoading === a.id}
-                                  onClick={() => handleStatusChange(a.id, 'PENDING', a.fullName)}
-                                  className="text-xs px-2 py-1 bg-yellow-50 text-yellow-600 rounded-lg font-bold hover:bg-yellow-100 transition disabled:opacity-50">
-                                  Reopen
-                                </button>
-                              </>
-                            )}
-                            {/* Delete — always visible for all statuses */}
+                          <div className="flex gap-1.5 items-center">
                             <button
                               disabled={actionLoading === a.id}
                               onClick={() => handleDelete(a.id, a.fullName)}
-                              title="Delete application permanently"
-                              className="text-xs px-2.5 py-1.5 bg-gray-100 text-gray-500 rounded-lg font-bold hover:bg-red-100 hover:text-red-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              🗑️ Delete
-                            </button>
-                            {/* Export single application */}
-                            <button
-                              onClick={() => exportApplication(a)}
-                              title="Export to Excel/CSV"
-                              className="text-xs px-2.5 py-1.5 bg-green-50 text-green-700 rounded-lg font-bold hover:bg-green-100 transition"
-                            >
-                              📊
-                            </button>
-                            {/* View documents */}
-                            {(a.idProofUrl || a.profilePhotoUrl) && (
-                              <div className="flex gap-1">
-                                {a.profilePhotoUrl && (
-                                  <a href={a.profilePhotoUrl} target="_blank" rel="noreferrer"
-                                    title="View profile photo"
-                                    className="text-xs px-2.5 py-1.5 bg-blue-50 text-blue-600 rounded-lg font-bold hover:bg-blue-100 transition">
-                                    🖼️
-                                  </a>
-                                )}
-                                {a.idProofUrl && (
-                                  <a href={a.idProofUrl} target="_blank" rel="noreferrer"
-                                    title="View ID proof"
-                                    className="text-xs px-2.5 py-1.5 bg-purple-50 text-purple-600 rounded-lg font-bold hover:bg-purple-100 transition">
-                                    📄
-                                  </a>
-                                )}
-                              </div>
+                              title="Delete"
+                              className="text-xs px-2.5 py-1.5 bg-gray-100 text-gray-500 rounded-lg font-bold hover:bg-red-100 hover:text-red-600 transition disabled:opacity-50"
+                            >🗑️</button>
+                            <button onClick={() => exportApplication(a)} title="Export CSV"
+                              className="text-xs px-2.5 py-1.5 bg-green-50 text-green-700 rounded-lg font-bold hover:bg-green-100 transition">📊</button>
+                            {a.profilePhotoUrl && (
+                              <a href={a.profilePhotoUrl} target="_blank" rel="noreferrer" title="Photo"
+                                className="text-xs px-2.5 py-1.5 bg-blue-50 text-blue-600 rounded-lg font-bold hover:bg-blue-100 transition">🖼️</a>
+                            )}
+                            {a.idProofUrl && (
+                              <a href={a.idProofUrl} target="_blank" rel="noreferrer" title="ID Proof"
+                                className="text-xs px-2.5 py-1.5 bg-purple-50 text-purple-600 rounded-lg font-bold hover:bg-purple-100 transition">📄</a>
                             )}
                           </div>
                         </td>

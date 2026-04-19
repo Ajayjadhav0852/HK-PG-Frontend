@@ -355,6 +355,26 @@ export default function OffersPage() {
       {/* CDAC Special Landing Section */}
       <CdacSpecialSection />
 
+      {/* Scrolling marquee bar */}
+      <div className="w-full overflow-hidden bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 py-3">
+        <div className="flex whitespace-nowrap animate-marquee">
+          {[...Array(3)].map((_, i) => (
+            <span key={i} className="inline-flex items-center gap-6 text-white font-bold text-sm px-8">
+              <span>⭐ Built by a CDAC student, for CDAC students</span>
+              <span className="opacity-60">•</span>
+              <span>🚀 Your 6 months matter – we support your placement journey</span>
+              <span className="opacity-60">•</span>
+              <span>📍 Near IACSD CDAC Center · KnowIT Deccan · IET Center</span>
+              <span className="opacity-60">•</span>
+              <span>🏠 Newly Opened PG · Prime Location · Akurdi, Pune</span>
+              <span className="opacity-60">•</span>
+              <span>👥 Group Stay Available · 4-5 Friends Together</span>
+              <span className="opacity-60">•</span>
+            </span>
+          ))}
+        </div>
+      </div>
+
       {/* Main Offers Content */}
       <div className="w-full px-4 sm:px-6 py-16 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-6xl mx-auto">

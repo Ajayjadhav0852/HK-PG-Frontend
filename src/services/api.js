@@ -109,6 +109,11 @@ export const adminApi = {
       method: 'PATCH',
       body: JSON.stringify({ status, adminNotes }),
     }),
+  updatePaymentStatus: (id, depositStatus, rentStatus) =>
+    request(`/api/admin/applications/${id}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ depositStatus, rentStatus }),
+    }),
   deleteApplication: (id) =>
     request(`/api/admin/applications/${id}`, { method: 'DELETE' }),
   updateRoomType: (slug, data) =>
