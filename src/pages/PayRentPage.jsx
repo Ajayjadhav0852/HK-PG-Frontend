@@ -46,7 +46,7 @@ export default function PayRentPage() {
 
   const monthLabel = (() => {
     const [y, m] = month.split('-')
-    return new Date(y, m - 1).toLocaleString('en-IN', { month: 'long', year: 'numeric' })
+    return new Date(parseInt(y), parseInt(m) - 1).toLocaleString('en-IN', { month: 'long', year: 'numeric' })
   })()
 
   const handleFileChange = (e) => {
@@ -91,19 +91,13 @@ export default function PayRentPage() {
         style={{ background: 'linear-gradient(135deg,#f0fdf4,#dcfce7)' }}>
         <div className="bg-white rounded-3xl shadow-xl p-8 max-w-md w-full text-center">
           <div className="text-6xl mb-4">🎉</div>
-          <h2 className="text-2xl font-extrabold text-gray-800 mb-2">Payment Submitted!</h2>
-          <p className="text-gray-500 text-sm mb-6">
-            Your payment screenshot has been sent to admin. You will receive a confirmation email once admin verifies it.
+          <h2 className="text-2xl font-extrabold text-gray-800 mb-3">Payment Submitted!</h2>
+          <p className="text-gray-500 text-sm leading-relaxed mb-8">
+            You will receive a confirmation email once admin verifies it.
           </p>
-          <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 text-left">
-            <p className="text-sm text-green-700 font-semibold mb-1">📋 Payment Summary</p>
-            <p className="text-xs text-green-600">Month: <strong>{monthLabel}</strong></p>
-            <p className="text-xs text-green-600">Amount: <strong>₹{Number(monthlyRent || 0).toLocaleString('en-IN')}</strong></p>
-            <p className="text-xs text-green-600">Bed: <strong>{confirmedApp?.bedNumber}</strong></p>
-          </div>
           <button
             onClick={() => navigate('/student')}
-            className="w-full py-3 rounded-xl font-bold text-white"
+            className="w-full py-3.5 rounded-xl font-bold text-white text-sm"
             style={{ background: 'linear-gradient(135deg,#d63384,#c026d3)' }}
           >
             ← Back to Dashboard

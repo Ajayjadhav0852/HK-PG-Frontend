@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import { useAuth } from '../context/AuthContext'
+import { rentApi } from '../services/api'
 
 export default function UPIPaymentScreen({
   amount,
@@ -11,22 +13,29 @@ export default function UPIPaymentScreen({
   showToast,
   rentMode = false
 }) {
-  const [copied, setCopied] = useState(false)
+  const { user } = useAuth()
+  const [copied, setCopied]               = useState(false)
+  const [screenshotFile, setScreenshotFile] = useState(null)
+  const [screenshotPreview, setScreenshotPreview] = useState(null)
+  const [submitting, setSubmitting]       = useState(false)
+  const [month, setMonth]                 = useState(() => {
+    const now = new Date()
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+  })
+  const fileInputRef = useRef(null)
 
   const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
 
   const upiLink = amount
-    ? `upi://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${amount}&cu=INR&tn=${encodeURIComponent('HK PG Security Deposit')}`
-    : `upi://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&cu=INR&tn=${encodeURIComponent('HK PG Security Deposit')}`
+    ? `upi://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(rentMode ? 'HK PG Monthly Rent' : 'HK PG Security Deposit')}`
+    : `upi://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&cu=INR`
 
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiLink)}&bgcolor=ffffff&color=000000&margin=10`
 
   const payApps = [
     {
       name: 'PhonePe',
-      link: amount
-        ? `phonepe://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${amount}&cu=INR`
-        : `phonepe://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&cu=INR`,
+      link: `phonepe://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}${amount ? `&am=${amount}` : ''}&cu=INR`,
       logo: (
         <svg viewBox="0 0 50 50" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
           <rect width="50" height="50" rx="12" fill="#5f259f"/>
@@ -36,9 +45,7 @@ export default function UPIPaymentScreen({
     },
     {
       name: 'Google Pay',
-      link: amount
-        ? `tez://upi/pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${amount}&cu=INR`
-        : `tez://upi/pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&cu=INR`,
+      link: `tez://upi/pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}${amount ? `&am=${amount}` : ''}&cu=INR`,
       logo: (
         <svg viewBox="0 0 50 50" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
           <rect width="50" height="50" rx="12" fill="white" stroke="#e2e8f0" strokeWidth="2"/>
@@ -49,9 +56,7 @@ export default function UPIPaymentScreen({
     },
     {
       name: 'Paytm',
-      link: amount
-        ? `paytmmp://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${amount}&cu=INR`
-        : `paytmmp://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&cu=INR`,
+      link: `paytmmp://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}${amount ? `&am=${amount}` : ''}&cu=INR`,
       logo: (
         <svg viewBox="0 0 50 50" width="36" height="36" xmlns="http://www.w3.org/2000/svg">
           <rect width="50" height="50" rx="12" fill="#002970"/>
@@ -77,29 +82,50 @@ export default function UPIPaymentScreen({
     })
   }
 
-  const waMessage = encodeURIComponent(
-    rentMode
-      ? `Hi! I have completed the monthly rent payment for HK PG.\n\n` +
-        `Room: ${selectedRoom?.title || 'As selected'}${roomNumber ? ` (Room No. ${roomNumber})` : ''}\n` +
-        `${bedNumber ? `Bed Number: ${bedNumber}\n` : ''}` +
-        `Amount Paid: ${amount ? `\u20B9${Number(amount).toLocaleString('en-IN')}` : 'As agreed'}\n\n` +
-        `Please find attached payment screenshot for verification.\n` +
-        `Kindly acknowledge receipt. Thank you!`
-      : `Hi! I have completed the UPI payment for HK PG booking.\n\n` +
-        `Room: ${selectedRoom?.title || 'As selected'}${roomNumber ? ` (Room No. ${roomNumber})` : ''}\n` +
-        `${bedNumber ? `Bed Number: ${bedNumber}\n` : ''}` +
-        `Amount Paid: ${amount ? `\u20B9${Number(amount).toLocaleString('en-IN')}` : 'As agreed'}\n\n` +
-        `Please find attached payment screenshot for verification.\n` +
-        `Kindly confirm my booking. Thank you!`
-  )
-  const waLink = `https://wa.me/919579828996?text=${waMessage}`
-
-  const handlePaid = () => {
-    window.open(waLink, '_blank')
-    setTimeout(() => { onIPaid() }, 500)
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setScreenshotFile(file)
+    setScreenshotPreview(URL.createObjectURL(file))
   }
 
-  const amtDisplay = amount ? `\u20B9${Number(amount).toLocaleString('en-IN')}` : 'As agreed'
+  const monthLabel = (() => {
+    const [y, m] = month.split('-')
+    return new Date(y, m - 1).toLocaleString('en-IN', { month: 'long', year: 'numeric' })
+  })()
+
+  const handlePaid = async () => {
+    if (rentMode && !screenshotFile) {
+      showToast?.error('Screenshot Required', 'Please upload your payment screenshot first.')
+      return
+    }
+
+    setSubmitting(true)
+    const toastId = showToast?.loading('Submitting...', 'Sending payment details to admin.')
+
+    try {
+      if (rentMode) {
+        const fd = new FormData()
+        fd.append('screenshot',   screenshotFile)
+        fd.append('studentName',  user?.name  || '')
+        fd.append('studentEmail', user?.email || '')
+        fd.append('bedNumber',    bedNumber   || '')
+        fd.append('roomNumber',   roomNumber  || '')
+        fd.append('roomType',     selectedRoom?.title || '')
+        fd.append('amount',       amount ? String(amount) : '')
+        fd.append('month',        monthLabel)
+        await rentApi.submitPayment(fd)
+        showToast?.update(toastId, 'success', '✅ Payment Submitted!', 'Admin has been notified. You will receive a confirmation email.')
+      }
+      onIPaid?.()
+    } catch (err) {
+      showToast?.update(toastId, 'error', 'Submission Failed', err.message || 'Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const amtDisplay = amount ? `₹${Number(amount).toLocaleString('en-IN')}` : 'As agreed'
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-8"
@@ -119,9 +145,7 @@ export default function UPIPaymentScreen({
                 {rentMode ? 'Pay Monthly Rent' : 'Secure Payment'}
               </h2>
               <p className="text-white/90 text-sm mt-1 font-semibold">
-                {rentMode
-                  ? 'Pay your monthly rent securely via UPI'
-                  : 'Send your payment screenshot to confirm booking'}
+                {rentMode ? 'Pay securely via UPI & upload screenshot' : 'Send your payment screenshot to confirm booking'}
               </p>
             </div>
           </div>
@@ -139,15 +163,13 @@ export default function UPIPaymentScreen({
                   <p className="text-3xl font-extrabold mt-0.5" style={{ color: '#c026d3' }}>
                     {amtDisplay}
                   </p>
+                  {rentMode && bedNumber && (
+                    <p className="text-xs text-gray-500 mt-1">Bed {bedNumber} · Room {roomNumber}</p>
+                  )}
                 </div>
                 <div className="text-right">
                   {selectedRoom && (
-                    <>
-                      <p className="text-xs text-gray-500">{selectedRoom.title}</p>
-                      <p className="text-xs font-bold text-gray-700 mt-0.5">
-                        ₹{Number(selectedRoom.monthlyPrice || 0).toLocaleString('en-IN')}/mo
-                      </p>
-                    </>
+                    <p className="text-xs text-gray-500">{selectedRoom.title}</p>
                   )}
                   <span className="inline-flex items-center gap-1 mt-1 text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-200">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
@@ -169,11 +191,9 @@ export default function UPIPaymentScreen({
 
             {/* Mobile: Pay Now button */}
             {isMobile && (
-              <a
-                href={upiLink}
+              <a href={upiLink}
                 className="block text-center py-4 rounded-2xl text-white font-extrabold text-base shadow-lg transition-all hover:opacity-90 active:scale-95"
-                style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}
-              >
+                style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>
                 🚀 Pay Now — Open UPI App
               </a>
             )}
@@ -181,20 +201,12 @@ export default function UPIPaymentScreen({
             {/* App buttons — mobile only */}
             {isMobile && (
               <div>
-                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider text-center mb-3">
-                  Or choose app
-                </p>
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider text-center mb-3">Or choose app</p>
                 <div className="grid grid-cols-3 gap-3">
                   {payApps.map(app => (
-                    <button
-                      key={app.name}
-                      type="button"
-                      onClick={() => handleAppClick(app)}
-                      className="flex flex-col items-center gap-2 py-4 px-2 rounded-2xl border-2 border-gray-100 bg-white transition-all hover:border-pink-200 hover:shadow-lg hover:-translate-y-0.5 active:scale-95"
-                    >
-                      <div className="transition-transform hover:scale-110">
-                        {app.logo}
-                      </div>
+                    <button key={app.name} type="button" onClick={() => handleAppClick(app)}
+                      className="flex flex-col items-center gap-2 py-4 px-2 rounded-2xl border-2 border-gray-100 bg-white transition-all hover:border-pink-200 hover:shadow-lg active:scale-95">
+                      {app.logo}
                       <span className="text-xs font-semibold text-gray-600">{app.name}</span>
                     </button>
                   ))}
@@ -216,12 +228,8 @@ export default function UPIPaymentScreen({
               <div className="relative">
                 <div className="absolute -inset-2 bg-gradient-to-br from-pink-200 to-purple-200 rounded-2xl blur-xl opacity-40" />
                 <div className="relative p-4 bg-white rounded-2xl border-2 border-gray-200 shadow-xl">
-                  <img
-                    src={qrUrl}
-                    alt="UPI QR Code"
-                    className="w-44 h-44 block"
-                    onError={e => { e.target.style.display = 'none' }}
-                  />
+                  <img src={qrUrl} alt="UPI QR Code" className="w-44 h-44 block"
+                    onError={e => { e.target.style.display = 'none' }} />
                 </div>
               </div>
               <p className="text-xs text-gray-500 mt-3 text-center font-medium">
@@ -236,12 +244,9 @@ export default function UPIPaymentScreen({
                 <p className="font-mono font-bold text-gray-800 text-sm truncate">{upiId}</p>
                 <p className="text-xs text-gray-400 mt-0.5">{upiName}</p>
               </div>
-              <button
-                type="button"
-                onClick={handleCopy}
+              <button type="button" onClick={handleCopy}
                 className="flex-shrink-0 px-3 py-2 rounded-lg font-bold text-xs text-white transition-all hover:scale-105 active:scale-95"
-                style={{ background: copied ? '#16a34a' : 'linear-gradient(135deg, #d63384, #c026d3)' }}
-              >
+                style={{ background: copied ? '#16a34a' : 'linear-gradient(135deg, #d63384, #c026d3)' }}>
                 {copied ? '✓ Copied' : '📋 Copy'}
               </button>
             </div>
@@ -250,60 +255,79 @@ export default function UPIPaymentScreen({
             <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl">
               <p className="text-xs font-bold text-blue-700 mb-2">📋 Steps:</p>
               <ol className="text-xs text-blue-600 space-y-1 list-decimal list-inside">
-                {isMobile ? (
-                  <>
-                    <li>Tap <strong>"Pay Now"</strong> or choose an app above</li>
-                    <li>Complete payment of <strong>{amtDisplay}</strong></li>
-                    <li>Come back here and tap <strong>"Payment Done"</strong></li>
-                    <li>WhatsApp opens — send your payment screenshot</li>
-                  </>
-                ) : (
-                  <>
-                    <li>Open PhonePe / GPay / Paytm on your phone</li>
-                    <li>Scan the QR code above</li>
-                    <li>Complete payment of <strong>{amtDisplay}</strong></li>
-                    <li>Come back here and click <strong>"Payment Done"</strong></li>
-                    <li>WhatsApp opens — send your payment screenshot</li>
-                  </>
-                )}
+                <li>{isMobile ? 'Tap "Pay Now" or choose an app above' : 'Open PhonePe / GPay / Paytm on your phone'}</li>
+                {!isMobile && <li>Scan the QR code above</li>}
+                <li>Complete payment of <strong>{amtDisplay}</strong></li>
+                <li>Upload your payment screenshot below</li>
+                <li>Click <strong>"Payment Done ✅"</strong></li>
               </ol>
             </div>
 
+            {/* ── Screenshot Upload (rent mode) ─────────────────────────── */}
+            {rentMode && (
+              <div className="space-y-3">
+                {/* Month selector */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1.5">
+                    Payment Month <span className="text-red-400">*</span>
+                  </label>
+                  <input type="month" value={month} onChange={e => setMonth(e.target.value)}
+                    className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100" />
+                </div>
+
+                {/* Upload field */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1.5">
+                    Upload Payment Screenshot <span className="text-red-400">*</span>
+                  </label>
+
+                  {/* Preview */}
+                  {screenshotPreview ? (
+                    <div className="relative rounded-xl overflow-hidden border-2 border-green-300">
+                      <img src={screenshotPreview} alt="Payment screenshot"
+                        className="w-full max-h-52 object-contain bg-gray-50" />
+                      <button onClick={() => { setScreenshotFile(null); setScreenshotPreview(null) }}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold hover:bg-red-600 transition shadow">
+                        ×
+                      </button>
+                      <div className="bg-green-50 px-3 py-1.5 flex items-center gap-2">
+                        <span className="text-green-600 text-xs">✅</span>
+                        <span className="text-xs text-green-700 font-semibold truncate">{screenshotFile?.name}</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <label className="flex flex-col items-center justify-center border-2 border-dashed border-pink-300 rounded-xl p-6 cursor-pointer hover:border-pink-500 hover:bg-pink-50 transition">
+                      <span className="text-3xl mb-2">📷</span>
+                      <p className="text-sm font-semibold text-gray-700">Click to upload screenshot</p>
+                      <p className="text-xs text-gray-400 mt-0.5">JPG, PNG supported</p>
+                      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+                    </label>
+                  )}
+                </div>
+              </div>
+            )}
+
           </div>
 
-          {/* Footer */}
+          {/* Footer — Payment Done button only */}
           <div className="px-5 pb-5">
-            <div className="flex items-start gap-3 p-4 bg-green-50 border-2 border-green-300 rounded-xl mb-4">
-              <span className="text-2xl flex-shrink-0">💬</span>
-              <div>
-                <p className="text-sm font-bold text-green-800 mb-1">
-                  Send payment screenshot to confirm booking
-                </p>
-                <p className="text-xs text-green-700 leading-relaxed">
-                  After paying, click the button below — WhatsApp opens automatically with your booking details.
-                  <strong> Attach your payment screenshot</strong> and send to confirm.
-                </p>
-              </div>
-            </div>
-
             <button
               type="button"
               onClick={handlePaid}
-              className="w-full py-4 rounded-2xl font-extrabold text-white text-base shadow-xl transition-all hover:shadow-2xl hover:scale-[1.02] active:scale-95 relative overflow-hidden group"
-              style={{ background: 'linear-gradient(135deg, #16a34a, #15803d)' }}
+              disabled={submitting || (rentMode && !screenshotFile)}
+              className="w-full py-4 rounded-2xl font-extrabold text-white text-base shadow-xl transition-all hover:shadow-2xl hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
+              style={{ background: (rentMode && !screenshotFile) ? '#9ca3af' : 'linear-gradient(135deg, #16a34a, #15803d)' }}
             >
               <span className="relative z-10 flex items-center justify-center gap-2">
                 <span className="text-xl">✅</span>
-                Payment Done → Send Screenshot on WhatsApp
+                {submitting ? 'Submitting...' : rentMode && !screenshotFile ? 'Upload Screenshot First' : 'Payment Done !'}
               </span>
               <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
             </button>
 
             <p className="text-center text-xs text-gray-400 mt-3">
               Need help?{' '}
-              <a href="tel:9579828996" className="text-pink-600 font-bold hover:underline">
-                Call 9579828996
-              </a>
+              <a href="tel:9579828996" className="text-pink-600 font-bold hover:underline">Call 9579828996</a>
             </p>
           </div>
 
