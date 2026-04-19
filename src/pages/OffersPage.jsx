@@ -92,8 +92,6 @@ export default function OffersPage() {
         <div className="flex whitespace-nowrap animate-marquee">
           {[...Array(3)].map((_, i) => (
             <span key={i} className="inline-flex items-center gap-6 text-white font-bold text-sm px-8">
-              <span>⭐ Built by a CDAC student, for CDAC students</span>
-              <span className="opacity-60">•</span>
               <span>🚀 Your 6 months matter – we support your placement journey</span>
               <span className="opacity-60">•</span>
               <span>📍 Near IACSD CDAC Center · KnowIT Deccan · IET Center</span>
@@ -351,22 +349,6 @@ export default function OffersPage() {
             </p>
           </div>
 
-          {/* Why cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-            {[
-              { icon: '🚂', title: 'Railway Access', desc: 'Akurdi station at doorstep. Easy commute to Pune & PCMC.' },
-              { icon: '🚌', title: 'Bus Stand 50m', desc: 'PMPML & private buses to Hinjewadi, Wakad, Pimpri.' },
-              { icon: '🔒', title: '24/7 Security', desc: 'CCTV, secure entry. Safe for working professionals.' },
-              { icon: '📶', title: 'High-Speed WiFi', desc: 'Work from room. Fast internet for remote work.' },
-            ].map((item, i) => (
-              <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 hover:border-blue-400/40 transition-all duration-300 group">
-                <div className="text-3xl mb-2">{item.icon}</div>
-                <p className="font-bold text-white text-sm group-hover:text-blue-300 transition-colors">{item.title}</p>
-                <p className="text-gray-400 text-xs mt-1 leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-
           {/* Main pro card */}
           <div className="relative bg-gradient-to-br from-blue-700 via-cyan-700 to-teal-700 rounded-3xl p-7 sm:p-9 shadow-2xl overflow-hidden border border-blue-400/30 hover:shadow-[0_0_50px_rgba(59,130,246,0.4)] transition-all duration-500 mb-8">
             <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white/10" />
@@ -431,45 +413,6 @@ export default function OffersPage() {
 
         </div>
       </div> 
-
-      <div className="py-10 px-4 sm:px-6 bg-gray-50">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-8">
-            <span className="inline-block bg-cyan-100 text-cyan-600 text-xs font-bold px-3 py-1 rounded-full tracking-widest uppercase mb-3">
-              🥉 FLEXIBLE STAY
-            </span>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-800">Short Stay Options</h2>
-            <p className="text-gray-500 text-sm mt-2">Perfect for visitors, exam periods, or trial stays</p>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {[
-              
-              { label: '1 Week', icon: '🗓️', desc: 'PAY FOR 6,LIVE 7 DAY', price: '₹300/day'},
-              { label: '15 Days', icon: '📆', desc: '1200 off', price: '₹300/day' },
-              { label: '1 Month', price: 'Monthly rate', icon: '🏠', desc: 'Trial stay' },
-            ].map((item, i) => (
-              <div key={i}
-                className="bg-white rounded-2xl p-4 text-center shadow-sm border border-cyan-100 hover:shadow-lg hover:border-cyan-300 hover:-translate-y-1 transition-all duration-300 group flex flex-col">
-                <div className="text-3xl mb-2">{item.icon}</div>
-                <p className="font-extrabold text-gray-800 text-base group-hover:text-cyan-600 transition-colors">{item.label}</p>
-                <p className="text-cyan-600 font-bold text-sm">{item.price}</p>
-                <p className="text-gray-400 text-xs mt-1 mb-3">{item.desc}</p>
-                <button
-                  onClick={() => window.open(`tel:${PHONE}`, '_self')}
-                  className="mt-auto w-full py-2 bg-cyan-50 text-cyan-700 font-bold rounded-xl hover:bg-cyan-100 transition-all text-xs border border-cyan-200"
-                >
-                  📞 Enquire
-                </button>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-4 text-center">
-            <p className="text-xs text-gray-500">📍 Near Railway Station · No long-term commitment · Ideal for visitors & exams</p>
-          </div>
-        </div>
-      </div>
 
       {/* ══════════════════════════════════════════════════════════════════════
           7. FINAL CTA — Strong close

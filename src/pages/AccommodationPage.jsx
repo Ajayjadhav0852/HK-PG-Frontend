@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import RoomTypesSection from '../components/RoomTypesSection'
 import FooterSection from '../components/FooterSection'
 
@@ -79,7 +79,7 @@ export default function AccommodationPage({ rooms, onBook, onRoomUpdated }) {
         <RoomTypesSection
           onBook={onBook}
           roomsState={rooms}
-          onRoomUpdated={onRoomUpdated}
+          onRoomUpdated={onRoomUpdated} 
         />
       </div>
 
