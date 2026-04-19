@@ -123,10 +123,12 @@ export default function OffersPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
-              { icon: '📍', title: 'Near CDAC Centers', desc: 'Walking distance to IACSD, KnowIT Deccan & IET. Save 2–3 hours daily.' },
+              { icon: '📍', title: 'Near CDAC Centers', desc: 'Walking distance to IACSD, Easyn fast travel to KnowIT Deccan & IET. Save 2–3 hours daily.' },
               { icon: '📚', title: 'Study Environment', desc: 'Quiet rooms, no disturbance. Built for focused study and placement prep.' },
               { icon: '👥', title: 'Group Stay Options', desc: 'Come with 3-4 friends. Stay together, study together, grow together.' },
-              { icon: '🎯', title: 'Placement Focused', desc: 'Pre-CAT & PGDAC material support. Owner is a CDAC alumnus.' },
+              { icon: '🎯', title: 'Placement Focused', desc: 'Pre-CAT & PGDAC material support. Owner is a sunbeam CDAC alumni.' },
+               { icon: '🚂', title: 'Railway Access', desc: 'Akurdi station at doorstep. Easy commute to Pune & PCMC.' },
+              { icon: '🚌', title: 'Bus Stand 50m', desc: 'PMPML & private buses to Hinjewadi, Wakad, Pimpri.' },
             ].map((item, i) => (
               <div key={i} className="bg-white rounded-2xl p-5 shadow-sm border border-purple-100 hover:shadow-lg hover:border-purple-300 transition-all duration-300 group">
                 <div className="text-3xl mb-3">{item.icon}</div>
@@ -232,7 +234,7 @@ export default function OffersPage() {
               <h3 className="text-xl font-extrabold mb-2">👥 CDAC Group Offer</h3>
               <p className="text-white/80 text-sm mb-4">Come with 3-4 friends — stay together, study together</p>
               <div className="space-y-2 mb-5">
-                {['Stay together guarantee', 'Group discount available', 'Same room allocation', 'Shared study space'].map((f, i) => (
+                {['Stay together guarantee', 'Group discount available', 'Same room allocation'].map((f, i) => (
                   <div key={i} className="flex items-center gap-2 text-sm"><span className="text-green-300">✓</span>{f}</div>
                 ))}
               </div>
@@ -314,7 +316,7 @@ export default function OffersPage() {
             <div className="relative bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl p-5 text-white shadow-lg hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] hover:-translate-y-1 transition-all duration-300 border border-orange-400/30 overflow-hidden flex flex-col">
               <span className="inline-block bg-white/20 text-xs font-bold px-3 py-1 rounded-full mb-3 w-fit">💸 EARN MONEY</span>
               <h3 className="text-lg font-extrabold mb-1">👥 Refer & Earn ₹500</h3>
-              <p className="text-white/80 text-xs mb-3">After 3 months of stay</p>
+              <p className="text-white/80 text-xs mb-3">After 2 months of stay</p>
               <div className="space-y-1.5 mb-4 flex-1">
                 {['Refer friends to HK PG', '₹500 per successful referral', 'No limit on referrals'].map((f, i) => (
                   <div key={i} className="flex items-center gap-2 text-xs"><span className="text-orange-300">✓</span>{f}</div>
@@ -330,8 +332,106 @@ export default function OffersPage() {
       </div>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          6. SHORT STAY — Level 3 Small Cards
+          5.5 WORKING PROFESSIONALS — IT / Employees across Pune & PCMC
       ══════════════════════════════════════════════════════════════════════ */}
+      <div className="py-12 px-4 sm:px-6 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white">
+        <div className="max-w-5xl mx-auto">
+
+          {/* Header */}
+          <div className="text-center mb-10">
+            <span className="inline-block bg-blue-500/20 border border-blue-400/40 text-blue-300 text-xs font-bold px-4 py-1.5 rounded-full tracking-widest uppercase mb-4">
+              💼 WORKING PROFESSIONALS
+            </span>
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-3">
+              Perfect for <span className="text-blue-400">IT Employees</span> &{' '}
+              <span className="text-cyan-400">Professionals</span>
+            </h2>
+            <p className="text-gray-400 text-sm max-w-2xl mx-auto">
+              Serving professionals across Pune &amp; PCMC — Hinjewadi · Wakad · Pimpri · Chinchwad · Nigdi · Kothrud · Baner · Balewadi IT Park
+            </p>
+          </div>
+
+          {/* Why cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+            {[
+              { icon: '🚂', title: 'Railway Access', desc: 'Akurdi station at doorstep. Easy commute to Pune & PCMC.' },
+              { icon: '🚌', title: 'Bus Stand 50m', desc: 'PMPML & private buses to Hinjewadi, Wakad, Pimpri.' },
+              { icon: '🔒', title: '24/7 Security', desc: 'CCTV, secure entry. Safe for working professionals.' },
+              { icon: '📶', title: 'High-Speed WiFi', desc: 'Work from room. Fast internet for remote work.' },
+            ].map((item, i) => (
+              <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-4 hover:bg-white/10 hover:border-blue-400/40 transition-all duration-300 group">
+                <div className="text-3xl mb-2">{item.icon}</div>
+                <p className="font-bold text-white text-sm group-hover:text-blue-300 transition-colors">{item.title}</p>
+                <p className="text-gray-400 text-xs mt-1 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Main pro card */}
+          <div className="relative bg-gradient-to-br from-blue-700 via-cyan-700 to-teal-700 rounded-3xl p-7 sm:p-9 shadow-2xl overflow-hidden border border-blue-400/30 hover:shadow-[0_0_50px_rgba(59,130,246,0.4)] transition-all duration-500 mb-8">
+            <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white/10" />
+            <div className="absolute -bottom-6 -left-6 w-28 h-28 rounded-full bg-white/5" />
+            <div className="relative z-10">
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <span className="bg-yellow-400 text-yellow-900 text-xs font-extrabold px-3 py-1 rounded-full">💼 PRO PACKAGE</span>
+                <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">Pune &amp; PCMC</span>
+              </div>
+              <h3 className="text-2xl sm:text-3xl font-extrabold mb-2">🏢 Working Professional Package</h3>
+              <p className="text-white/80 text-sm mb-6">Comfortable, affordable living for IT employees &amp; professionals across Pune PCMC</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-7">
+                {[
+                  '✅ Near Akurdi Railway Station — easy commute',
+                  '✅ Bus stand 50m — Hinjewadi, Wakad, Pimpri routes',
+                  '✅ High-speed WiFi for remote work',
+                  '✅ 24/7 CCTV security & safe environment',
+                  '✅ Washing machine, power backup, RO water',
+                  '✅ Flexible stay — monthly, 3-month, 6-month plans',
+                  '✅ No brokerage — direct owner contact',
+                  '✅ Fixed rent — no surprise charges',
+                ].map((f, i) => (
+                  <div key={i} className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2.5 text-sm font-medium">
+                    {f}
+                  </div>
+                ))}
+              </div>
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <div>
+                  <p className="font-extrabold text-lg">👉 Comfortable stay for your professional life</p>
+                  <p className="text-white/70 text-sm">Affordable · Secure · Well-connected to all IT hubs</p>
+                </div>
+                <div className="flex gap-3 flex-shrink-0">
+                  <button
+                    onClick={() => navigate('/accommodation')}
+                    className="px-6 py-3 bg-white text-blue-700 font-extrabold rounded-xl hover:bg-yellow-300 hover:text-blue-900 transition-all transform hover:scale-105 shadow-lg text-sm"
+                  >
+                    🚀 Book Now
+                  </button>
+                  <a href={WA_LINK} target="_blank" rel="noreferrer"
+                    className="px-6 py-3 bg-green-500 text-white font-bold rounded-xl hover:bg-green-400 transition-all text-sm">
+                    💬 WhatsApp
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* IT Hubs */}
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
+            <p className="text-center text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
+              🗺️ Well Connected to IT Hubs &amp; Offices
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              {['🏢 Hinjewadi IT Park','🏢 Wakad','🏢 Pimpri-Chinchwad','🏢 Akurdi','🏢 Nigdi','🏢 Kothrud','🏢 Baner','🏢 Aundh','🚂 Pune Railway Station','🚂 Pimpri Station'].map((hub, i) => (
+                <span key={i} className="bg-white/10 border border-white/20 text-white/80 text-xs font-semibold px-3 py-1.5 rounded-full hover:bg-blue-500/20 hover:border-blue-400/40 transition-all cursor-default">
+                  {hub}
+                </span>
+              ))}
+            </div>
+          </div>
+
+        </div>
+      </div> 
+
       <div className="py-10 px-4 sm:px-6 bg-gray-50">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8">
@@ -344,9 +444,9 @@ export default function OffersPage() {
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
-              { label: '1 Day', price: '₹300/day', icon: '📅', desc: 'Quick visit' },
-              { label: '1 Week', price: '₹300/day', icon: '🗓️', desc: '7 days stay' },
-              { label: '15 Days', price: '₹300/day', icon: '📆', desc: 'Exam period' },
+              
+              { label: '1 Week', icon: '🗓️', desc: 'PAY FOR 6,LIVE 7 DAY', price: '₹300/day'},
+              { label: '15 Days', icon: '📆', desc: '1200 off', price: '₹300/day' },
               { label: '1 Month', price: 'Monthly rate', icon: '🏠', desc: 'Trial stay' },
             ].map((item, i) => (
               <div key={i}
