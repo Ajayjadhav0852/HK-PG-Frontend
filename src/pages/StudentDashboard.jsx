@@ -273,6 +273,83 @@ export default function StudentDashboard() {
           </div>
         )}
 
+        {/* ── Payment Status ────────────────────────────────────────────────── */}
+        {myApplications.some(a => a.status === 'CONFIRMED') && (() => {
+          const confirmedApp = myApplications.find(a => a.status === 'CONFIRMED')
+          const depositStatus = confirmedApp?.depositStatus || 'PENDING'
+          const rentStatus    = confirmedApp?.rentStatus    || 'PENDING'
+
+          const statusConfig = {
+            RECEIVED: { label: '✅ Received',  bg: 'bg-green-50',  border: 'border-green-200', text: 'text-green-700', badge: 'bg-green-100 text-green-700' },
+            OVERDUE:  { label: '🔴 Overdue',   bg: 'bg-red-50',    border: 'border-red-200',   text: 'text-red-600',   badge: 'bg-red-100 text-red-600' },
+            PENDING:  { label: '⏳ Pending',   bg: 'bg-yellow-50', border: 'border-yellow-200',text: 'text-yellow-700',badge: 'bg-yellow-100 text-yellow-700' },
+          }
+
+          const dep = statusConfig[depositStatus] || statusConfig.PENDING
+          const ren = statusConfig[rentStatus]    || statusConfig.PENDING
+
+          return (
+            <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+              <h2 className="font-extrabold text-gray-800 text-base mb-4">💰 Payment Status</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                {/* Deposit */}
+                <div className={`rounded-xl border p-4 ${dep.bg} ${dep.border}`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-sm font-bold text-gray-700">🏦 Security Deposit</p>
+                    <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${dep.badge}`}>
+                      {dep.label}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    Amount: <strong>₹{Number(confirmedApp?.depositAmount || 0).toLocaleString('en-IN')}</strong>
+                  </p>
+                  {depositStatus === 'RECEIVED' && (
+                    <p className="text-xs text-green-600 mt-1 font-semibold">✓ Deposit confirmed by admin</p>
+                  )}
+                  {depositStatus === 'OVERDUE' && (
+                    <p className="text-xs text-red-600 mt-1 font-semibold">⚠️ Please pay your deposit immediately</p>
+                  )}
+                  {depositStatus === 'PENDING' && (
+                    <p className="text-xs text-yellow-600 mt-1">Awaiting admin confirmation</p>
+                  )}
+                </div>
+
+                {/* Rent */}
+                <div className={`rounded-xl border p-4 ${ren.bg} ${ren.border}`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-sm font-bold text-gray-700">💸 Monthly Rent</p>
+                    <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${ren.badge}`}>
+                      {ren.label}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    Monthly: <strong>₹{Number(confirmedApp?.monthlyPrice || 0).toLocaleString('en-IN')}</strong>
+                  </p>
+                  {rentStatus === 'RECEIVED' && (
+                    <p className="text-xs text-green-600 mt-1 font-semibold">✓ Last rent payment confirmed</p>
+                  )}
+                  {rentStatus === 'OVERDUE' && (
+                    <p className="text-xs text-red-600 mt-1 font-semibold">⚠️ Rent overdue — pay before 5th to avoid late fees</p>
+                  )}
+                  {rentStatus === 'PENDING' && (
+                    <p className="text-xs text-yellow-600 mt-1">Due before 5th of every month</p>
+                  )}
+                </div>
+
+              </div>
+
+              {/* Note */}
+              <div className="mt-4 bg-blue-50 border border-blue-200 rounded-xl p-3">
+                <p className="text-xs text-blue-700">
+                  📌 <strong>Note:</strong> Always pay rent through the HK PG application only. 
+                  Admin updates your payment status after verification.
+                </p>
+              </div>
+            </div>
+          )
+        })()}
+
         {/* Summary cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {[
