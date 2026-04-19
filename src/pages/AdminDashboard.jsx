@@ -98,10 +98,7 @@ export default function AdminDashboard() {
   const handlePaymentStatusChange = async (appId, field, value, applicantName) => {
     setActionLoading(`pay-${appId}-${field}`)
     try {
-      const payload = field === 'deposit'
-        ? { depositStatus: value }
-        : { rentStatus: value }
-      await adminApi.updatePaymentStatus(appId, payload.depositStatus, payload.rentStatus)
+      await adminApi.updatePaymentStatus(appId, field, value)
       await fetchData(true)
       showToast.success('Payment Status Updated', `${applicantName}'s ${field} → ${value}`)
     } catch (e) {
