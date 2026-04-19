@@ -1,168 +1,416 @@
-import { useState } from "react";
-import FooterSection from "../components/FooterSection";
+import { useNavigate } from 'react-router-dom'
+import FooterSection from '../components/FooterSection'
 
-/* ---------------- CDAC SPECIAL SECTION ---------------- */
+const PHONE = '9579828996'
+const WA_LINK = `https://wa.me/91${PHONE}?text=${encodeURIComponent('Hi! I am interested in booking a room at HK PG Akurdi.')}`
 
-function CdacSpecialSection() {
-  const [activeTab, setActiveTab] = useState("benefits");
-
-  const benefits = [
-    { icon: "🎯", title: "Placement Focused", desc: "Environment designed for CDAC success" },
-    { icon: "📚", title: "Study Material", desc: "Pre-CAT & PGDAC support" },
-    { icon: "🤫", title: "Silent Environment", desc: "Distraction-free study space" },
-    { icon: "⚡", title: "Save Time", desc: "Near CDAC centers" },
-    { icon: "👥", title: "Group Stay", desc: "Stay with 3-4 friends" },
-    { icon: "📅", title: "Flexible Stay", desc: "6 months, no lock-in" },
-  ];
-
-  const testimonials = [
-    {
-      name: "Rahul S.",
-      text: "Perfect location. Got placed in Amdocs. Material really helped.",
-    },
-    {
-      name: "Sanket Patil",
-      text: "Group stay helped us study together. Best decision.",
-    },
-  ];
-
+// ── Reusable Book Now button ──────────────────────────────────────────────────
+function BookBtn({ label = '🚀 Book Now', className = '' }) {
+  const navigate = useNavigate()
   return (
-    <div className="bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white py-12 px-4">
-      <div className="max-w-5xl mx-auto">
-
-        {/* HEADER */}
-        <div className="text-center mb-8">
-          <span className="bg-white/20 px-4 py-1 rounded-full text-sm font-bold">
-            ⭐ CDAC STUDENT SPECIAL
-          </span>
-
-          <h1 className="text-3xl md:text-4xl font-extrabold mt-4 leading-tight">
-            Built by a CDAC student,<br />
-            for CDAC students
-          </h1>
-
-          <p className="text-white/80 mt-3 text-sm md:text-base">
-            "Your 6 months matter – we support your placement journey"
-          </p>
-        </div>
-
-        {/* TABS */}
-        <div className="flex justify-center mb-6">
-          <div className="bg-white/10 rounded-full p-1 flex">
-            <button
-              onClick={() => setActiveTab("benefits")}
-              className={`px-5 py-2 rounded-full text-sm ${
-                activeTab === "benefits"
-                  ? "bg-white text-black"
-                  : "text-white/70"
-              }`}
-            >
-              Benefits
-            </button>
-            <button
-              onClick={() => setActiveTab("stories")}
-              className={`px-5 py-2 rounded-full text-sm ${
-                activeTab === "stories"
-                  ? "bg-white text-black"
-                  : "text-white/70"
-              }`}
-            >
-              Success Stories
-            </button>
-          </div>
-        </div>
-
-        {/* CONTENT */}
-        {activeTab === "benefits" && (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {benefits.map((b, i) => (
-              <div key={i} className="bg-white/10 p-4 rounded-xl">
-                <div className="text-xl">{b.icon}</div>
-                <h3 className="font-bold text-sm mt-2">{b.title}</h3>
-                <p className="text-xs text-white/70">{b.desc}</p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {activeTab === "stories" && (
-          <div className="space-y-4">
-            {testimonials.map((t, i) => (
-              <div key={i} className="bg-white/10 p-4 rounded-xl">
-                <p className="text-sm italic">"{t.text}"</p>
-                <p className="text-xs mt-2 font-semibold">{t.name}</p>
-              </div>
-            ))}
-          </div>
-        )}
-
-      </div>
-    </div>
-  );
+    <button
+      onClick={() => navigate('/accommodation')}
+      className={`px-6 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold rounded-xl hover:opacity-90 transition-all transform hover:scale-105 shadow-lg text-sm ${className}`}
+    >
+      {label}
+    </button>
+  )
 }
-
-/* ---------------- OFFER CARD ---------------- */
-
-function OfferCard({ title, desc }) {
-  return (
-    <div className="bg-white rounded-xl p-4 shadow-sm border hover:shadow-md transition">
-      <h3 className="font-bold text-sm mb-1">{title}</h3>
-      <p className="text-xs text-gray-600">{desc}</p>
-    </div>
-  );
-}
-
-/* ---------------- MAIN PAGE ---------------- */
 
 export default function OffersPage() {
+  const navigate = useNavigate()
+
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="min-h-screen flex flex-col bg-white">
 
-      {/* HERO */}
-      <CdacSpecialSection />
+      {/* ══════════════════════════════════════════════════════════════════════
+          1. HERO — Sharp, urgent, CDAC-first
+      ══════════════════════════════════════════════════════════════════════ */}
+      <div className="relative w-full bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] text-white overflow-hidden">
+        {/* Decorative blobs */}
+        <div className="absolute top-0 left-0 w-72 h-72 bg-purple-600/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-pink-600/20 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
 
-      {/* OFFERS */}
-      <div className="px-4 py-10 bg-gray-50">
-        <div className="max-w-5xl mx-auto">
-
-          {/* CDAC OFFERS */}
-          <h2 className="text-xl font-bold mb-4">🚀 CDAC Offers</h2>
-          <div className="grid md:grid-cols-2 gap-4 mb-8">
-            <OfferCard title="6 Month Stay Plan" desc="Flexible stay for CDAC batch" />
-            <OfferCard title="Placement Material" desc="Support for interviews & prep" />
-            <OfferCard title="Group Stay" desc="4-5 friends together" />
-            <OfferCard title="Near CDAC" desc="Save travel time" />
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+          {/* Badge */}
+          <div className="flex justify-center mb-6">
+            <span className="inline-flex items-center gap-2 bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 text-xs font-bold px-4 py-1.5 rounded-full tracking-widest uppercase">
+              ⭐ CDAC STUDENT SPECIAL
+            </span>
           </div>
 
-          {/* STUDENT OFFERS */}
-          <h2 className="text-xl font-bold mb-4">🎓 Student Offers</h2>
-          <div className="grid md:grid-cols-3 gap-4 mb-8">
-            <OfferCard title="Pay 11 Months" desc="Stay 12 months" />
-            <OfferCard title="Refer & Earn" desc="₹500 per friend" />
-            <OfferCard title="Long Term Stay" desc="Best for college students" />
+          {/* Headline */}
+          <h1 className="text-center text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6">
+            Built by a{' '}
+            <span className="text-yellow-300">CDAC student</span>,<br />
+            for{' '}
+            <span className="text-pink-400">CDAC students</span>
+          </h1>
+
+          {/* Value props */}
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
+            {[
+              '✔ Save 2–3 hours daily travel',
+              '✔ Focus only on study & placement',
+              '✔ Quiet + study-friendly environment',
+            ].map((v, i) => (
+              <span key={i} className="bg-white/10 backdrop-blur-sm border border-white/20 text-white/90 text-sm font-semibold px-4 py-2 rounded-full">
+                {v}
+              </span>
+            ))}
           </div>
 
-          {/* FLEXIBLE */}
-          <h2 className="text-xl font-bold mb-4">📅 Flexible Stay</h2>
-          <div className="grid md:grid-cols-1 gap-4 mb-10">
-            <OfferCard title="Short Stay" desc="1 day / 1 week / 15 days options" />
+          {/* Urgency */}
+          <div className="flex justify-center mb-8">
+            <span className="inline-flex items-center gap-2 bg-red-500/80 text-white text-sm font-bold px-5 py-2 rounded-full animate-pulse">
+              🔥 Limited beds available — Book fast!
+            </span>
           </div>
 
-          {/* CTA */}
-          <div className="text-center bg-white p-6 rounded-xl shadow">
-            <h3 className="font-bold text-lg mb-2">Ready to Book?</h3>
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => (window.location.href = "/accommodation")}
-              className="bg-pink-500 text-white px-6 py-2 rounded-lg font-bold"
+              onClick={() => navigate('/accommodation')}
+              className="px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-extrabold rounded-2xl hover:opacity-90 transition-all transform hover:scale-105 shadow-2xl text-base"
             >
-              View Rooms
+              🚀 Book Your Seat Now
             </button>
+            <a
+              href={`tel:${PHONE}`}
+              className="px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-bold rounded-2xl hover:bg-white/20 transition-all text-base text-center"
+            >
+              📞 Call Now — {PHONE}
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          MARQUEE BAR
+      ══════════════════════════════════════════════════════════════════════ */}
+      <div className="w-full overflow-hidden bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 py-3">
+        <div className="flex whitespace-nowrap animate-marquee">
+          {[...Array(3)].map((_, i) => (
+            <span key={i} className="inline-flex items-center gap-6 text-white font-bold text-sm px-8">
+              <span>⭐ Built by a CDAC student, for CDAC students</span>
+              <span className="opacity-60">•</span>
+              <span>🚀 Your 6 months matter – we support your placement journey</span>
+              <span className="opacity-60">•</span>
+              <span>📍 Near IACSD CDAC Center · KnowIT Deccan · IET Center</span>
+              <span className="opacity-60">•</span>
+              <span>🏠 Newly Opened PG · Prime Location · Akurdi, Pune</span>
+              <span className="opacity-60">•</span>
+              <span>👥 Group Stay Available · 3-4 Friends Together</span>
+              <span className="opacity-60">•</span>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          2. WHY THIS PG — Trust builder
+      ══════════════════════════════════════════════════════════════════════ */}
+      <div className="bg-gradient-to-br from-purple-50 to-pink-50 py-14 px-4 sm:px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <span className="inline-block bg-purple-100 text-purple-600 text-xs font-bold px-3 py-1 rounded-full tracking-widest uppercase mb-3">
+              WHY CHOOSE US
+            </span>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800">
+              Why students choose <span className="text-purple-600">HK PG?</span>
+            </h2>
           </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              { icon: '📍', title: 'Near CDAC Centers', desc: 'Walking distance to IACSD, KnowIT Deccan & IET. Save 2–3 hours daily.' },
+              { icon: '📚', title: 'Study Environment', desc: 'Quiet rooms, no disturbance. Built for focused study and placement prep.' },
+              { icon: '👥', title: 'Group Stay Options', desc: 'Come with 3-4 friends. Stay together, study together, grow together.' },
+              { icon: '🎯', title: 'Placement Focused', desc: 'Pre-CAT & PGDAC material support. Owner is a CDAC alumnus.' },
+            ].map((item, i) => (
+              <div key={i} className="bg-white rounded-2xl p-5 shadow-sm border border-purple-100 hover:shadow-lg hover:border-purple-300 transition-all duration-300 group">
+                <div className="text-3xl mb-3">{item.icon}</div>
+                <h3 className="font-bold text-gray-800 text-sm mb-2 group-hover:text-purple-600 transition-colors">{item.title}</h3>
+                <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          3. CDAC MAIN OFFER — Level 1 Big Card (full-width hero card)
+      ══════════════════════════════════════════════════════════════════════ */}
+      <div className="py-14 px-4 sm:px-6 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-8">
+            <span className="inline-block bg-blue-100 text-blue-600 text-xs font-bold px-3 py-1 rounded-full tracking-widest uppercase mb-3">
+              🥇 FEATURED OFFER
+            </span>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800">
+              CDAC <span className="text-blue-600">Success Package</span>
+            </h2>
+          </div>
+
+          {/* BIG HERO CARD */}
+          <div className="relative bg-gradient-to-br from-blue-700 via-purple-700 to-pink-700 rounded-3xl p-8 sm:p-10 text-white shadow-2xl overflow-hidden group hover:shadow-[0_0_60px_rgba(139,92,246,0.4)] transition-all duration-500 border-2 border-purple-400/30">
+            {/* Background pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-white/20 translate-x-1/3 -translate-y-1/3" />
+              <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-white/10 -translate-x-1/4 translate-y-1/4" />
+            </div>
+
+            <div className="relative z-10">
+              {/* Badge + title */}
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <span className="bg-yellow-400 text-yellow-900 text-xs font-extrabold px-3 py-1 rounded-full">🎯 CDAC SPECIAL</span>
+                <span className="bg-red-500/80 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">🔥 Limited Beds</span>
+              </div>
+
+              <h3 className="text-3xl sm:text-4xl font-extrabold mb-2">🎯 CDAC Success Package</h3>
+              <p className="text-white/80 text-base mb-6">Designed for placement success — everything a CDAC student needs</p>
+
+              {/* Features grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+                {[
+                  '✅ 6-month flexible stay plan',
+                  '✅ Pre-CAT & PGDAC placement material support',
+                  '✅ Quiet, distraction-free study rooms',
+                  '✅ Near IACSD CDAC Center',
+                  '✅ Easy travel to KnowIT Deccan & IET Center',
+                  '✅ Railway at doorstep · Bus stand 50m away',
+                  '✅ Group stay option (3-4 friends together)',
+                  '✅ No long lock-in period',
+                ].map((f, i) => (
+                  <div key={i} className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2.5 text-sm font-medium">
+                    {f}
+                  </div>
+                ))}
+              </div>
+
+              {/* Highlight + CTA */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                <div>
+                  <p className="font-extrabold text-lg">👉 Designed for Placement Success</p>
+                  <p className="text-white/70 text-sm">"Your 6 months matter – we support your placement journey"</p>
+                </div>
+                <div className="flex gap-3 flex-shrink-0">
+                  <button
+                    onClick={() => navigate('/accommodation')}
+                    className="px-6 py-3 bg-white text-purple-700 font-extrabold rounded-xl hover:bg-yellow-300 hover:text-purple-900 transition-all transform hover:scale-105 shadow-lg text-sm"
+                  >
+                    🚀 Book Now
+                  </button>
+                  <a href={WA_LINK} target="_blank" rel="noreferrer"
+                    className="px-6 py-3 bg-green-500 text-white font-bold rounded-xl hover:bg-green-400 transition-all text-sm">
+                    💬 WhatsApp
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          4. CDAC OTHER OFFERS — Level 2 Medium Cards
+      ══════════════════════════════════════════════════════════════════════ */}
+      <div className="py-10 px-4 sm:px-6 bg-gray-50">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-8">
+            <span className="inline-block bg-green-100 text-green-600 text-xs font-bold px-3 py-1 rounded-full tracking-widest uppercase mb-3">
+              🥈 CDAC OFFERS
+            </span>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-800">More CDAC Benefits</h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {/* Group Offer */}
+            <div className="relative bg-gradient-to-br from-green-600 to-teal-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] hover:-translate-y-1 transition-all duration-300 border border-green-400/30 overflow-hidden group">
+              <div className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-white/10" />
+              <span className="inline-block bg-white/20 text-xs font-bold px-3 py-1 rounded-full mb-3">👥 GROUP SPECIAL</span>
+              <h3 className="text-xl font-extrabold mb-2">👥 CDAC Group Offer</h3>
+              <p className="text-white/80 text-sm mb-4">Come with 3-4 friends — stay together, study together</p>
+              <div className="space-y-2 mb-5">
+                {['Stay together guarantee', 'Group discount available', 'Same room allocation', 'Shared study space'].map((f, i) => (
+                  <div key={i} className="flex items-center gap-2 text-sm"><span className="text-green-300">✓</span>{f}</div>
+                ))}
+              </div>
+              <button onClick={() => navigate('/accommodation')}
+                className="w-full py-2.5 bg-white text-green-700 font-bold rounded-xl hover:bg-green-50 transition-all text-sm">
+                🚀 Book Now
+              </button>
+            </div>
+
+            {/* Placement Material */}
+            <div className="relative bg-gradient-to-br from-indigo-600 to-blue-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-[0_0_30px_rgba(99,102,241,0.4)] hover:-translate-y-1 transition-all duration-300 border border-indigo-400/30 overflow-hidden group">
+              <div className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-white/10" />
+              <span className="inline-block bg-white/20 text-xs font-bold px-3 py-1 rounded-full mb-3">📚 STUDY SUPPORT</span>
+              <h3 className="text-xl font-extrabold mb-2">📚 Placement Material Support</h3>
+              <p className="text-white/80 text-sm mb-4">Get the edge you need for CDAC placement</p>
+              <div className="space-y-2 mb-5">
+                {['Pre-CAT material support', 'PGDAC placement resources', 'Silent study environment', 'Placement-focused atmosphere'].map((f, i) => (
+                  <div key={i} className="flex items-center gap-2 text-sm"><span className="text-blue-300">✓</span>{f}</div>
+                ))}
+              </div>
+              <button onClick={() => navigate('/accommodation')}
+                className="w-full py-2.5 bg-white text-indigo-700 font-bold rounded-xl hover:bg-indigo-50 transition-all text-sm">
+                🚀 Book Now
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          5. STUDENT OFFERS — Level 2 Medium Cards
+      ══════════════════════════════════════════════════════════════════════ */}
+      <div className="py-10 px-4 sm:px-6 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-8">
+            <span className="inline-block bg-pink-100 text-pink-600 text-xs font-bold px-3 py-1 rounded-full tracking-widest uppercase mb-3">
+              🥈 STUDENT OFFERS
+            </span>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-800">
+              For <span className="text-pink-600">Degree Students</span>
+            </h2>
+            <p className="text-gray-500 text-sm mt-2">DY Patil · PCCOE · PCET · and all colleges</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            {/* Annual Saver */}
+            <div className="relative bg-gradient-to-br from-pink-600 to-rose-600 rounded-2xl p-5 text-white shadow-lg hover:shadow-[0_0_30px_rgba(236,72,153,0.4)] hover:-translate-y-1 transition-all duration-300 border border-pink-400/30 overflow-hidden flex flex-col">
+              <span className="inline-block bg-white/20 text-xs font-bold px-3 py-1 rounded-full mb-3 w-fit">💰 BEST VALUE</span>
+              <h3 className="text-lg font-extrabold mb-1">🎉 Annual Saver Plan</h3>
+              <p className="text-white/80 text-xs mb-3">Stay 12 months, pay ONLY for 11</p>
+              <div className="space-y-1.5 mb-4 flex-1">
+                {['Save 1 month rent annually', 'Fixed rent for full year', 'Long-term stability'].map((f, i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs"><span className="text-pink-300">✓</span>{f}</div>
+                ))}
+              </div>
+              <button onClick={() => navigate('/accommodation')}
+                className="w-full py-2 bg-white text-pink-700 font-bold rounded-xl hover:bg-pink-50 transition-all text-xs mt-auto">
+                🚀 Book Now
+              </button>
+            </div>
+
+            {/* College Special */}
+            <div className="relative bg-gradient-to-br from-violet-600 to-purple-600 rounded-2xl p-5 text-white shadow-lg hover:shadow-[0_0_30px_rgba(139,92,246,0.4)] hover:-translate-y-1 transition-all duration-300 border border-violet-400/30 overflow-hidden flex flex-col">
+              <span className="inline-block bg-white/20 text-xs font-bold px-3 py-1 rounded-full mb-3 w-fit">🏫 COLLEGE SPECIAL</span>
+              <h3 className="text-lg font-extrabold mb-1">🏫 College Student Special</h3>
+              <p className="text-white/80 text-xs mb-3">DY Patil · PCCOE · PCET students</p>
+              <div className="space-y-1.5 mb-4 flex-1">
+                {['Safe & comfortable living', 'Long-term stay (1-4 years)', 'Study-focused atmosphere'].map((f, i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs"><span className="text-violet-300">✓</span>{f}</div>
+                ))}
+              </div>
+              <button onClick={() => navigate('/accommodation')}
+                className="w-full py-2 bg-white text-violet-700 font-bold rounded-xl hover:bg-violet-50 transition-all text-xs mt-auto">
+                🚀 Book Now
+              </button>
+            </div>
+
+            {/* Refer & Earn */}
+            <div className="relative bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl p-5 text-white shadow-lg hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] hover:-translate-y-1 transition-all duration-300 border border-orange-400/30 overflow-hidden flex flex-col">
+              <span className="inline-block bg-white/20 text-xs font-bold px-3 py-1 rounded-full mb-3 w-fit">💸 EARN MONEY</span>
+              <h3 className="text-lg font-extrabold mb-1">👥 Refer & Earn ₹500</h3>
+              <p className="text-white/80 text-xs mb-3">After 3 months of stay</p>
+              <div className="space-y-1.5 mb-4 flex-1">
+                {['Refer friends to HK PG', '₹500 per successful referral', 'No limit on referrals'].map((f, i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs"><span className="text-orange-300">✓</span>{f}</div>
+                ))}
+              </div>
+              <button onClick={() => navigate('/accommodation')}
+                className="w-full py-2 bg-white text-orange-700 font-bold rounded-xl hover:bg-orange-50 transition-all text-xs mt-auto">
+                🚀 Book Now
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          6. SHORT STAY — Level 3 Small Cards
+      ══════════════════════════════════════════════════════════════════════ */}
+      <div className="py-10 px-4 sm:px-6 bg-gray-50">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-8">
+            <span className="inline-block bg-cyan-100 text-cyan-600 text-xs font-bold px-3 py-1 rounded-full tracking-widest uppercase mb-3">
+              🥉 FLEXIBLE STAY
+            </span>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-800">Short Stay Options</h2>
+            <p className="text-gray-500 text-sm mt-2">Perfect for visitors, exam periods, or trial stays</p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {[
+              { label: '1 Day', price: '₹300/day', icon: '📅', desc: 'Quick visit' },
+              { label: '1 Week', price: '₹300/day', icon: '🗓️', desc: '7 days stay' },
+              { label: '15 Days', price: '₹300/day', icon: '📆', desc: 'Exam period' },
+              { label: '1 Month', price: 'Monthly rate', icon: '🏠', desc: 'Trial stay' },
+            ].map((item, i) => (
+              <div key={i}
+                className="bg-white rounded-2xl p-4 text-center shadow-sm border border-cyan-100 hover:shadow-lg hover:border-cyan-300 hover:-translate-y-1 transition-all duration-300 group flex flex-col">
+                <div className="text-3xl mb-2">{item.icon}</div>
+                <p className="font-extrabold text-gray-800 text-base group-hover:text-cyan-600 transition-colors">{item.label}</p>
+                <p className="text-cyan-600 font-bold text-sm">{item.price}</p>
+                <p className="text-gray-400 text-xs mt-1 mb-3">{item.desc}</p>
+                <button
+                  onClick={() => window.open(`tel:${PHONE}`, '_self')}
+                  className="mt-auto w-full py-2 bg-cyan-50 text-cyan-700 font-bold rounded-xl hover:bg-cyan-100 transition-all text-xs border border-cyan-200"
+                >
+                  📞 Enquire
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4 text-center">
+            <p className="text-xs text-gray-500">📍 Near Railway Station · No long-term commitment · Ideal for visitors & exams</p>
+          </div>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          7. FINAL CTA — Strong close
+      ══════════════════════════════════════════════════════════════════════ */}
+      <div className="py-14 px-4 sm:px-6 bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] text-white">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl sm:text-4xl font-extrabold mb-3">
+            🚀 Book Your Room Now
+          </h2>
+          <p className="text-white/70 text-base mb-6">
+            Limited beds available · Fast booking · No brokerage · Direct owner contact
+          </p>
+
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
+            {['✔ Limited beds', '✔ Fast booking', '✔ No brokerage', '✔ Direct owner'].map((v, i) => (
+              <span key={i} className="bg-white/10 border border-white/20 text-white/90 text-sm font-semibold px-4 py-1.5 rounded-full">
+                {v}
+              </span>
+            ))}
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => navigate('/accommodation')}
+              className="px-10 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-extrabold rounded-2xl hover:opacity-90 transition-all transform hover:scale-105 shadow-2xl text-base"
+            >
+              🏠 View Available Rooms
+            </button>
+            <a href={`tel:${PHONE}`}
+              className="px-10 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-bold rounded-2xl hover:bg-white/20 transition-all text-base text-center">
+              📞 Call Now
+            </a>
+            <a href={WA_LINK} target="_blank" rel="noreferrer"
+              className="px-10 py-4 bg-green-500 text-white font-bold rounded-2xl hover:bg-green-400 transition-all text-base text-center">
+              💬 WhatsApp
+            </a>
+          </div>
         </div>
       </div>
 
       <FooterSection />
     </div>
-  );
+  )
 }
