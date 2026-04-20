@@ -1,6 +1,7 @@
 import LocationInfo from '../components/LocationInfo'
 import RulesPolicies from '../components/RulesPolicies'
 import FooterSection from '../components/FooterSection'
+import { PhoneIcon, BuildingIcon, WhatsAppIcon, MapIcon, TrainIcon, MapPinIcon, ArrowRightIcon } from '../components/Icons'
 
 export default function ContactPage() {
   return (
@@ -32,9 +33,9 @@ export default function ContactPage() {
           {/* Owner 1 */}
           <a href="tel:9579828996"
             className="bg-white rounded-2xl shadow-sm p-6 flex items-center gap-4 hover:shadow-md transition group">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white"
               style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>
-              📞
+              <PhoneIcon className="w-6 h-6" />
             </div>
             <div>
               <p className="text-xs text-gray-400 font-medium">Owner</p>
@@ -47,9 +48,9 @@ export default function ContactPage() {
           {/* Owner 2 */}
           <a href="tel:9096398032"
             className="bg-white rounded-2xl shadow-sm p-6 flex items-center gap-4 hover:shadow-md transition group">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white"
               style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>
-              📞
+              <PhoneIcon className="w-6 h-6" />
             </div>
             <div>
               <p className="text-xs text-gray-400 font-medium">Owner</p>
@@ -62,9 +63,9 @@ export default function ContactPage() {
           {/* PG Management */}
           <a href="tel:9022481019"
             className="bg-white rounded-2xl shadow-sm p-6 flex items-center gap-4 hover:shadow-md transition group sm:col-span-2">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white"
               style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>
-              🏢
+              <BuildingIcon className="w-6 h-6" />
             </div>
             <div>
               <p className="text-xs text-gray-400 font-medium">PG Management</p>
@@ -81,8 +82,8 @@ export default function ContactPage() {
             rel="noreferrer"
             className="bg-white rounded-2xl shadow-sm p-6 flex items-center gap-4 hover:shadow-md transition group sm:col-span-2"
           >
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl bg-green-500">
-              💬
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white bg-green-500">
+              <WhatsAppIcon className="w-6 h-6" />
             </div>
             <div className="flex-1">
               <p className="text-xs text-gray-400 font-medium">WhatsApp</p>
@@ -90,7 +91,7 @@ export default function ContactPage() {
                 Chat with us on WhatsApp
               </p>
             </div>
-            <span className="text-green-500 font-bold text-sm">→</span>
+            <ArrowRightIcon className="w-5 h-5 text-green-500" />
           </a>
 
         </div>
@@ -99,28 +100,38 @@ export default function ContactPage() {
 
         {/* IT Hubs & Connectivity */}
         <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
-          <h3 className="font-extrabold text-gray-800 text-base mb-4">🗺️ Well Connected to IT Hubs &amp; Offices</h3>
+          <div className="flex items-center gap-2 mb-4">
+            <MapIcon className="w-5 h-5 text-purple-600" />
+            <h3 className="font-extrabold text-gray-800 text-base">Well Connected to IT Hubs &amp; Offices</h3>
+          </div>
           <div className="flex flex-wrap gap-2">
             {[
-              '🏢 Hinjewadi IT Park',
-              '🏢 Wakad',
-              '🏢 Pimpri-Chinchwad',
-              '🏢 Akurdi',
-              '🏢 Nigdi',
-              '🏢 Kothrud',
-              '🏢 Baner',
-              '🏢 Aundh',
-              '🏢 Balewadi',
-              '🚂 Pune Railway Station',
-              '🚂 Pimpri Station',
-              '🚂 Akurdi Station',
+              { label: 'Hinjewadi IT Park', type: 'office' },
+              { label: 'Wakad', type: 'office' },
+              { label: 'Pimpri-Chinchwad', type: 'office' },
+              { label: 'Akurdi', type: 'office' },
+              { label: 'Nigdi', type: 'office' },
+              { label: 'Kothrud', type: 'office' },
+              { label: 'Baner', type: 'office' },
+              { label: 'Aundh', type: 'office' },
+              { label: 'Balewadi', type: 'office' },
+              { label: 'Pune Railway Station', type: 'train' },
+              { label: 'Pimpri Station', type: 'train' },
+              { label: 'Akurdi Station', type: 'train' },
             ].map((hub, i) => (
-              <span key={i} className="bg-purple-50 border border-purple-200 text-purple-700 text-xs font-semibold px-3 py-1.5 rounded-full hover:bg-purple-100 transition-all cursor-default">
-                {hub}
+              <span key={i} className="inline-flex items-center gap-1.5 bg-purple-50 border border-purple-200 text-purple-700 text-xs font-semibold px-3 py-1.5 rounded-full hover:bg-purple-100 transition-all cursor-default">
+                {hub.type === 'train'
+                  ? <TrainIcon className="w-3.5 h-3.5" />
+                  : <BuildingIcon className="w-3.5 h-3.5" />
+                }
+                {hub.label}
               </span>
             ))}
           </div>
-          <p className="text-xs text-gray-400 mt-3">📍 Near Akurdi Railway Station — easy commute to all major IT hubs across Pune &amp; PCMC</p>
+          <div className="flex items-center gap-1.5 mt-3">
+            <MapPinIcon className="w-3.5 h-3.5 text-gray-400" />
+            <p className="text-xs text-gray-400">Near Akurdi Railway Station — easy commute to all major IT hubs across Pune &amp; PCMC</p>
+          </div>
         </div>
 
         <RulesPolicies />
