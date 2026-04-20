@@ -10,6 +10,7 @@ import { roomApi } from './services/api'
 import HomePage          from './pages/HomePage'
 import FacilitiesPage    from './pages/FacilitiesPage'
 import AccommodationPage from './pages/AccommodationPage'
+import GalleryPage       from './pages/GalleryPage'
 import OffersPage        from './pages/OffersPage'
 import RulesAndRegulationsPage from './pages/RulesAndRegulationsPage'
 import PayRentPage       from './pages/PayRentPage'
@@ -140,7 +141,7 @@ function AppRoutes() {
   }, [fetchRooms])
 
   return (
-    <div className="pt-16">
+    <div className="pt-[72px]">
       {/* Header rendered ONCE here — outside AnimatePresence/motion.div stacking context */}
       <Header />
       <AnimatePresence mode="wait" initial={false}>
@@ -157,6 +158,9 @@ function AppRoutes() {
             <PageWrapper>
               <AccommodationPage rooms={rooms} onBook={goToRoomDetail} onRoomUpdated={fetchRooms} />
             </PageWrapper>
+          } />
+          <Route path="/gallery" element={
+            <PageWrapper><GalleryPage /></PageWrapper>
           } />
           <Route path="/offers" element={
             <PageWrapper><OffersPage /></PageWrapper>

@@ -1,12 +1,15 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import hkpgLogo from '../assets/hkpg-logo.png'
+
+// Cloudinary-hosted logo — auto format, auto quality, 120px wide
+const LOGO_URL = 'https://res.cloudinary.com/dzr0crkvr/image/upload/q_auto,f_auto,w_120/hkpg/logo/hkpg-logo.jpg'
 
 const navLinks = [
   { label: 'Home',          path: '/', id: 'home' },
   { label: 'Facilities',    path: '/facilities', id: 'facilities' },
   { label: 'Accommodation', path: '/accommodation', id: 'accommodation' },
+  { label: 'Gallery',       path: '/gallery', id: 'gallery' },
   { label: 'Offers',        path: '/offers', id: 'offers' },
   { label: 'Testimonials',  path: '/testimonials', id: 'testimonials' },
   { label: 'Contact Us',    path: '/contact', id: 'contact' },
@@ -18,6 +21,7 @@ export default function Header() {
   const [scrollProgress, setScrollProgress] = useState(0)
   const [scrolled,       setScrolled]       = useState(false)
   const [visible,        setVisible]        = useState(true)
+  const [logoError,      setLogoError]      = useState(false)
   const lastScrollY = useRef(0)
   const ticking    = useRef(false)
 
@@ -53,11 +57,9 @@ export default function Header() {
       if (scrollTop <= 0) {
         setVisible(true)
       } else if (diff > 3) {
-        // Scrolling DOWN → hide
         setVisible(false)
         setMenuOpen(false)
       } else if (diff < -1) {
-        // Scrolling UP → show instantly
         setVisible(true)
       }
       lastScrollY.current = scrollTop
@@ -95,100 +97,106 @@ export default function Header() {
     return location.pathname === link.path
   }
 
+  // Fallback logo — local asset
+  const logoSrc = logoError ? '/hkpg-logo.png' : LOGO_URL
+
   return (
     <>
-      {/* ── Keyframe styles ─────────────────────────────────────────────── */}
       <style>{`
         @keyframes slideDown {
           from { opacity: 0; transform: translateY(-8px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        .nav-link-hover {
-          position: relative;
-        }
+        .nav-link-hover { position: relative; }
         .nav-link-hover::after {
           content: '';
           position: absolute;
-          bottom: -2px;
-          left: 50%;
-          width: 0;
-          height: 2px;
+          bottom: -2px; left: 50%;
+          width: 0; height: 2px;
           background: linear-gradient(90deg, #d63384, #c026d3);
           border-radius: 2px;
           transition: width 0.3s ease, left 0.3s ease;
         }
-        .nav-link-hover:hover::after {
-          width: 80%;
-          left: 10%;
+        .nav-link-hover:hover::after { width: 80%; left: 10%; }
+        .nav-link-active::after { width: 80% !important; left: 10% !important; }
+        .hkpg-logo-ring {
+          border-radius: 50%;
+          padding: 2.5px;
+          background: linear-gradient(135deg, #d63384, #c026d3, #f472b6);
+          box-shadow: 0 0 0 2px rgba(214,51,132,0.15), 0 4px 18px rgba(208,35,132,0.35);
+          transition: box-shadow 0.3s ease, transform 0.2s ease;
+          flex-shrink: 0;
         }
-        .nav-link-active::after {
-          width: 80% !important;
-          left: 10% !important;
+        .hkpg-logo-ring:hover {
+          box-shadow: 0 0 0 3px rgba(214,51,132,0.25), 0 6px 24px rgba(208,35,132,0.5);
+        }
+        .hkpg-logo-img {
+          display: block;
+          border-radius: 50%;
+          border: 2px solid white;
+          object-fit: cover;
+          object-position: center;
+          background: white;
         }
       `}</style>
 
       <header
         style={{
           position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
+          top: 0, left: 0, width: '100%',
           zIndex: 50,
-          // Glass effect
           background: scrolled
-            ? 'rgba(255, 245, 250, 0.92)'
-            : 'rgba(255, 245, 250, 0.80)',
+            ? 'rgba(255, 245, 250, 0.94)'
+            : 'rgba(255, 245, 250, 0.82)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: scrolled ? '1px solid rgba(208,35,132,0.15)' : '1px solid rgba(208,35,132,0.08)',
+          borderBottom: scrolled
+            ? '1px solid rgba(208,35,132,0.18)'
+            : '1px solid rgba(208,35,132,0.08)',
           boxShadow: scrolled
-            ? '0 4px 30px rgba(208, 35, 132, 0.12), 0 1px 0 rgba(255,255,255,0.6) inset'
+            ? '0 4px 30px rgba(208,35,132,0.12), 0 1px 0 rgba(255,255,255,0.6) inset'
             : '0 2px 10px rgba(0,0,0,0.04)',
-          // Slide up/down
           transform: visible ? 'translateY(0)' : 'translateY(-100%)',
           transition: visible
-            ? 'transform 0.22s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease, background 0.3s ease'
-            : 'transform 0.3s cubic-bezier(0.55, 0.085, 0.68, 0.53)',
+            ? 'transform 0.22s cubic-bezier(0.25,0.46,0.45,0.94), box-shadow 0.3s ease, background 0.3s ease'
+            : 'transform 0.3s cubic-bezier(0.55,0.085,0.68,0.53)',
           willChange: 'transform',
         }}
       >
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
+        {/* ── Main bar — height increased to 72px ─────────────────────── */}
+        <div className="max-w-6xl mx-auto px-4 flex items-center justify-between gap-3"
+          style={{ height: '72px' }}>
 
-          {/* ── Logo ──────────────────────────────────────────────────────── */}
+          {/* ── Logo ──────────────────────────────────────────────────── */}
           <button
             onClick={() => go(navLinks[0])}
-            className="flex items-center gap-2.5 group"
-            style={{ transition: 'transform 0.2s ease' }}
-            onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.04)'}
-            onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+            className="flex items-center gap-3 group"
+            aria-label="HK PG Home"
           >
-            <div style={{
-              borderRadius: '50%',
-              padding: '2px',
-              background: 'linear-gradient(135deg, #d63384, #c026d3)',
-              boxShadow: '0 0 12px rgba(208,35,132,0.35)',
-              transition: 'box-shadow 0.3s ease',
-            }}>
+            <div className="hkpg-logo-ring">
               <img
-                src={hkpgLogo}
-                alt="HK PG"
-                className="w-10 h-10 rounded-full block"
-                style={{ border: '2px solid white' }}
+                src={logoSrc}
+                alt="HK PG Logo"
+                className="hkpg-logo-img"
+                width={52}
+                height={52}
+                style={{ width: 52, height: 52 }}
+                onError={() => setLogoError(true)}
               />
             </div>
             <div className="hidden sm:block leading-tight">
-              <p className="font-extrabold text-gray-800 text-sm">HK PG</p>
-              <p className="text-xs font-semibold" style={{ color: '#c026d3' }}>Boys Accommodation</p>
+              <p className="font-extrabold text-gray-800" style={{ fontSize: 15, letterSpacing: '-0.01em' }}>HK PG</p>
+              <p className="text-xs font-semibold" style={{ color: '#c026d3', letterSpacing: '0.01em' }}>Boys Accommodation</p>
             </div>
           </button>
 
-          {/* ── Desktop Nav ───────────────────────────────────────────────── */}
-          <nav className="hidden md:flex items-center gap-0.5">
+          {/* ── Desktop Nav ───────────────────────────────────────────── */}
+          <nav className="hidden lg:flex items-center gap-0.5">
             {navLinks.map(link => (
               <button
                 key={link.path}
                 onClick={() => go(link)}
-                className={`nav-link-hover px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                className={`nav-link-hover px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
                   isActive(link) ? 'nav-link-active' : ''
                 }`}
                 style={
@@ -219,17 +227,20 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* ── Auth Buttons ──────────────────────────────────────────────── */}
-          <div className="hidden md:flex items-center gap-2">
+          {/* ── Auth Buttons ──────────────────────────────────────────── */}
+          <div className="hidden lg:flex items-center gap-2">
             {user ? (
               <>
                 <button
                   onClick={() => navigate(user.role === 'admin' ? '/admin' : '/student')}
-                  className="px-3 py-2 rounded-xl text-sm font-semibold text-gray-700 transition-all duration-200"
+                  className="px-3 py-2 rounded-xl text-sm font-semibold text-gray-700 transition-all duration-200 flex items-center gap-1.5"
                   onMouseEnter={e => { e.currentTarget.style.background = 'rgba(192,38,211,0.06)'; e.currentTarget.style.color = '#c026d3' }}
                   onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#374151' }}
                 >
-                  👤 {user.name}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  {user.name}
                 </button>
                 <button
                   onClick={handleLogout}
@@ -264,9 +275,9 @@ export default function Header() {
             )}
           </div>
 
-          {/* ── Hamburger ─────────────────────────────────────────────────── */}
+          {/* ── Hamburger (md and below) ───────────────────────────────── */}
           <button
-            className="md:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded-xl transition-all duration-200"
+            className="lg:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded-xl transition-all duration-200"
             onClick={() => setMenuOpen(o => !o)}
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             style={{ background: menuOpen ? 'rgba(192,38,211,0.08)' : 'transparent' }}
@@ -292,10 +303,10 @@ export default function Header() {
           </button>
         </div>
 
-        {/* ── Mobile Menu ───────────────────────────────────────────────────── */}
+        {/* ── Mobile Menu ───────────────────────────────────────────────── */}
         <div style={{
           overflow: 'hidden',
-          maxHeight: menuOpen ? '420px' : '0',
+          maxHeight: menuOpen ? '520px' : '0',
           opacity: menuOpen ? 1 : 0,
           transition: 'max-height 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease',
           borderTop: menuOpen ? '1px solid rgba(208,35,132,0.1)' : 'none',
@@ -326,14 +337,17 @@ export default function Header() {
                   <button
                     onClick={() => { navigate(user.role === 'admin' ? '/admin' : '/student'); setMenuOpen(false) }}
                     className="w-full text-left px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-600"
-                    style={{ animation: menuOpen ? 'slideDown 0.3s ease 200ms both' : 'none' }}
+                    style={{ animation: menuOpen ? 'slideDown 0.3s ease 280ms both' : 'none' }}
                   >
-                    👤 {user.name}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="14" height="14" style={{ display: 'inline', marginRight: 6, verticalAlign: 'middle' }}>
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    {user.name}
                   </button>
                   <button
                     onClick={() => { handleLogout(); setMenuOpen(false) }}
                     className="w-full py-2.5 rounded-xl text-sm font-bold text-white"
-                    style={{ ...gradientBtn, animation: menuOpen ? 'slideDown 0.3s ease 240ms both' : 'none' }}
+                    style={{ ...gradientBtn, animation: menuOpen ? 'slideDown 0.3s ease 320ms both' : 'none' }}
                   >
                     Logout
                   </button>
@@ -343,14 +357,14 @@ export default function Header() {
                   <button
                     onClick={() => { navigate('/login'); setMenuOpen(false) }}
                     className="w-full py-2.5 rounded-xl text-sm font-semibold text-gray-600"
-                    style={{ animation: menuOpen ? 'slideDown 0.3s ease 200ms both' : 'none' }}
+                    style={{ animation: menuOpen ? 'slideDown 0.3s ease 280ms both' : 'none' }}
                   >
                     Login
                   </button>
                   <button
                     onClick={() => { navigate('/register'); setMenuOpen(false) }}
                     className="w-full py-2.5 rounded-xl text-sm font-bold text-white"
-                    style={{ ...gradientBtn, animation: menuOpen ? 'slideDown 0.3s ease 240ms both' : 'none' }}
+                    style={{ ...gradientBtn, animation: menuOpen ? 'slideDown 0.3s ease 320ms both' : 'none' }}
                   >
                     Sign Up
                   </button>
@@ -360,12 +374,10 @@ export default function Header() {
           </div>
         </div>
 
-        {/* ── Scroll Progress Bar ───────────────────────────────────────────── */}
+        {/* ── Scroll Progress Bar ───────────────────────────────────────── */}
         <div
           style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
+            position: 'absolute', bottom: 0, left: 0,
             height: '3px',
             width: `${scrollProgress}%`,
             background: 'linear-gradient(90deg, #d63384, #c026d3, #e879f9)',

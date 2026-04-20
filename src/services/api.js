@@ -139,6 +139,21 @@ export const rentApi = {
   confirmPayment: (token) => request(`/api/rent/confirm/${token}`, { method: 'POST' }),
 }
 
+// ── Gallery ───────────────────────────────────────────────────────────────────
+export const galleryApi = {
+  getAll: () => request('/api/gallery'),
+  getBySection: (section) => request(`/api/gallery/section/${section}`),
+  upload: (file, section, caption = '', displayOrder = 0) => {
+    const fd = new FormData()
+    fd.append('file', file)
+    fd.append('section', section)
+    if (caption) fd.append('caption', caption)
+    fd.append('displayOrder', String(displayOrder))
+    return request('/api/gallery', { method: 'POST', body: fd }, 30000)
+  },
+  delete: (id) => request(`/api/gallery/${id}`, { method: 'DELETE' }),
+}
+
 // ── Keep-alive ping ───────────────────────────────────────────────────────────
 // Render free tier spins down after 15 min of inactivity.
 // Pings /health every 8 minutes — well within the 15-min sleep threshold.
