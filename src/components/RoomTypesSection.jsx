@@ -180,7 +180,10 @@ const RoomCard = memo(function RoomCard({ slug, rt, onBook, onRoomUpdated, isAdm
           aria-label={isFull ? 'Room fully booked' : `Book ${rt.title}`}
           title={isFull ? 'This room type is fully booked. Check back later.' : ''}
           className="mt-2 py-2.5 rounded-xl text-white font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:opacity-90 active:scale-95"
-          style={{ background: isFull ? '#9ca3af' : 'linear-gradient(135deg,#d63384,#c026d3)' }}
+          style={{
+            background: isFull ? '#9ca3af' : 'linear-gradient(135deg,#d63384,#c026d3)',
+            animation: !isFull && !loading ? 'bookBlink 1.8s ease-in-out infinite' : 'none',
+          }}
         >
           {loading ? '⏳ Processing...' : isFull ? 'Fully Booked' : 'Book Now →'}
         </button>

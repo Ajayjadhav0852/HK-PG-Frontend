@@ -4,21 +4,17 @@ import FooterSection from '../components/FooterSection'
 const PHONE = '9579828996'
 const WA_LINK = `https://wa.me/91${PHONE}?text=${encodeURIComponent('Hi! I am interested in booking a room at HK PG Akurdi.')}`
 
-// ── Reusable Book Now button ──────────────────────────────────────────────────
-function BookBtn({ label = '🚀 Book Now', className = '' }) {
+// Navigate to accommodation page TOP (not bottom)
+function useBookNow() {
   const navigate = useNavigate()
-  return (
-    <button
-      onClick={() => navigate('/accommodation')}
-      className={`px-6 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold rounded-xl hover:opacity-90 transition-all transform hover:scale-105 shadow-lg text-sm ${className}`}
-    >
-      {label}
-    </button>
-  )
+  return () => {
+    navigate('/accommodation')
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }
 }
 
 export default function OffersPage() {
-  const navigate = useNavigate()
+  const bookNow = useBookNow()
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -70,7 +66,7 @@ export default function OffersPage() {
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => navigate('/accommodation')}
+              onClick={bookNow}
               className="px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-extrabold rounded-2xl hover:opacity-90 transition-all transform hover:scale-105 shadow-2xl text-base"
             >
               🚀 Book Your Seat Now
@@ -84,57 +80,25 @@ export default function OffersPage() {
           </div>
         </div>
       </div>
-
       {/* ══════════════════════════════════════════════════════════════════════
-          MARQUEE BAR
+          MARQUEE BAR — faster, mobile friendly
       ══════════════════════════════════════════════════════════════════════ */}
-      <div className="w-full overflow-hidden bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 py-3">
-        <div className="flex whitespace-nowrap animate-marquee">
-          {[...Array(3)].map((_, i) => (
-            <span key={i} className="inline-flex items-center gap-6 text-white font-bold text-sm px-8">
+      <div className="w-full overflow-hidden bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 py-2.5">
+        <div className="flex whitespace-nowrap" style={{ animation: 'marquee 12s linear infinite' }}>
+          {[...Array(4)].map((_, i) => (
+            <span key={i} className="inline-flex items-center gap-4 text-white font-bold text-xs sm:text-sm px-6">
+              <span>⭐ Built by a CDAC student, for CDAC students</span>
+              <span className="opacity-50">•</span>
               <span>🚀 Your 6 months matter – we support your placement journey</span>
-              <span className="opacity-60">•</span>
+              <span className="opacity-50">•</span>
               <span>📍 Near IACSD CDAC Center · KnowIT Deccan · IET Center</span>
-              <span className="opacity-60">•</span>
+              <span className="opacity-50">•</span>
               <span>🏠 Newly Opened PG · Prime Location · Akurdi, Pune</span>
-              <span className="opacity-60">•</span>
+              <span className="opacity-50">•</span>
               <span>👥 Group Stay Available · 3-4 Friends Together</span>
-              <span className="opacity-60">•</span>
+              <span className="opacity-50">•</span>
             </span>
           ))}
-        </div>
-      </div>
-
-      {/* ══════════════════════════════════════════════════════════════════════
-          2. WHY THIS PG — Trust builder
-      ══════════════════════════════════════════════════════════════════════ */}
-      <div className="bg-gradient-to-br from-purple-50 to-pink-50 py-14 px-4 sm:px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-10">
-            <span className="inline-block bg-purple-100 text-purple-600 text-xs font-bold px-3 py-1 rounded-full tracking-widest uppercase mb-3">
-              WHY CHOOSE US
-            </span>
-            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800">
-              Why students choose <span className="text-purple-600">HK PG?</span>
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {[
-              { icon: '📍', title: 'Near CDAC Centers', desc: 'Walking distance to IACSD, Easyn fast travel to KnowIT Deccan & IET. Save 2–3 hours daily.' },
-              { icon: '📚', title: 'Study Environment', desc: 'Quiet rooms, no disturbance. Built for focused study and placement prep.' },
-              { icon: '👥', title: 'Group Stay Options', desc: 'Come with 3-4 friends. Stay together, study together, grow together.' },
-              { icon: '🎯', title: 'Placement Focused', desc: 'Pre-CAT & PGDAC material support. Owner is a sunbeam CDAC alumni.' },
-               { icon: '🚂', title: 'Railway Access', desc: 'Akurdi station at doorstep. Easy commute to Pune & PCMC.' },
-              { icon: '🚌', title: 'Bus Stand 50m', desc: 'PMPML & private buses to Hinjewadi, Wakad, Pimpri.' },
-            ].map((item, i) => (
-              <div key={i} className="bg-white rounded-2xl p-5 shadow-sm border border-purple-100 hover:shadow-lg hover:border-purple-300 transition-all duration-300 group">
-                <div className="text-3xl mb-3">{item.icon}</div>
-                <h3 className="font-bold text-gray-800 text-sm mb-2 group-hover:text-purple-600 transition-colors">{item.title}</h3>
-                <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 
@@ -196,7 +160,7 @@ export default function OffersPage() {
                 </div>
                 <div className="flex gap-3 flex-shrink-0">
                   <button
-                    onClick={() => navigate('/accommodation')}
+                    onClick={bookNow}
                     className="px-6 py-3 bg-white text-purple-700 font-extrabold rounded-xl hover:bg-yellow-300 hover:text-purple-900 transition-all transform hover:scale-105 shadow-lg text-sm"
                   >
                     🚀 Book Now
@@ -236,7 +200,7 @@ export default function OffersPage() {
                   <div key={i} className="flex items-center gap-2 text-sm"><span className="text-green-300">✓</span>{f}</div>
                 ))}
               </div>
-              <button onClick={() => navigate('/accommodation')}
+              <button onClick={bookNow}
                 className="w-full py-2.5 bg-white text-green-700 font-bold rounded-xl hover:bg-green-50 transition-all text-sm">
                 🚀 Book Now
               </button>
@@ -253,7 +217,7 @@ export default function OffersPage() {
                   <div key={i} className="flex items-center gap-2 text-sm"><span className="text-blue-300">✓</span>{f}</div>
                 ))}
               </div>
-              <button onClick={() => navigate('/accommodation')}
+              <button onClick={bookNow}
                 className="w-full py-2.5 bg-white text-indigo-700 font-bold rounded-xl hover:bg-indigo-50 transition-all text-sm">
                 🚀 Book Now
               </button>
@@ -288,7 +252,7 @@ export default function OffersPage() {
                   <div key={i} className="flex items-center gap-2 text-xs"><span className="text-pink-300">✓</span>{f}</div>
                 ))}
               </div>
-              <button onClick={() => navigate('/accommodation')}
+              <button onClick={bookNow}
                 className="w-full py-2 bg-white text-pink-700 font-bold rounded-xl hover:bg-pink-50 transition-all text-xs mt-auto">
                 🚀 Book Now
               </button>
@@ -304,7 +268,7 @@ export default function OffersPage() {
                   <div key={i} className="flex items-center gap-2 text-xs"><span className="text-violet-300">✓</span>{f}</div>
                 ))}
               </div>
-              <button onClick={() => navigate('/accommodation')}
+              <button onClick={bookNow}
                 className="w-full py-2 bg-white text-violet-700 font-bold rounded-xl hover:bg-violet-50 transition-all text-xs mt-auto">
                 🚀 Book Now
               </button>
@@ -320,7 +284,7 @@ export default function OffersPage() {
                   <div key={i} className="flex items-center gap-2 text-xs"><span className="text-orange-300">✓</span>{f}</div>
                 ))}
               </div>
-              <button onClick={() => navigate('/accommodation')}
+              <button onClick={bookNow}
                 className="w-full py-2 bg-white text-orange-700 font-bold rounded-xl hover:bg-orange-50 transition-all text-xs mt-auto">
                 🚀 Book Now
               </button>
@@ -332,25 +296,25 @@ export default function OffersPage() {
       {/* ══════════════════════════════════════════════════════════════════════
           5.5 WORKING PROFESSIONALS — IT / Employees across Pune & PCMC
       ══════════════════════════════════════════════════════════════════════ */}
-      <div className="py-12 px-4 sm:px-6 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-white">
+      <div className="py-12 px-4 sm:px-6 bg-white">
         <div className="max-w-5xl mx-auto">
 
           {/* Header */}
           <div className="text-center mb-10">
-            <span className="inline-block bg-blue-500/20 border border-blue-400/40 text-blue-300 text-xs font-bold px-4 py-1.5 rounded-full tracking-widest uppercase mb-4">
+            <span className="inline-block bg-blue-100 text-blue-600 text-xs font-bold px-4 py-1.5 rounded-full tracking-widest uppercase mb-4">
               💼 WORKING PROFESSIONALS
             </span>
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-3">
-              Perfect for <span className="text-blue-400">IT Employees</span> &{' '}
-              <span className="text-cyan-400">Professionals</span>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800 mb-3">
+              Perfect for <span className="text-blue-600">IT Employees</span> &{' '}
+              <span className="text-cyan-600">Professionals</span>
             </h2>
-            <p className="text-gray-400 text-sm max-w-2xl mx-auto">
+            <p className="text-gray-500 text-sm max-w-2xl mx-auto">
               Serving professionals across Pune &amp; PCMC — Hinjewadi · Wakad · Pimpri · Chinchwad · Nigdi · Kothrud · Baner · Balewadi IT Park
             </p>
           </div>
 
           {/* Main pro card */}
-          <div className="relative bg-gradient-to-br from-blue-700 via-cyan-700 to-teal-700 rounded-3xl p-7 sm:p-9 shadow-2xl overflow-hidden border border-blue-400/30 hover:shadow-[0_0_50px_rgba(59,130,246,0.4)] transition-all duration-500 mb-8">
+          <div className="relative bg-gradient-to-br from-blue-700 via-cyan-700 to-teal-700 rounded-3xl p-7 sm:p-9 shadow-2xl overflow-hidden border border-blue-400/30 hover:shadow-[0_0_50px_rgba(59,130,246,0.4)] transition-all duration-500">
             <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white/10" />
             <div className="absolute -bottom-6 -left-6 w-28 h-28 rounded-full bg-white/5" />
             <div className="relative z-10">
@@ -358,7 +322,7 @@ export default function OffersPage() {
                 <span className="bg-yellow-400 text-yellow-900 text-xs font-extrabold px-3 py-1 rounded-full">💼 PRO PACKAGE</span>
                 <span className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">Pune &amp; PCMC</span>
               </div>
-              <h3 className="text-2xl sm:text-3xl font-extrabold mb-2">🏢 Working Professional Package</h3>
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-white mb-2">🏢 Working Professional Package</h3>
               <p className="text-white/80 text-sm mb-6">Comfortable, affordable living for IT employees &amp; professionals across Pune PCMC</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-7">
                 {[
@@ -371,21 +335,19 @@ export default function OffersPage() {
                   '✅ No brokerage — direct owner contact',
                   '✅ Fixed rent — no surprise charges',
                 ].map((f, i) => (
-                  <div key={i} className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2.5 text-sm font-medium">
+                  <div key={i} className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2.5 text-sm font-medium text-white">
                     {f}
                   </div>
                 ))}
               </div>
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
                 <div>
-                  <p className="font-extrabold text-lg">👉 Comfortable stay for your professional life</p>
+                  <p className="font-extrabold text-lg text-white">👉 Comfortable stay for your professional life</p>
                   <p className="text-white/70 text-sm">Affordable · Secure · Well-connected to all IT hubs</p>
                 </div>
                 <div className="flex gap-3 flex-shrink-0">
-                  <button
-                    onClick={() => navigate('/accommodation')}
-                    className="px-6 py-3 bg-white text-blue-700 font-extrabold rounded-xl hover:bg-yellow-300 hover:text-blue-900 transition-all transform hover:scale-105 shadow-lg text-sm"
-                  >
+                  <button onClick={bookNow}
+                    className="px-6 py-3 bg-white text-blue-700 font-extrabold rounded-xl hover:bg-yellow-300 hover:text-blue-900 transition-all transform hover:scale-105 shadow-lg text-sm">
                     🚀 Book Now
                   </button>
                   <a href={WA_LINK} target="_blank" rel="noreferrer"
@@ -394,20 +356,6 @@ export default function OffersPage() {
                   </a>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* IT Hubs */}
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
-            <p className="text-center text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
-              🗺️ Well Connected to IT Hubs &amp; Offices
-            </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              {['🏢 Hinjewadi IT Park','🏢 Wakad','🏢 Pimpri-Chinchwad','🏢 Akurdi','🏢 Nigdi','🏢 Kothrud','🏢 Baner','🏢 Aundh','🚂 Pune Railway Station','🚂 Pimpri Station'].map((hub, i) => (
-                <span key={i} className="bg-white/10 border border-white/20 text-white/80 text-xs font-semibold px-3 py-1.5 rounded-full hover:bg-blue-500/20 hover:border-blue-400/40 transition-all cursor-default">
-                  {hub}
-                </span>
-              ))}
             </div>
           </div>
 
@@ -436,7 +384,7 @@ export default function OffersPage() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => navigate('/accommodation')}
+              onClick={bookNow}
               className="px-10 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-extrabold rounded-2xl hover:opacity-90 transition-all transform hover:scale-105 shadow-2xl text-base"
             >
               🏠 View Available Rooms

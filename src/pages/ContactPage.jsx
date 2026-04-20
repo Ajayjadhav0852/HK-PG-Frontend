@@ -96,6 +96,33 @@ export default function ContactPage() {
         </div>
 
         <LocationInfo />
+
+        {/* IT Hubs & Connectivity */}
+        <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+          <h3 className="font-extrabold text-gray-800 text-base mb-4">🗺️ Well Connected to IT Hubs &amp; Offices</h3>
+          <div className="flex flex-wrap gap-2">
+            {[
+              '🏢 Hinjewadi IT Park',
+              '🏢 Wakad',
+              '🏢 Pimpri-Chinchwad',
+              '🏢 Akurdi',
+              '🏢 Nigdi',
+              '🏢 Kothrud',
+              '🏢 Baner',
+              '🏢 Aundh',
+              '🏢 Balewadi',
+              '🚂 Pune Railway Station',
+              '🚂 Pimpri Station',
+              '🚂 Akurdi Station',
+            ].map((hub, i) => (
+              <span key={i} className="bg-purple-50 border border-purple-200 text-purple-700 text-xs font-semibold px-3 py-1.5 rounded-full hover:bg-purple-100 transition-all cursor-default">
+                {hub}
+              </span>
+            ))}
+          </div>
+          <p className="text-xs text-gray-400 mt-3">📍 Near Akurdi Railway Station — easy commute to all major IT hubs across Pune &amp; PCMC</p>
+        </div>
+
         <RulesPolicies />
       </div>
 
