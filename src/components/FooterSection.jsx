@@ -10,16 +10,6 @@ const quickLinks = [
   { label: 'Contact Us',      path: '/contact' },
 ]
 
-const facilities = [
-  '📶 High-Speed WiFi',
-  '📹 24/7 CCTV Security',
-  '👕 Washing Machine',
-  '💧 RO Water Purifier',
-  '🏍️ Two Wheeler Parking',
-  '🧹 Daily Housekeeping',
-  '🏠 1–4 Sharing Rooms',
-]
-
 const socialLinks = [
   {
     label: 'WhatsApp',
@@ -59,7 +49,7 @@ export default function FooterSection() {
   return (
     <footer style={{ background: 'linear-gradient(135deg, #fff0f6 0%, #fdf3e7 60%, #fff8f0 100%)' }}>
 
-      <div className="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+      <div className="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
 
         {/* Brand */}
         <div className="space-y-4">
@@ -96,18 +86,6 @@ export default function FooterSection() {
                   <span style={{ color: '#c026d3' }}>›</span> {l.label}
                 </button>
               </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Facilities */}
-        <div>
-          <h3 className="text-sm font-extrabold uppercase tracking-widest mb-4" style={{ color: '#c026d3' }}>
-            Facilities
-          </h3>
-          <ul className="space-y-2">
-            {facilities.map(f => (
-              <li key={f} className="text-gray-600 text-sm">{f}</li>
             ))}
           </ul>
         </div>
