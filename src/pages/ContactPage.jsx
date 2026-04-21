@@ -1,5 +1,4 @@
 import LocationInfo from '../components/LocationInfo'
-import RulesPolicies from '../components/RulesPolicies'
 import FooterSection from '../components/FooterSection'
 import { PhoneIcon, BuildingIcon, WhatsAppIcon, MapIcon, TrainIcon, MapPinIcon, ArrowRightIcon } from '../components/Icons'
 
@@ -38,7 +37,7 @@ export default function ContactPage() {
               <PhoneIcon className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-xs text-gray-400 font-medium">Owner</p>
+              <p className="text-xs text-gray-400 font-medium">Owner (PG Management)</p>
               <p className="font-extrabold text-gray-800 text-lg group-hover:text-pink-600 transition">
                 9579828996
               </p>
@@ -134,7 +133,6 @@ export default function ContactPage() {
           </div>
         </div>
 
-        <RulesPolicies />
       </div>
 
       <FooterSection />

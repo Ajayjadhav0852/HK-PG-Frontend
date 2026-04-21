@@ -1,6 +1,7 @@
 const pricing = [
   { label: 'Monthly Rent', value: '₹4,000 – ₹7,000', highlight: false },
-  { label: 'Security Deposit', value: 'Same as monthly rent (refundable)', highlight: false },
+  { label: 'Security Deposit', value: 'Same as monthly rent', highlight: false },
+  { label: 'Deposit Refund', value: '₹1,000 deducted for maintenance, rest refunded', highlight: false },
   { label: 'Maintenance Charges', value: 'Zero ✅', highlight: false },
   { label: 'Electricity', value: 'Included (fair use)', highlight: false },
   { label: 'WiFi & Internet', value: 'Included', highlight: false },

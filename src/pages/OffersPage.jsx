@@ -81,10 +81,10 @@ export default function OffersPage() {
         </div>
       </div>
       {/* ══════════════════════════════════════════════════════════════════════
-          MARQUEE BAR — faster, mobile friendly
+          MARQUEE BAR — faster on mobile, responsive
       ══════════════════════════════════════════════════════════════════════ */}
       <div className="w-full overflow-hidden bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 py-2.5">
-        <div className="flex whitespace-nowrap" style={{ animation: 'marquee 12s linear infinite' }}>
+        <div className="flex whitespace-nowrap" style={{ animation: 'marquee 8s linear infinite' }}>
           {[...Array(4)].map((_, i) => (
             <span key={i} className="inline-flex items-center gap-4 text-white font-bold text-xs sm:text-sm px-6">
               <span>⭐ Built by a CDAC student, for CDAC students</span>
@@ -132,15 +132,15 @@ export default function OffersPage() {
               </div>
 
               <h3 className="text-3xl sm:text-4xl font-extrabold mb-2">🎯 CDAC Success Package</h3>
-              <p className="text-white/80 text-base mb-6">Designed for placement success — everything a CDAC student needs</p>
+              <p className="text-white/80 text-base mb-6">Designed for success — everything a CDAC student needs</p>
 
               {/* Features grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
                 {[
                   '✅ 6-month flexible stay plan',
                   '✅ Pre-CAT & PGDAC placement material support',
-                  '✅ Quiet, distraction-free study rooms',
-                  '✅ Near IACSD CDAC Center',
+                  '✅ Quiet, distraction-free,well ventilated rooms',
+                  '✅ Near IACSD CDAC Center ',
                   '✅ Easy travel to KnowIT Deccan & IET Center',
                   '✅ Railway at doorstep · Bus stand 50m away',
                   '✅ Group stay option (3-4 friends together)',
@@ -330,7 +330,7 @@ export default function OffersPage() {
                   '✅ Bus stand 50m — Hinjewadi, Wakad, Pimpri routes',
                   '✅ High-speed WiFi for remote work',
                   '✅ 24/7 CCTV security & safe environment',
-                  '✅ Washing machine, power backup, RO water',
+                  '✅ Washing machine, RO water',
                   '✅ Flexible stay — monthly, 3-month, 6-month plans',
                   '✅ No brokerage — direct owner contact',
                   '✅ Fixed rent — no surprise charges',

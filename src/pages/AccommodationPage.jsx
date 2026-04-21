@@ -5,6 +5,7 @@ import FooterSection from '../components/FooterSection'
 export default function AccommodationPage({ rooms, onBook, onRoomUpdated }) {
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
     if (!rooms || Object.keys(rooms).length === 0) {
       onRoomUpdated?.()
     }

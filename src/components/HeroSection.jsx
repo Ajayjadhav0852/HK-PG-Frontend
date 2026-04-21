@@ -132,8 +132,11 @@ export default function HeroSection({ onBook }) {
           Accommodation
         </h1>
 
-        <p className="text-white mt-3 text-base sm:text-lg">
-          📍 Near Gurudwara, Akurdi Railway Station, Pune
+        <p className="text-white mt-3 text-base sm:text-lg flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>
+          </svg>
+          Near Gurudwara, Akurdi Railway Station, Pune
         </p>
 
         {/* Button */}
@@ -150,17 +153,18 @@ export default function HeroSection({ onBook }) {
         {/* Amenities */}
         <div className="mt-5 flex flex-wrap gap-2">
           {[
-            '📍 Prime Location',
-            '🚗 Parking Available',
-            '💧 RO Water',
-            '📶 High-Speed WiFi',
-            '🔒 24x7 Security',
+            { icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>, label: 'Prime Location' },
+            { icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><circle cx="12" cy="16" r="1"/><rect x="3" y="10" width="18" height="12" rx="2"/><path d="M7 10V7a5 5 0 0 1 9.33-2.5"/></svg>, label: 'Parking Available' },
+            { icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>, label: 'RO Water' },
+            { icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg>, label: 'High-Speed WiFi' },
+            { icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>, label: '24x7 Security' },
           ].map((item, i) => (
             <span
               key={i}
-              className="px-3 py-1.5 text-xs font-semibold rounded-full bg-white/20 text-white backdrop-blur-md border border-white/20"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full bg-white/20 text-white backdrop-blur-md border border-white/20"
             >
-              {item}
+              {item.icon}
+              {item.label}
             </span>
           ))}
         </div>

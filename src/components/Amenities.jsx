@@ -3,11 +3,7 @@ const amenities = [
   { icon: '🏍️', label: 'Two Wheeler Parking' },
   { icon: '👕', label: 'Laundry' },
   { icon: '📹', label: 'CCTV' },
-  { icon: '🔋', label: 'Power Backup' },
   { icon: '🧹', label: 'Daily Housekeeping' },
-  { icon: '❄️', label: 'AC Rooms' },
-  { icon: '🏋️', label: 'Gym' },
-  { icon: '🛗', label: 'Lift' },
 ]
 
 export default function Amenities() {

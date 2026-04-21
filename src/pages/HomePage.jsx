@@ -17,8 +17,8 @@ const WHY_ITEMS = [
     ),
   },
   {
-    title: 'Near CDAC & Tech Hubs',
-    line: 'Walk to CDAC, Persistent, and Pimpri IT corridor.',
+    title: 'Near CDAC IACSD ,DYP,PCET COLLEGES',
+    line: 'Walk to CDAC, Save 2-3 hr travel, and It hubs.',
     color: '#2563eb',
     bg: '#eff6ff',
     icon: (
@@ -29,7 +29,7 @@ const WHY_ITEMS = [
   },
   {
     title: 'Quiet Study Environment',
-    line: 'Dedicated study hours. Zero noise policy after 10 PM.',
+    line: 'well ventilated rooms . Zero noise policy after 10 PM.',
     color: '#0891b2',
     bg: '#ecfeff',
     icon: (
@@ -40,7 +40,7 @@ const WHY_ITEMS = [
   },
   {
     title: 'Safe & Secure 24/7',
-    line: 'CCTV, secure entry, and trusted management on-site.',
+    line: 'CCTV Security, and trusted management on-website.',
     color: '#16a34a',
     bg: '#f0fdf4',
     icon: (
@@ -51,7 +51,7 @@ const WHY_ITEMS = [
   },
   {
     title: 'Flexible Group Stays',
-    line: 'Single, double, and triple sharing — pick what fits.',
+    line: 'Single, double, and triple,four sharing — pick what fits.',
     color: '#d97706',
     bg: '#fffbeb',
     icon: (
@@ -181,7 +181,7 @@ export default function HomePage() {
           {/* CTA */}
           <div style={{ textAlign: 'center', marginTop: 44 }}>
             <button
-              onClick={() => navigate('/accommodation')}
+              onClick={() => { navigate('/accommodation'); window.scrollTo({ top: 0, behavior: 'instant' }) }}
               style={{
                 padding: '14px 36px',
                 background: 'linear-gradient(135deg,#d63384,#c026d3)',

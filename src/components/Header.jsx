@@ -119,25 +119,6 @@ export default function Header() {
         }
         .nav-link-hover:hover::after { width: 80%; left: 10%; }
         .nav-link-active::after { width: 80% !important; left: 10% !important; }
-        .hkpg-logo-ring {
-          border-radius: 50%;
-          padding: 2.5px;
-          background: linear-gradient(135deg, #d63384, #c026d3, #f472b6);
-          box-shadow: 0 0 0 2px rgba(214,51,132,0.15), 0 4px 18px rgba(208,35,132,0.35);
-          transition: box-shadow 0.3s ease, transform 0.2s ease;
-          flex-shrink: 0;
-        }
-        .hkpg-logo-ring:hover {
-          box-shadow: 0 0 0 3px rgba(214,51,132,0.25), 0 6px 24px rgba(208,35,132,0.5);
-        }
-        .hkpg-logo-img {
-          display: block;
-          border-radius: 50%;
-          border: 2px solid white;
-          object-fit: cover;
-          object-position: center;
-          background: white;
-        }
       `}</style>
 
       <header
@@ -173,17 +154,14 @@ export default function Header() {
             className="flex items-center gap-3 group"
             aria-label="HK PG Home"
           >
-            <div className="hkpg-logo-ring">
-              <img
-                src={logoSrc}
-                alt="HK PG Logo"
-                className="hkpg-logo-img"
-                width={52}
-                height={52}
-                style={{ width: 52, height: 52 }}
-                onError={() => setLogoError(true)}
-              />
-            </div>
+            <img
+              src={logoSrc}
+              alt="HK PG Logo"
+              width={48}
+              height={48}
+              style={{ width: 48, height: 48, borderRadius: '8px' }}
+              onError={() => setLogoError(true)}
+            />
             <div className="hidden sm:block leading-tight">
               <p className="font-extrabold text-gray-800" style={{ fontSize: 15, letterSpacing: '-0.01em' }}>HK PG</p>
               <p className="text-xs font-semibold" style={{ color: '#c026d3', letterSpacing: '0.01em' }}>Boys Accommodation</p>

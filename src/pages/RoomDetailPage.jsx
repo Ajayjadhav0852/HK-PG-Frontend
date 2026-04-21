@@ -8,8 +8,7 @@ const AMENITIES = [
   { icon: '📶', label: 'High-Speed WiFi' },
   { icon: '🚿', label: 'Attached Bath' },
   { icon: '🗄️', label: 'Wardrobe with Inner Locker' },
-  { icon: '🔋', label: 'Power Backup' },
-  { icon: '📹', label: '24/7 CCTV' },
+  { icon: '', label: '24/7 CCTV' },
   { icon: '👕', label: 'Washing Machine' },
   { icon: '🧹', label: 'Daily Housekeeping' },
   { icon: '🏍️', label: 'Two Wheeler Parking' },
@@ -163,7 +162,7 @@ export default function RoomDetailPage({ onBook, onBack }) {
             </p>
             {typeData.securityDeposit > 0 && (
               <p className="text-xs text-gray-400 mt-0.5">
-                + ₹{Number(typeData.securityDeposit).toLocaleString('en-IN')} refundable deposit
+                + ₹{Number(typeData.securityDeposit).toLocaleString('en-IN')} deposit · ₹1,000 deducted for maintenance on exit
               </p>
             )}
           </div>
@@ -235,7 +234,8 @@ export default function RoomDetailPage({ onBook, onBack }) {
           <div className="space-y-2">
             {[
               { label: 'Monthly Rent',      value: `₹${Number(typeData.monthlyPrice).toLocaleString('en-IN')}` },
-              { label: 'Security Deposit',  value: typeData.securityDeposit > 0 ? `₹${Number(typeData.securityDeposit).toLocaleString('en-IN')} (refundable)` : 'N/A' },
+              { label: 'Security Deposit',  value: typeData.securityDeposit > 0 ? `₹${Number(typeData.securityDeposit).toLocaleString('en-IN')}` : 'N/A' },
+              { label: 'Deposit Refund',    value: '₹1,000 deducted for maintenance, rest refunded' },
               { label: 'Electricity',       value: 'Included (fair use) ✅' },
               { label: 'WiFi',              value: 'Included ✅' },
               { label: 'Daily Housekeeping', value: 'Included ✅' },
