@@ -2,8 +2,9 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
-// Cloudinary-hosted logo — auto format, auto quality, 120px wide
-const LOGO_URL = 'https://res.cloudinary.com/dzr0crkvr/image/upload/q_auto,f_auto,w_120/hkpg/logo/hkpg-logo.jpg'
+// Cloudinary-hosted logo — new HK PG logo with peacock feather
+// Upload the new logo to Cloudinary and replace this URL
+const LOGO_URL = 'https://res.cloudinary.com/dzr0crkvr/image/upload/q_auto,f_auto,w_200/hkpg/logo/hkpg-new-logo.png'
 
 const navLinks = [
   { label: 'Home',          path: '/', id: 'home' },
@@ -97,7 +98,7 @@ export default function Header() {
     return location.pathname === link.path
   }
 
-  // Fallback logo — local asset
+  // Fallback logo — local asset if Cloudinary fails
   const logoSrc = logoError ? '/hkpg-logo.png' : LOGO_URL
 
   return (
@@ -157,9 +158,9 @@ export default function Header() {
             <img
               src={logoSrc}
               alt="HK PG Logo"
-              width={48}
-              height={48}
-              style={{ width: 48, height: 48, borderRadius: '8px' }}
+              width={64}
+              height={64}
+              style={{ width: 64, height: 64, objectFit: 'contain' }}
               onError={() => setLogoError(true)}
             />
             <div className="hidden sm:block leading-tight">
