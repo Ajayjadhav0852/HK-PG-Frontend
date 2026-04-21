@@ -635,7 +635,7 @@ export default function StudentDashboard() {
               <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-lg flex-shrink-0"
                 style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>📞</div>
               <div>
-                <p className="text-xs text-gray-400">Warden Direct</p>
+                <p className="text-xs text-gray-400">Owner</p>
                 <p className="font-extrabold text-gray-800 text-sm group-hover:text-pink-600 transition">9096398032</p>
               </div>
             </a>
