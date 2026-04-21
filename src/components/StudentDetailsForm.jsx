@@ -93,7 +93,8 @@ const INIT = {
   selectedBedNumber: '',   // bed number within the selected room
 }
 
-const STORAGE_KEY = 'hkpg_application_draft'
+const STORAGE_KEY        = 'hkpg_application_draft'
+const AGREED_STORAGE_KEY = 'hkpg_rules_accepted'
 
 export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubmit }) {
   const { user }                      = useAuth()
@@ -108,7 +109,13 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
     return INIT
   }
 
-  const [agreed, setAgreed]           = useState(false)
+  // Load agreed state from localStorage (persisted across tab navigation)
+  const loadAgreed = () => {
+    try { return localStorage.getItem(AGREED_STORAGE_KEY) === 'true' } catch {}
+    return false
+  }
+
+  const [agreed, setAgreed]           = useState(() => loadAgreed())
   const [submitted, setSubmitted]     = useState(false)
   const [showUPI, setShowUPI]         = useState(false)   // UPI payment screen
   const [upiConfirmed, setUpiConfirmed] = useState(false) // user clicked "I Paid"
@@ -164,6 +171,22 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
       }
     } catch {}
   }, [formData])
+
+  // Persist agreed state to localStorage
+  useEffect(() => {
+    try { localStorage.setItem(AGREED_STORAGE_KEY, String(agreed)) } catch {}
+  }, [agreed])
+
+  // Listen for rules acceptance from the rules tab (cross-tab sync via storage event)
+  useEffect(() => {
+    const onStorage = (e) => {
+      if (e.key === AGREED_STORAGE_KEY && e.newValue === 'true') {
+        setAgreed(true)
+      }
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
+  }, [])
 
   const set = (key) => (e) => {
     setFormData(f => ({ ...f, [key]: e.target.value }))
@@ -271,6 +294,7 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
       setSavedAppId(res?.data?.id || null)
       // Clear saved draft after successful submission
       localStorage.removeItem(STORAGE_KEY)
+      localStorage.removeItem(AGREED_STORAGE_KEY)
       showToast.update(toastId, 'success', 'Details Saved! 💳', 'Now complete your advance payment.')
       onSubmit?.()
       setShowUPI(true)   // Show UPI payment screen
@@ -755,7 +779,7 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
       </div>
 
       {/* 10. Agreement */}
-      <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4">
+      <div className={`border rounded-2xl p-4 ${agreed ? 'bg-green-50 border-green-300' : 'bg-yellow-50 border-yellow-200'}`}>
         <label className="flex items-start gap-3 cursor-pointer">
           <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)}
             className="mt-0.5 w-4 h-4 accent-pink-600" />
@@ -766,6 +790,11 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
             I understand that violation of any rule may result in termination of accommodation without refund.
           </span>
         </label>
+        {agreed && (
+          <p className="text-xs text-green-700 font-semibold mt-2 ml-7">
+            ✅ Rules accepted — you're good to submit!
+          </p>
+        )}
       </div>
 
       {/* 11. Submit */}

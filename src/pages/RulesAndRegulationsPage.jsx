@@ -266,6 +266,22 @@ export default function RulesAndRegulationsPage() {
   const [rulesAccepted, setRulesAccepted] = useState(false)
   const navigate = useNavigate()
 
+  // Persist acceptance to localStorage so the booking form picks it up
+  const handleAcceptChange = (checked) => {
+    setRulesAccepted(checked)
+    try { localStorage.setItem('hkpg_rules_accepted', String(checked)) } catch {}
+  }
+
+  const handleBackToBooking = () => {
+    // If opened in a new tab from the form, close this tab to return to the form
+    // The form will auto-detect the localStorage change via storage event
+    if (window.opener) {
+      window.close()
+    } else {
+      navigate('/accommodation')
+    }
+  }
+
   const toggleSection = (sectionId) => {
     const newExpanded = new Set(expandedSections)
     if (newExpanded.has(sectionId)) {
@@ -345,7 +361,7 @@ export default function RulesAndRegulationsPage() {
                 <input 
                   type="checkbox" 
                   checked={rulesAccepted} 
-                  onChange={e => setRulesAccepted(e.target.checked)}
+                  onChange={e => handleAcceptChange(e.target.checked)}
                   className="mt-1 w-5 h-5 accent-green-600" 
                 />
                 <div className="text-sm text-gray-700 leading-relaxed">
@@ -380,7 +396,7 @@ export default function RulesAndRegulationsPage() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
-                onClick={() => navigate('/accommodation')}
+                onClick={handleBackToBooking}
                 disabled={!rulesAccepted}
                 className={`px-8 py-3 font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg ${
                   rulesAccepted 
@@ -388,7 +404,7 @@ export default function RulesAndRegulationsPage() {
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               >
-                {rulesAccepted ? '🏠 Back to Booking Page' : '📋 Please Accept Rules First'}
+                {rulesAccepted ? '← Back to Booking Form' : '📋 Please Accept Rules First'}
               </button>
               
               <button
