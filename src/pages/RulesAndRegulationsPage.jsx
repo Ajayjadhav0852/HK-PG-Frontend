@@ -278,7 +278,8 @@ export default function RulesAndRegulationsPage() {
     if (window.opener) {
       window.close()
     } else {
-      navigate('/accommodation')
+      // Same-tab navigation — go back to the application form
+      navigate('/apply')
     }
   }
 

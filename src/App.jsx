@@ -126,19 +126,46 @@ function AppRoutes() {
 
   const goToRoomDetail = (typeKey) => {
     setRoomTypeKey(typeKey)
+    try { sessionStorage.setItem('hkpg_room_type_key', typeKey) } catch {}
     navigate(`/room/${typeKey}`)
     window.scrollTo({ top: 0, behavior: 'instant' })
   }
 
   const goToForm = (roomTypeDto) => {
     setSelectedRoom(roomTypeDto)
+    // Persist to sessionStorage so it survives navigation to rules page and back
+    try { sessionStorage.setItem('hkpg_selected_room', JSON.stringify(roomTypeDto)) } catch {}
     navigate('/apply')
     window.scrollTo({ top: 0, behavior: 'instant' })
   }
 
+  // Restore selectedRoom + roomTypeKey from sessionStorage on mount (handles rules page navigation)
+  useEffect(() => {
+    try {
+      if (!selectedRoom) {
+        const saved = sessionStorage.getItem('hkpg_selected_room')
+        if (saved) setSelectedRoom(JSON.parse(saved))
+      }
+      if (!roomTypeKey) {
+        const savedKey = sessionStorage.getItem('hkpg_room_type_key')
+        if (savedKey) setRoomTypeKey(savedKey)
+      }
+    } catch {}
+  }, [])
+
   const handleBookingSubmit = useCallback(() => {
     fetchRooms()
   }, [fetchRooms])
+
+  const handleAfterSubmit = useCallback(() => {
+    // Clear persisted room selection after successful booking
+    try {
+      sessionStorage.removeItem('hkpg_selected_room')
+      sessionStorage.removeItem('hkpg_room_type_key')
+    } catch {}
+    fetchRooms()
+    navigate(`/room/${roomTypeKey}`)
+  }, [fetchRooms, navigate, roomTypeKey])
 
   return (
     <div className="pt-[90px]">
@@ -190,7 +217,7 @@ function AppRoutes() {
                   selectedRoom={selectedRoom}
                   onBack={() => navigate(roomTypeKey ? `/room/${roomTypeKey}` : '/accommodation')}
                   onSubmit={handleBookingSubmit}
-                  onAfterSubmit={() => { fetchRooms(); navigate(`/room/${roomTypeKey}`) }}
+                  onAfterSubmit={handleAfterSubmit}
                 />
               </PageWrapper>
             </ProtectedRoute>
