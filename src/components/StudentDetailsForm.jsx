@@ -37,46 +37,57 @@ const Field = ({ label, required, error, children }) => (
 
 // ── Export to Excel (admin only) ──────────────────────────────────────────────
 function exportToExcel(formData, selectedRoom, allRooms) {
+  const BOM  = '\uFEFF'
   const room = allRooms.find(r => r.roomNumber === formData.preferredRoomNumber)
-  const bedEnd = room ? room.bedStart + room.bedsPerRoom - 1 : ''
+  const bedStart = room?.bedStart || 1
+  const bedEnd   = room ? bedStart + room.bedsPerRoom - 1 : ''
   const bedRange = room
-    ? (room.bedsPerRoom === 1 ? `Bed ${room.bedStart}` : `Beds ${room.bedStart}–${bedEnd}`)
+    ? (room.bedsPerRoom === 1 ? `Bed ${bedStart}` : `Beds ${bedStart}–${bedEnd}`)
     : ''
 
   const rows = [
     ['Field', 'Value'],
-    ['Full Name',          formData.fullName],
-    ['Mobile',             formData.mobile],
-    ['Alternate Mobile',   formData.alternateMobile || ''],
-    ['Email',              formData.email],
-    ['Address',            formData.address],
-    ['City',               formData.city],
-    ['State',              formData.state],
-    ['Occupation',         formData.occupation],
-    ['Institution',        formData.institutionName],
-    ['Course / Role',      formData.courseOrRole],
-    ['Guardian Name',      formData.guardianName],
-    ['Guardian Contact',   formData.guardianContact],
-    ['Guardian Relation',  formData.guardianRelation],
-    ['Joining Date',       formData.joiningDate],
-    ['Duration (months)',  formData.durationMonths],
-    ['Room Type',          selectedRoom?.title || ''],
-    ['Selected Room',      formData.preferredRoomNumber || ''],
-    ['Floor',              room?.floor || ''],
-    ['Bed Numbers',        bedRange],
-    ['Deposit Amount',     formData.depositAmount || ''],
-    ['Payment Mode',       formData.paymentMode || ''],
-    ['Transaction ID',     formData.transactionId || ''],
-    ['ID Proof Type',      formData.idProofType || ''],
+    ['--- PERSONAL DETAILS ---', ''],
+    ['Full Name',              formData.fullName || ''],
+    ['Mobile',                 formData.mobile || ''],
+    ['Alternate Mobile',       formData.alternateMobile || ''],
+    ['Email',                  formData.email || ''],
+    ['--- ADDRESS ---', ''],
+    ['Full Address',           formData.address || ''],
+    ['City',                   formData.city || ''],
+    ['State',                  formData.state || ''],
+    ['--- OCCUPATION ---', ''],
+    ['Occupation',             formData.occupation || ''],
+    ['Institution / Company',  formData.institutionName || ''],
+    ['Course / Job Role',      formData.courseOrRole || ''],
+    ['--- GUARDIAN DETAILS ---', ''],
+    ['Guardian Name',          formData.guardianName || ''],
+    ['Guardian Contact',       formData.guardianContact || ''],
+    ['Guardian Relation',      formData.guardianRelation || ''],
+    ['--- ROOM & STAY ---', ''],
+    ['Room Type',              selectedRoom?.title || ''],
+    ['Room Number',            formData.preferredRoomNumber || ''],
+    ['Floor',                  room?.floor || ''],
+    ['Bed Numbers in Room',    bedRange],
+    ['Selected Bed',           formData.selectedBedNumber ? `Bed ${formData.selectedBedNumber}` : ''],
+    ['Joining Date',           formData.joiningDate || ''],
+    ['Duration (months)',      formData.durationMonths || ''],
+    ['--- PAYMENT ---', ''],
+    ['Deposit Amount (Rs)',    formData.depositAmount || ''],
+    ['Payment Mode',           formData.paymentMode || ''],
+    ['Transaction ID',         formData.transactionId || ''],
+    ['--- ID PROOF ---', ''],
+    ['ID Proof Type',          formData.idProofType || ''],
+    ['--- EXPORTED ---', ''],
+    ['Exported On',            new Date().toLocaleString('en-IN')],
   ]
 
-  // Build CSV content
-  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n')
+  const csv = BOM + rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\r\n')
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
   const url  = URL.createObjectURL(blob)
   const a    = document.createElement('a')
   a.href     = url
-  a.download = `HK_PG_Application_${formData.fullName.replace(/\s+/g, '_') || 'form'}_${new Date().toISOString().slice(0,10)}.csv`
+  a.download = `HKPG_FormDraft_${(formData.fullName || 'Applicant').replace(/\s+/g, '_')}_${new Date().toLocaleDateString('en-IN').replace(/\//g, '-')}.csv`
   a.click()
   URL.revokeObjectURL(url)
 }

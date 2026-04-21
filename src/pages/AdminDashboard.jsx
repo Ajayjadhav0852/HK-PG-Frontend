@@ -150,65 +150,115 @@ export default function AdminDashboard() {
 
   // ── Export single application to CSV ─────────────────────────────────────
   const exportApplication = (a) => {
+    // UTF-8 BOM for Excel compatibility
+    const BOM = '\uFEFF'
     const rows = [
       ['Field', 'Value'],
-      ['Application ID', a.id],
-      ['Full Name', a.fullName],
-      ['Mobile', a.mobile],
-      ['Alternate Mobile', a.alternateMobile || ''],
-      ['Email', a.email || ''],
-      ['Address', a.address || ''],
-      ['City', a.city || ''],
-      ['State', a.state || ''],
-      ['Occupation', a.occupation || ''],
-      ['Institution / Company', a.institutionName || ''],
-      ['Course / Job Role', a.courseOrRole || ''],
-      ['Guardian Name', a.guardianName || ''],
-      ['Guardian Contact', a.guardianContact || ''],
-      ['Guardian Relation', a.guardianRelation || ''],
-      ['Joining Date', a.joiningDate || ''],
-      ['Duration (months)', a.durationMonths || ''],
-      ['Room Type', a.roomTypeTitle || ''],
-      ['Room Number', a.roomNumber || ''],
-      ['Bed Number', a.bedNumber || ''],
-      ['Deposit Amount', a.depositAmount || ''],
-      ['Payment Mode', a.paymentMode || ''],
-      ['Transaction ID', a.transactionId || ''],
-      ['ID Proof Type', a.idProofType || ''],
-      ['ID Proof URL', a.idProofUrl || ''],
-      ['Profile Photo URL', a.profilePhotoUrl || ''],
-      ['Status', a.status],
-      ['Admin Notes', a.adminNotes || ''],
-      ['Applied On', a.createdAt ? new Date(a.createdAt).toLocaleString() : ''],
+      ['--- PERSONAL DETAILS ---', ''],
+      ['Application ID',       a.id],
+      ['Full Name',            a.fullName || ''],
+      ['Mobile',               a.mobile || ''],
+      ['Alternate Mobile',     a.alternateMobile || ''],
+      ['Email',                a.email || ''],
+      ['--- ADDRESS ---', ''],
+      ['Full Address',         a.address || ''],
+      ['City',                 a.city || ''],
+      ['State',                a.state || ''],
+      ['--- OCCUPATION ---', ''],
+      ['Occupation',           a.occupation || ''],
+      ['Institution / Company',a.institutionName || ''],
+      ['Course / Job Role',    a.courseOrRole || ''],
+      ['--- GUARDIAN DETAILS ---', ''],
+      ['Guardian Name',        a.guardianName || ''],
+      ['Guardian Contact',     a.guardianContact || ''],
+      ['Guardian Relation',    a.guardianRelation || ''],
+      ['--- ROOM & STAY ---', ''],
+      ['Room Type',            a.roomTypeTitle || ''],
+      ['Room Number',          a.roomNumber || ''],
+      ['Bed Number',           a.bedNumber ? `Bed ${a.bedNumber}` : ''],
+      ['Joining Date',         a.joiningDate || ''],
+      ['Duration (months)',    a.durationMonths || ''],
+      ['--- PAYMENT ---', ''],
+      ['Deposit Amount (Rs)',  a.depositAmount || ''],
+      ['Payment Mode',         a.paymentMode || ''],
+      ['Transaction ID',       a.transactionId || ''],
+      ['Deposit Status',       a.depositStatus || 'PENDING'],
+      ['Rent Status',          a.rentStatus || 'PENDING'],
+      ['Monthly Rent (Rs)',    a.monthlyPrice || ''],
+      ['--- ID PROOF ---', ''],
+      ['ID Proof Type',        a.idProofType || ''],
+      ['ID Proof URL',         a.idProofUrl || ''],
+      ['Profile Photo URL',    a.profilePhotoUrl || ''],
+      ['--- APPLICATION STATUS ---', ''],
+      ['Booking Status',       a.status || ''],
+      ['Admin Notes',          a.adminNotes || ''],
+      ['Applied On',           a.createdAt ? new Date(a.createdAt).toLocaleString('en-IN') : ''],
     ]
-    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n')
+    const csv = BOM + rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\r\n')
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = `HKPG_Application_${a.fullName?.replace(/\s+/g, '_')}_${a.id}.csv`
+    link.download = `HKPG_${a.fullName?.replace(/\s+/g, '_') || 'Application'}_${a.id}.csv`
     link.click()
     URL.revokeObjectURL(url)
   }
 
   // ── Export ALL applications to CSV ────────────────────────────────────────
   const exportAllApplications = (apps) => {
-    if (!apps.length) return
-    const headers = ['ID','Name','Mobile','Email','Room Type','Room','Bed','Joining','Duration','Status','Deposit','Payment Mode','ID Proof URL','Photo URL','Applied On']
-    const rows = apps.map(a => [
-      a.id, a.fullName, a.mobile, a.email || '',
-      a.roomTypeTitle || '', a.roomNumber || '', a.bedNumber || '',
-      a.joiningDate || '', a.durationMonths || '', a.status,
-      a.depositAmount || '', a.paymentMode || '',
-      a.idProofUrl || '', a.profilePhotoUrl || '',
-      a.createdAt ? new Date(a.createdAt).toLocaleString() : ''
+    if (!apps.length) { showToast.warning('No Data', 'No applications to export.'); return }
+    const BOM = '\uFEFF'
+    const headers = [
+      'Sr No', 'Application ID', 'Full Name', 'Mobile', 'Alternate Mobile', 'Email',
+      'Address', 'City', 'State',
+      'Occupation', 'Institution / Company', 'Course / Job Role',
+      'Guardian Name', 'Guardian Contact', 'Guardian Relation',
+      'Room Type', 'Room Number', 'Bed Number', 'Joining Date', 'Duration (months)',
+      'Deposit Amount (Rs)', 'Payment Mode', 'Transaction ID',
+      'Deposit Status', 'Rent Status', 'Monthly Rent (Rs)',
+      'ID Proof Type', 'ID Proof URL', 'Profile Photo URL',
+      'Booking Status', 'Admin Notes', 'Applied On'
+    ]
+    const rows = apps.map((a, i) => [
+      i + 1,
+      a.id,
+      a.fullName || '',
+      a.mobile || '',
+      a.alternateMobile || '',
+      a.email || '',
+      a.address || '',
+      a.city || '',
+      a.state || '',
+      a.occupation || '',
+      a.institutionName || '',
+      a.courseOrRole || '',
+      a.guardianName || '',
+      a.guardianContact || '',
+      a.guardianRelation || '',
+      a.roomTypeTitle || '',
+      a.roomNumber || '',
+      a.bedNumber ? `Bed ${a.bedNumber}` : '',
+      a.joiningDate || '',
+      a.durationMonths || '',
+      a.depositAmount || '',
+      a.paymentMode || '',
+      a.transactionId || '',
+      a.depositStatus || 'PENDING',
+      a.rentStatus || 'PENDING',
+      a.monthlyPrice || '',
+      a.idProofType || '',
+      a.idProofUrl || '',
+      a.profilePhotoUrl || '',
+      a.status || '',
+      a.adminNotes || '',
+      a.createdAt ? new Date(a.createdAt).toLocaleString('en-IN') : '',
     ])
-    const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n')
+    const csv = BOM + [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\r\n')
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = `HKPG_All_Applications_${new Date().toISOString().slice(0,10)}.csv`
+    link.download = `HKPG_All_Applications_${new Date().toLocaleDateString('en-IN').replace(/\//g, '-')}.csv`
     link.click()
     URL.revokeObjectURL(url)
   }
