@@ -141,7 +141,7 @@ function AppRoutes() {
   }, [fetchRooms])
 
   return (
-    <div className="pt-[72px]">
+    <div className="pt-[90px]">
       {/* Header rendered ONCE here — outside AnimatePresence/motion.div stacking context */}
       <Header />
       <AnimatePresence mode="wait" initial={false}>

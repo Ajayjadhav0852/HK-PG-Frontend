@@ -145,9 +145,9 @@ export default function Header() {
           willChange: 'transform',
         }}
       >
-        {/* ── Main bar — height increased to 72px ─────────────────────── */}
+        {/* ── Main bar — height increased to 90px for proper logo circle ─────────────────────── */}
         <div className="max-w-6xl mx-auto px-4 flex items-center justify-between gap-3"
-          style={{ height: '72px' }}>
+          style={{ height: '90px' }}>
 
           {/* ── Logo ──────────────────────────────────────────────────── */}
           <button
@@ -158,11 +158,11 @@ export default function Header() {
             <img
               src={logoSrc}
               alt="HK PG Logo"
-              width={70}
-              height={70}
+              width={80}
+              height={80}
               style={{ 
-                width: 70, 
-                height: 70, 
+                width: 80, 
+                height: 80, 
                 objectFit: 'contain', 
                 display: 'block',
                 borderRadius: '50%'
