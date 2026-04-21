@@ -155,26 +155,20 @@ export default function Header() {
             className="flex items-center gap-3 group"
             aria-label="HK PG Home"
           >
-            <div style={{
-              width: 70,
-              height: 70,
-              borderRadius: '50%',
-              background: 'white',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '6px',
-              boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
-            }}>
-              <img
-                src={logoSrc}
-                alt="HK PG Logo"
-                width={58}
-                height={58}
-                style={{ width: 58, height: 58, objectFit: 'contain', display: 'block' }}
-                onError={() => setLogoError(true)}
-              />
-            </div>
+            <img
+              src={logoSrc}
+              alt="HK PG Logo"
+              width={70}
+              height={70}
+              style={{ 
+                width: 70, 
+                height: 70, 
+                objectFit: 'contain', 
+                display: 'block',
+                borderRadius: '50%'
+              }}
+              onError={() => setLogoError(true)}
+            />
             <div className="hidden sm:block leading-tight">
               <p className="font-extrabold text-gray-800" style={{ fontSize: 15, letterSpacing: '-0.01em' }}>HK PG</p>
               <p className="text-xs font-semibold" style={{ color: '#c026d3', letterSpacing: '0.01em' }}>Boys Accommodation</p>
