@@ -240,7 +240,6 @@ export default function RoomDetailPage({ onBook, onBack }) {
               { label: 'WiFi',              value: 'Included ✅' },
               { label: 'Daily Housekeeping', value: 'Included ✅' },
               { label: 'Two Wheeler Parking', value: 'Included ✅' },
-              { label: 'Maintenance Charges', value: 'Zero ✅' },
               { label: 'Hidden Charges',    value: 'None 🎉', highlight: true },
             ].map(p => (
               <div key={p.label}
