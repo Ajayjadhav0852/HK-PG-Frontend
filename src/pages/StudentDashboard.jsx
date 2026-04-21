@@ -509,16 +509,44 @@ export default function StudentDashboard() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="font-extrabold text-gray-800 text-base">🚪 Apply to Vacate PG</h2>
-              <p className="text-xs text-gray-400 mt-0.5">Submit a formal notice before leaving</p>
+              <p className="text-xs text-gray-400 mt-0.5">
+                {myApplications.some(a => a.status === 'CONFIRMED')
+                  ? 'Submit a formal notice before leaving'
+                  : 'Available after admin confirms your booking'
+                }
+              </p>
             </div>
             <button
-              onClick={() => setShowVacateForm(v => !v)}
-              className="px-4 py-2 rounded-xl text-xs font-bold text-white transition hover:opacity-90"
-              style={{ background: showVacateForm ? '#6b7280' : 'linear-gradient(135deg, #d63384, #c026d3)' }}
+              onClick={() => {
+                if (!myApplications.some(a => a.status === 'CONFIRMED')) {
+                  showToast.warning('Not Available', 'Apply to Vacate is available only after admin confirms your booking.')
+                  return
+                }
+                setShowVacateForm(v => !v)
+              }}
+              disabled={!myApplications.some(a => a.status === 'CONFIRMED')}
+              className="px-4 py-2 rounded-xl text-xs font-bold text-white transition hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{ background: showVacateForm ? '#6b7280' : (myApplications.some(a => a.status === 'CONFIRMED') ? 'linear-gradient(135deg, #d63384, #c026d3)' : '#9ca3af') }}
             >
-              {showVacateForm ? 'Cancel' : '+ Apply to Vacate'}
+              {myApplications.some(a => a.status === 'CONFIRMED') 
+                ? (showVacateForm ? 'Cancel' : '+ Apply to Vacate')
+                : '🔒 Locked'
+              }
             </button>
           </div>
+
+          {/* Status indicator */}
+          {!myApplications.some(a => a.status === 'CONFIRMED') && (
+            <div className="flex items-center gap-2 text-xs text-gray-500 bg-gray-50 rounded-xl px-3 py-2">
+              <span>🔒</span>
+              <span>
+                {myApplications.length === 0
+                  ? 'No booking found. Apply for a room first.'
+                  : 'Your booking is pending admin approval. Apply to Vacate unlocks after confirmation.'
+                }
+              </span>
+            </div>
+          )}
 
           {showVacateForm && (
             <form

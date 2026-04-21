@@ -299,39 +299,6 @@ export default function RulesAndRegulationsPage() {
           <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-6">
             Please read all rules carefully before booking. Acceptance of these rules is mandatory for accommodation.
           </p>
-          
-          {/* Data safety notice */}
-          <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 max-w-2xl mx-auto">
-            <div className="flex items-center gap-2 text-green-800 mb-2">
-              <span className="text-lg">💾</span>
-              <p className="font-semibold">Your Application Data is Safe!</p>
-            </div>
-            <p className="text-sm text-green-700">
-              Don't worry - all your filled form data is automatically saved. You can read these rules and return to complete your booking without losing any information.
-            </p>
-          </div>
-          
-          {/* Action buttons */}
-          <div className="flex flex-wrap gap-3 justify-center mb-8">
-            <button
-              onClick={expandAll}
-              className="px-4 py-2 bg-blue-100 text-blue-700 rounded-xl text-sm font-semibold hover:bg-blue-200 transition"
-            >
-              📖 Expand All
-            </button>
-            <button
-              onClick={collapseAll}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-200 transition"
-            >
-              📑 Collapse All
-            </button>
-            <button
-              onClick={() => navigate('/accommodation')}
-              className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl text-sm font-bold hover:opacity-90 transition"
-            >
-              🏠 Back to Rooms
-            </button>
-          </div>
 
           {/* Important notice */}
           <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-left">
