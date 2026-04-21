@@ -36,48 +36,61 @@ const Field = ({ label, required, error, children }) => (
 )
 
 // ── Export to Excel (admin only) ──────────────────────────────────────────────
+// Force a value to be treated as TEXT in Excel (prevents scientific notation & date auto-format)
+function txt(v) { return v ? `="${String(v).replace(/"/g, '""')}"` : '' }
+// Plain string cell (for labels/names — no formula needed)
+function str(v) { return String(v || '').replace(/–/g, '-').replace(/—/g, '-') }
+
 function exportToExcel(formData, selectedRoom, allRooms) {
   const BOM  = '\uFEFF'
   const room = allRooms.find(r => r.roomNumber === formData.preferredRoomNumber)
   const bedStart = room?.bedStart || 1
   const bedEnd   = room ? bedStart + room.bedsPerRoom - 1 : ''
   const bedRange = room
-    ? (room.bedsPerRoom === 1 ? `Bed ${bedStart}` : `Beds ${bedStart}–${bedEnd}`)
+    ? (room.bedsPerRoom === 1 ? `Bed ${bedStart}` : `Beds ${bedStart}-${bedEnd}`)
     : ''
+
+  // Format joining date as DD/MM/YYYY to prevent Excel from mangling it
+  const fmtDate = (d) => {
+    if (!d) return ''
+    const parts = d.split('-') // yyyy-mm-dd
+    if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`
+    return d
+  }
 
   const rows = [
     ['Field', 'Value'],
     ['--- PERSONAL DETAILS ---', ''],
-    ['Full Name',              formData.fullName || ''],
-    ['Mobile',                 formData.mobile || ''],
-    ['Alternate Mobile',       formData.alternateMobile || ''],
-    ['Email',                  formData.email || ''],
+    ['Full Name',              str(formData.fullName)],
+    ['Mobile',                 txt(formData.mobile)],
+    ['Alternate Mobile',       txt(formData.alternateMobile)],
+    ['Email',                  str(formData.email)],
     ['--- ADDRESS ---', ''],
-    ['Full Address',           formData.address || ''],
-    ['City',                   formData.city || ''],
-    ['State',                  formData.state || ''],
+    ['Full Address',           str(formData.address)],
+    ['City',                   str(formData.city)],
+    ['State',                  str(formData.state)],
     ['--- OCCUPATION ---', ''],
-    ['Occupation',             formData.occupation || ''],
-    ['Institution / Company',  formData.institutionName || ''],
-    ['Course / Job Role',      formData.courseOrRole || ''],
+    ['Occupation',             str(formData.occupation)],
+    ['Institution / Company',  str(formData.institutionName)],
+    ['Course / Job Role',      str(formData.courseOrRole)],
     ['--- GUARDIAN DETAILS ---', ''],
-    ['Guardian Name',          formData.guardianName || ''],
-    ['Guardian Contact',       formData.guardianContact || ''],
-    ['Guardian Relation',      formData.guardianRelation || ''],
+    ['Guardian Name',          str(formData.guardianName)],
+    ['Guardian Contact',       txt(formData.guardianContact)],
+    ['Guardian Relation',      str(formData.guardianRelation)],
     ['--- ROOM & STAY ---', ''],
-    ['Room Type',              selectedRoom?.title || ''],
-    ['Room Number',            formData.preferredRoomNumber || ''],
-    ['Floor',                  room?.floor || ''],
-    ['Bed Numbers in Room',    bedRange],
+    ['Room Type',              str(selectedRoom?.title)],
+    ['Room Number',            str(formData.preferredRoomNumber)],
+    ['Floor',                  str(room?.floor)],
+    ['Bed Numbers in Room',    str(bedRange)],
     ['Selected Bed',           formData.selectedBedNumber ? `Bed ${formData.selectedBedNumber}` : ''],
-    ['Joining Date',           formData.joiningDate || ''],
-    ['Duration (months)',      formData.durationMonths || ''],
+    ['Joining Date',           txt(fmtDate(formData.joiningDate))],
+    ['Duration (months)',      txt(formData.durationMonths)],
     ['--- PAYMENT ---', ''],
-    ['Deposit Amount (Rs)',    formData.depositAmount || ''],
-    ['Payment Mode',           formData.paymentMode || ''],
-    ['Transaction ID',         formData.transactionId || ''],
+    ['Deposit Amount (Rs)',    txt(formData.depositAmount)],
+    ['Payment Mode',           str(formData.paymentMode)],
+    ['Transaction ID',         str(formData.transactionId)],
     ['--- ID PROOF ---', ''],
-    ['ID Proof Type',          formData.idProofType || ''],
+    ['ID Proof Type',          str(formData.idProofType)],
     ['--- EXPORTED ---', ''],
     ['Exported On',            new Date().toLocaleString('en-IN')],
   ]

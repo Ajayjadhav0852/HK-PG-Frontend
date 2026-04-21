@@ -152,49 +152,62 @@ export default function AdminDashboard() {
   const exportApplication = (a) => {
     // UTF-8 BOM for Excel compatibility
     const BOM = '\uFEFF'
+    // Force text in Excel: prevents scientific notation on phone numbers, date mangling, encoding issues
+    const txt = (v) => v ? `="${String(v).replace(/"/g, '""')}"` : ''
+    const str = (v) => String(v || '').replace(/–/g, '-').replace(/—/g, '-')
+    const fmtDate = (d) => {
+      if (!d) return ''
+      const parts = String(d).split('-')
+      if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`
+      return d
+    }
     const rows = [
       ['Field', 'Value'],
       ['--- PERSONAL DETAILS ---', ''],
-      ['Application ID',       a.id],
-      ['Full Name',            a.fullName || ''],
-      ['Mobile',               a.mobile || ''],
-      ['Alternate Mobile',     a.alternateMobile || ''],
-      ['Email',                a.email || ''],
+      ['Application ID',        txt(a.id)],
+      ['Full Name',             str(a.fullName)],
+      ['Mobile',                txt(a.mobile)],
+      ['Alternate Mobile',      txt(a.alternateMobile)],
+      ['Email',                 str(a.email)],
       ['--- ADDRESS ---', ''],
-      ['Full Address',         a.address || ''],
-      ['City',                 a.city || ''],
-      ['State',                a.state || ''],
+      ['Full Address',          str(a.address)],
+      ['City',                  str(a.city)],
+      ['State',                 str(a.state)],
       ['--- OCCUPATION ---', ''],
-      ['Occupation',           a.occupation || ''],
-      ['Institution / Company',a.institutionName || ''],
-      ['Course / Job Role',    a.courseOrRole || ''],
+      ['Occupation',            str(a.occupation)],
+      ['Institution / Company', str(a.institutionName)],
+      ['Course / Job Role',     str(a.courseOrRole)],
       ['--- GUARDIAN DETAILS ---', ''],
-      ['Guardian Name',        a.guardianName || ''],
-      ['Guardian Contact',     a.guardianContact || ''],
-      ['Guardian Relation',    a.guardianRelation || ''],
+      ['Guardian Name',         str(a.guardianName)],
+      ['Guardian Contact',      txt(a.guardianContact)],
+      ['Guardian Relation',     str(a.guardianRelation)],
       ['--- ROOM & STAY ---', ''],
-      ['Room Type',            a.roomTypeTitle || ''],
-      ['Room Number',          a.roomNumber || ''],
-      ['Bed Number',           a.bedNumber ? `Bed ${a.bedNumber}` : ''],
-      ['Joining Date',         a.joiningDate || ''],
-      ['Duration (months)',    a.durationMonths || ''],
+      ['Room Type',             str(a.roomTypeTitle)],
+      ['Room Number',           str(a.roomNumber)],
+      ['Bed Number',            a.bedNumber ? `Bed ${a.bedNumber}` : ''],
+      ['Joining Date',          txt(fmtDate(a.joiningDate))],
+      ['Duration (months)',     txt(a.durationMonths)],
       ['--- PAYMENT ---', ''],
-      ['Deposit Amount (Rs)',  a.depositAmount || ''],
-      ['Payment Mode',         a.paymentMode || ''],
-      ['Transaction ID',       a.transactionId || ''],
-      ['Deposit Status',       a.depositStatus || 'PENDING'],
-      ['Rent Status',          a.rentStatus || 'PENDING'],
-      ['Monthly Rent (Rs)',    a.monthlyPrice || ''],
+      ['Deposit Amount (Rs)',   txt(a.depositAmount)],
+      ['Payment Mode',          str(a.paymentMode)],
+      ['Transaction ID',        str(a.transactionId)],
+      ['Deposit Status',        str(a.depositStatus || 'PENDING')],
+      ['Rent Status',           str(a.rentStatus || 'PENDING')],
+      ['Monthly Rent (Rs)',     txt(a.monthlyPrice)],
       ['--- ID PROOF ---', ''],
-      ['ID Proof Type',        a.idProofType || ''],
-      ['ID Proof URL',         a.idProofUrl || ''],
-      ['Profile Photo URL',    a.profilePhotoUrl || ''],
+      ['ID Proof Type',         str(a.idProofType)],
+      ['ID Proof URL',          str(a.idProofUrl)],
+      ['Profile Photo URL',     str(a.profilePhotoUrl)],
       ['--- APPLICATION STATUS ---', ''],
-      ['Booking Status',       a.status || ''],
-      ['Admin Notes',          a.adminNotes || ''],
-      ['Applied On',           a.createdAt ? new Date(a.createdAt).toLocaleString('en-IN') : ''],
+      ['Booking Status',        str(a.status)],
+      ['Admin Notes',           str(a.adminNotes)],
+      ['Applied On',            str(a.createdAt ? new Date(a.createdAt).toLocaleString('en-IN') : '')],
     ]
-    const csv = BOM + rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\r\n')
+    const csv = BOM + rows.map(r => r.map(v => {
+      // If already a formula (starts with ="), don't re-quote
+      if (String(v).startsWith('="')) return v
+      return `"${String(v).replace(/"/g, '""')}"`
+    }).join(',')).join('\r\n')
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
@@ -208,6 +221,14 @@ export default function AdminDashboard() {
   const exportAllApplications = (apps) => {
     if (!apps.length) { showToast.warning('No Data', 'No applications to export.'); return }
     const BOM = '\uFEFF'
+    const txt = (v) => v ? `="${String(v).replace(/"/g, '""')}"` : ''
+    const str = (v) => String(v || '').replace(/–/g, '-').replace(/—/g, '-')
+    const fmtDate = (d) => {
+      if (!d) return ''
+      const parts = String(d).split('-')
+      if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`
+      return d
+    }
     const headers = [
       'Sr No', 'Application ID', 'Full Name', 'Mobile', 'Alternate Mobile', 'Email',
       'Address', 'City', 'State',
@@ -221,39 +242,47 @@ export default function AdminDashboard() {
     ]
     const rows = apps.map((a, i) => [
       i + 1,
-      a.id,
-      a.fullName || '',
-      a.mobile || '',
-      a.alternateMobile || '',
-      a.email || '',
-      a.address || '',
-      a.city || '',
-      a.state || '',
-      a.occupation || '',
-      a.institutionName || '',
-      a.courseOrRole || '',
-      a.guardianName || '',
-      a.guardianContact || '',
-      a.guardianRelation || '',
-      a.roomTypeTitle || '',
-      a.roomNumber || '',
+      txt(a.id),
+      str(a.fullName),
+      txt(a.mobile),
+      txt(a.alternateMobile),
+      str(a.email),
+      str(a.address),
+      str(a.city),
+      str(a.state),
+      str(a.occupation),
+      str(a.institutionName),
+      str(a.courseOrRole),
+      str(a.guardianName),
+      txt(a.guardianContact),
+      str(a.guardianRelation),
+      str(a.roomTypeTitle),
+      str(a.roomNumber),
       a.bedNumber ? `Bed ${a.bedNumber}` : '',
-      a.joiningDate || '',
-      a.durationMonths || '',
-      a.depositAmount || '',
-      a.paymentMode || '',
-      a.transactionId || '',
-      a.depositStatus || 'PENDING',
-      a.rentStatus || 'PENDING',
-      a.monthlyPrice || '',
-      a.idProofType || '',
-      a.idProofUrl || '',
-      a.profilePhotoUrl || '',
-      a.status || '',
-      a.adminNotes || '',
-      a.createdAt ? new Date(a.createdAt).toLocaleString('en-IN') : '',
+      txt(fmtDate(a.joiningDate)),
+      txt(a.durationMonths),
+      txt(a.depositAmount),
+      str(a.paymentMode),
+      str(a.transactionId),
+      str(a.depositStatus || 'PENDING'),
+      str(a.rentStatus || 'PENDING'),
+      txt(a.monthlyPrice),
+      str(a.idProofType),
+      str(a.idProofUrl),
+      str(a.profilePhotoUrl),
+      str(a.status),
+      str(a.adminNotes),
+      str(a.createdAt ? new Date(a.createdAt).toLocaleString('en-IN') : ''),
     ])
-    const csv = BOM + [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\r\n')
+    // Headers as plain quoted strings, data rows use txt/str helpers
+    const csvRows = [
+      headers.map(h => `"${h}"`).join(','),
+      ...rows.map(r => r.map(v => {
+        if (String(v).startsWith('="')) return v  // already a formula
+        return `"${String(v).replace(/"/g, '""')}"`
+      }).join(','))
+    ]
+    const csv = BOM + csvRows.join('\r\n')
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
