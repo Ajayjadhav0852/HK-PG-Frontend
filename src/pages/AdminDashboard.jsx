@@ -76,7 +76,10 @@ export default function AdminDashboard() {
       setAllRooms(allRoomsRes.data || [])
       setLastUpdated(new Date())
     } catch (e) {
-      if (!silent) showToast.error('Failed to Load', e.message || 'Could not fetch dashboard data.')
+      if (!silent) {
+        // Silently retry after 8s — server may be waking up (Render free tier cold start)
+        setTimeout(() => fetchData(false), 8000)
+      }
     } finally {
       setLoading(false)
     }
@@ -366,7 +369,10 @@ export default function AdminDashboard() {
   if (loading) return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 gap-3">
       <div className="w-10 h-10 border-4 border-pink-300 border-t-pink-600 rounded-full animate-spin" />
-      <p className="text-gray-400 text-sm font-medium">Loading Admin Dashboard...</p>
+      <p className="text-gray-500 text-sm font-medium">Loading Admin Dashboard...</p>
+      <p className="text-xs text-gray-400 max-w-xs text-center">
+        ⏳ If this takes more than 30 seconds, the server is waking up from sleep. Please wait.
+      </p>
     </div>
   )
 
