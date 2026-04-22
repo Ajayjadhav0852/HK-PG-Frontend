@@ -389,10 +389,10 @@ export default function AdminDashboard() {
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-extrabold text-sm"
             style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>
-            {user?.name?.charAt(0).toUpperCase() || 'A'}
+            🛡️
           </div>
           <div>
-            <p className="font-extrabold text-gray-800 text-sm">{user?.name}</p>
+            <p className="font-extrabold text-gray-800 text-sm">Admin</p>
             <p className="text-xs text-gray-400">Admin Dashboard</p>
           </div>
         </div>
