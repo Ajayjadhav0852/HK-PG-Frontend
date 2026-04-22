@@ -5,17 +5,28 @@ import FooterSection from '../components/FooterSection'
 
 // ── Section config ────────────────────────────────────────────────────────────
 const SECTIONS = [
-  { key: 'all',       label: 'All Photos',   emoji: '🏠', color: '#c026d3' },
-  { key: 'outdoor',   label: 'Outdoor',      emoji: '🌿', color: '#16a34a' },
-  { key: 'indoor',    label: 'Indoor',       emoji: '🛋️', color: '#2563eb' },
-  { key: 'rooms',     label: 'Rooms',        emoji: '🛏️', color: '#d97706' },
-  { key: 'balcony',   label: 'Balcony',      emoji: '🌅', color: '#0891b2' },
-  { key: 'terrace',   label: 'Terrace',      emoji: '🌇', color: '#7c3aed' },
-  { key: 'bathrooms', label: 'Bathrooms',    emoji: '🚿', color: '#0f766e' },
-  { key: 'common',    label: 'Common Areas', emoji: '🤝', color: '#be185d' },
+  { key: 'all',        label: 'All Photos',      emoji: '🏠', color: '#c026d3' },
+  { key: '1-sharing',  label: '1 Sharing Room',  emoji: '🛏️', color: '#7c3aed' },
+  { key: '2-sharing',  label: '2 Sharing Room',  emoji: '🛏️', color: '#2563eb' },
+  { key: '3-sharing',  label: '3 Sharing Room',  emoji: '🛏️', color: '#0891b2' },
+  { key: '4-sharing',  label: '4 Sharing Room',  emoji: '🛏️', color: '#0f766e' },
+  { key: 'balcony',    label: 'Balcony',          emoji: '🌅', color: '#d97706' },
+  { key: 'outdoor',    label: 'Outdoor',          emoji: '🌿', color: '#16a34a' },
+  { key: 'indoor',     label: 'Indoor',           emoji: '🛋️', color: '#be185d' },
+  { key: 'common',     label: 'Common Areas',     emoji: '🤝', color: '#9333ea' },
+  { key: 'parking',    label: 'Parking',          emoji: '🏍️', color: '#374151' },
+  { key: 'terrace',    label: 'Terrace',          emoji: '🌇', color: '#b45309' },
+  { key: 'bathrooms',  label: 'Bathrooms',        emoji: '🚿', color: '#0369a1' },
+  { key: 'rooms',      label: 'Rooms (General)',  emoji: '🚪', color: '#6b7280' },
 ]
 
 const SECTION_KEYS = SECTIONS.filter(s => s.key !== 'all').map(s => s.key)
+
+// ── Cloudinary CDN optimizer — auto quality, auto format, responsive width ───
+function cdnOpt(url, width = 600) {
+  if (!url || !url.includes('res.cloudinary.com')) return url
+  return url.replace(/\/upload\/([^/]*\/)?/, `/upload/w_${width},q_auto,f_auto,dpr_auto/`)
+}
 
 // ── Upload Card (admin only) ──────────────────────────────────────────────────
 function UploadCard({ onUploaded }) {
@@ -215,7 +226,7 @@ function ImageCard({ img, isAdmin, onDelete, onClick }) {
       onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.08)' }}
     >
       <img
-        src={img.imageUrl}
+        src={cdnOpt(img.imageUrl, 500)}
         alt={img.caption || img.section}
         loading="lazy"
         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
@@ -286,7 +297,7 @@ function Lightbox({ images, index, onClose }) {
     >
       <div onClick={e => e.stopPropagation()} style={{ position: 'relative', maxWidth: 900, width: '100%' }}>
         <img
-          src={img.imageUrl}
+          src={cdnOpt(img.imageUrl, 1200)}
           alt={img.caption || img.section}
           style={{ width: '100%', maxHeight: '80vh', objectFit: 'contain', borderRadius: 16 }}
         />

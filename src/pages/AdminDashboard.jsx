@@ -646,6 +646,28 @@ export default function AdminDashboard() {
           </p>
         </div>
 
+        {/* ── Gallery Management ───────────────────────────────────────────── */}
+        <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="font-extrabold text-gray-800 text-base">🖼️ Gallery Management</h2>
+              <p className="text-xs text-gray-400 mt-0.5">Upload room photos, balcony, outdoor & common area images</p>
+            </div>
+            <button
+              onClick={() => navigate('/gallery')}
+              className="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition hover:opacity-90 active:scale-95 flex items-center gap-2"
+              style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}
+            >
+              📷 Open Gallery Upload
+            </button>
+          </div>
+          <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-gray-500">
+            {['🛏️ Rooms', '🌅 Balcony', '🌿 Outdoor', '🤝 Common Areas'].map(s => (
+              <div key={s} className="bg-gray-50 rounded-xl px-3 py-2 text-center font-medium">{s}</div>
+            ))}
+          </div>
+        </div>
+
         {/* ── Room Type Management ──────────────────────────────────────────── */}
         <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
           <div className="flex items-center justify-between mb-5">
