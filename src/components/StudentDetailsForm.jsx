@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { showToast } from '../components/Toast'
 import { applicationApi, roomApi } from '../services/api'
 import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 import UPIPaymentScreen from './UPIPaymentScreen'
 import BookingSuccessScreen from './BookingSuccessScreen'
 
@@ -122,6 +123,7 @@ const AGREED_STORAGE_KEY = 'hkpg_rules_accepted'
 
 export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubmit }) {
   const { user }                      = useAuth()
+  const navigate                      = useNavigate()
   const isAdmin                       = user?.role === 'admin'
 
   // Load saved draft from localStorage on mount
@@ -757,34 +759,27 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
             <p className="text-red-600 text-sm">You must read and accept all rules before submitting your application</p>
           </div>
         </div>
-        
+
         <div className="bg-white rounded-xl p-4 border border-red-200 mb-4">
           <p className="text-sm text-gray-700 mb-3">
-            <strong>Important:</strong> The rules shown below are just a summary. Complete rules include payment policies, 
-            security guidelines, visitor policies, and legal terms that are mandatory for all residents.
+            Complete rules include payment policies, security guidelines, visitor policies, and legal terms — all mandatory for all residents.
           </p>
-          
-          <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
-            <p className="text-xs text-green-700 font-semibold">
-              💾 <strong>Don't worry about your form data!</strong> All your filled information is automatically saved. 
-              You can safely read the complete rules and return - your progress will be preserved.
-            </p>
-          </div>
-          
-          <a
-            href="/rules-and-regulations"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={() => navigate('/rules-and-regulations')}
             className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-600 to-pink-600 text-white font-bold rounded-xl hover:opacity-90 transition-all transform hover:scale-105 shadow-lg"
           >
             📋 Read Complete Rules & Regulations
             <span className="text-xs bg-white/20 px-2 py-1 rounded-full">MANDATORY</span>
-          </a>
+          </button>
+          <p className="text-xs text-gray-400 mt-2">
+            💾 Your form data is saved — you can read rules and come back without losing anything.
+          </p>
         </div>
 
         {/* Summary Rules */}
         <div className="space-y-2">
-          <h4 className="font-semibold text-gray-800 text-sm mb-2">📝 Quick Summary (Full details in complete rules):</h4>
+          <h4 className="font-semibold text-gray-800 text-sm mb-2">📝 Quick Summary:</h4>
           {[
             { icon: '💰', text: 'Rent due by 5th of every month (₹100/day late fee)' },
             { icon: '📅', text: '15-day advance notice required for vacating (online only)' },
@@ -819,13 +814,26 @@ export default function StudentDetailsForm({ selectedRoom, onSubmit, onAfterSubm
             ✅ Rules accepted — you're good to submit!
           </p>
         )}
+        {!agreed && (
+          <p className="text-xs text-amber-600 mt-2 ml-7">
+            ☝️ Read the rules above and check this box to enable submission.
+          </p>
+        )}
       </div>
 
       {/* 11. Submit */}
-      <button type="submit" disabled={loading}
-        className="w-full font-extrabold py-4 rounded-2xl text-white text-base shadow-lg transition hover:opacity-90 active:scale-95 disabled:opacity-60"
-        style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}>
-        {loading ? '⏳ Submitting...' : '✅ Submit Application'}
+      <button
+        type="submit"
+        disabled={loading || !agreed}
+        className={`w-full font-extrabold py-4 rounded-2xl text-white text-base shadow-lg transition active:scale-95 ${
+          !agreed
+            ? 'opacity-50 cursor-not-allowed'
+            : 'hover:opacity-90 cursor-pointer'
+        }`}
+        style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}
+        title={!agreed ? 'Please read and accept the Rules & Regulations first' : ''}
+      >
+        {loading ? '⏳ Submitting...' : agreed ? '✅ Submit Application' : '🔒 Accept Rules to Submit'}
       </button>
 
     </form>

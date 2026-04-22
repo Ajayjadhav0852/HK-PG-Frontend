@@ -263,7 +263,9 @@ function SectionCard({ section, isExpanded, onToggle }) {
 
 export default function RulesAndRegulationsPage() {
   const [expandedSections, setExpandedSections] = useState(new Set(['payment', 'notice', 'security']))
-  const [rulesAccepted, setRulesAccepted] = useState(false)
+  const [rulesAccepted, setRulesAccepted] = useState(() => {
+    try { return localStorage.getItem('hkpg_rules_accepted') === 'true' } catch { return false }
+  })
   const navigate = useNavigate()
 
   // Persist acceptance to localStorage so the booking form picks it up
@@ -273,15 +275,15 @@ export default function RulesAndRegulationsPage() {
   }
 
   const handleBackToBooking = () => {
-    // If opened in a new tab from the form, close this tab to return to the form
-    // The form will auto-detect the localStorage change via storage event
     if (window.opener) {
       window.close()
     } else {
-      // Same-tab navigation — go back to the application form
       navigate('/apply')
     }
   }
+
+  // Check if user came from the application form
+  const cameFromForm = !!sessionStorage.getItem('hkpg_selected_room')
 
   const toggleSection = (sectionId) => {
     const newExpanded = new Set(expandedSections)
@@ -303,6 +305,21 @@ export default function RulesAndRegulationsPage() {
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(135deg, #fff0f6 0%, #fdf3e7 60%, #fff8f0 100%)' }}>
+
+      {/* Sticky top bar — only shown when user came from application form */}
+      {cameFromForm && (
+        <div className="sticky top-[90px] z-30 w-full bg-white border-b border-gray-100 shadow-sm px-4 py-2.5 flex items-center justify-between">
+          <p className="text-xs text-gray-500 font-medium">
+            📋 Reading rules for your booking application
+          </p>
+          <button
+            onClick={handleBackToBooking}
+            className="flex items-center gap-1.5 text-xs font-bold text-pink-600 hover:text-pink-800 transition"
+          >
+            ← Back to Application
+          </button>
+        </div>
+      )}
       
       {/* Header */}
       <div className="w-full px-4 sm:px-6 py-12">
