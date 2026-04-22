@@ -25,6 +25,28 @@ const PAYMENT_STATUSES = [
 export default function AdminDashboard() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+
+  // ── HARD SECURITY GUARD — never render admin UI for non-admin users ───────
+  // This is a second layer of protection beyond ProtectedRoute.
+  // If somehow a non-admin reaches this component, immediately redirect.
+  useEffect(() => {
+    if (user && (user.role || '').toLowerCase() !== 'admin') {
+      navigate('/student', { replace: true })
+    }
+  }, [user, navigate])
+
+  if (!user || (user.role || '').toLowerCase() !== 'admin') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <p className="text-5xl mb-3">🔒</p>
+          <p className="font-bold text-gray-700">Access Denied</p>
+          <p className="text-sm text-gray-400 mt-1">You do not have permission to view this page.</p>
+        </div>
+      </div>
+    )
+  }
+  // ─────────────────────────────────────────────────────────────────────────
   const [stats, setStats]               = useState(null)
   const [applications, setApplications] = useState([])
   const [roomTypes, setRoomTypes]       = useState([])

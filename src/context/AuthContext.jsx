@@ -40,12 +40,13 @@ export function AuthProvider({ children }) {
       storedUser = null
     }
 
-    if (!token || !storedUser) {
+    if (!token) {
       setUser(null)
       setValidating(false)
       return
     }
 
+    // Always validate against the server — never trust localStorage role alone
     authApi.getMe()
       .then(res => {
         const d = res?.data
@@ -53,8 +54,10 @@ export function AuthProvider({ children }) {
           clearSession()
           return
         }
-
+        // Server response is the source of truth for role — never use localStorage role
         const fresh = buildUser(d, storedUser)
+        // Ensure role always comes from server, not localStorage
+        fresh.role = (d.role || 'student').toLowerCase()
         setUser(fresh)
         localStorage.setItem('hkpg_user', JSON.stringify(fresh))
       })
