@@ -94,7 +94,12 @@ function UploadCard({ onUploaded }) {
       onUploaded()
       setTimeout(() => setSuccess(''), 3000)
     } catch (err) {
-      setError(err.message || 'Upload failed. Please try again.')
+      const msg = err.message || 'Upload failed'
+      if (msg.toLowerCase().includes('preset')) {
+        setError('⚙️ Cloudinary upload preset "hkpg_gallery" not found. Go to cloudinary.com → Settings → Upload → Add upload preset → name it "hkpg_gallery" → set Signing mode to Unsigned → Save.')
+      } else {
+        setError(msg)
+      }
     } finally {
       setLoading(false)
     }
