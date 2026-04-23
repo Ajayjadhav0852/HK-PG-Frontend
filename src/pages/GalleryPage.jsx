@@ -28,6 +28,30 @@ function cdnOpt(url, width = 600) {
   return url.replace(/\/upload\/([^/]*\/)?/, `/upload/w_${width},q_auto,f_auto,dpr_auto/`)
 }
 
+// ── Direct Cloudinary upload (bypasses backend — instant, no Render needed) ──
+const CLOUDINARY_CLOUD = 'dzr0crkvr'
+const CLOUDINARY_PRESET = 'hkpg_gallery'  // unsigned upload preset — create in Cloudinary dashboard
+
+async function uploadToCloudinary(file, section) {
+  const fd = new FormData()
+  fd.append('file', file)
+  fd.append('upload_preset', CLOUDINARY_PRESET)
+  fd.append('folder', `hkpg/gallery/${section}`)
+  fd.append('quality', 'auto')
+  fd.append('fetch_format', 'auto')
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`,
+    { method: 'POST', body: fd }
+  )
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.error?.message || `Cloudinary upload failed (${res.status})`)
+  }
+  const data = await res.json()
+  return data.secure_url
+}
+
 // ── Upload Card (admin only) ──────────────────────────────────────────────────
 function UploadCard({ onUploaded }) {
   const [file, setFile]         = useState(null)
@@ -59,13 +83,18 @@ function UploadCard({ onUploaded }) {
     if (!file) { setError('Please select an image'); return }
     setLoading(true); setError(''); setSuccess('')
     try {
-      await galleryApi.upload(file, section, caption)
+      // Step 1: Upload directly to Cloudinary (fast, no backend needed)
+      const cloudinaryUrl = await uploadToCloudinary(file, section)
+
+      // Step 2: Save the URL + metadata to backend DB
+      await galleryApi.saveUrl(cloudinaryUrl, section, caption)
+
       setSuccess('Image uploaded successfully!')
       setFile(null); setPreview(null); setCaption('')
       onUploaded()
       setTimeout(() => setSuccess(''), 3000)
     } catch (err) {
-      setError(err.message || 'Upload failed')
+      setError(err.message || 'Upload failed. Please try again.')
     } finally {
       setLoading(false)
     }

@@ -143,6 +143,7 @@ export const rentApi = {
 export const galleryApi = {
   getAll: () => request('/api/gallery'),
   getBySection: (section) => request(`/api/gallery/section/${section}`),
+  // Legacy file upload (kept for fallback)
   upload: (file, section, caption = '', displayOrder = 0) => {
     const fd = new FormData()
     fd.append('file', file)
@@ -151,6 +152,12 @@ export const galleryApi = {
     fd.append('displayOrder', String(displayOrder))
     return request('/api/gallery', { method: 'POST', body: fd }, 30000)
   },
+  // New: save a Cloudinary URL directly (after frontend upload)
+  saveUrl: (imageUrl, section, caption = '', displayOrder = 0) =>
+    request('/api/gallery/url', {
+      method: 'POST',
+      body: JSON.stringify({ imageUrl, section, caption, displayOrder }),
+    }),
   delete: (id) => request(`/api/gallery/${id}`, { method: 'DELETE' }),
 }
 
