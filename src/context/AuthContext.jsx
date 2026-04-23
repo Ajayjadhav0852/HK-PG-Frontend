@@ -61,7 +61,17 @@ export function AuthProvider({ children }) {
         setUser(fresh)
         localStorage.setItem('hkpg_user', JSON.stringify(fresh))
       })
-      .catch(() => clearSession())
+      .catch((err) => {
+        // Network error (server sleeping / offline) — keep existing session
+        // Don't clear the token — user is still logged in, server just isn't responding
+        // Only clear on 401 (handled in api.js request wrapper)
+        if (storedUser) {
+          // Restore from localStorage so user stays logged in
+          setUser(storedUser)
+        } else {
+          clearSession()
+        }
+      })
       .finally(() => setValidating(false))
   }, [clearSession])
 
