@@ -92,11 +92,11 @@ export default function OffersPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button onClick={bookNow}
               className="px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-extrabold rounded-2xl hover:opacity-90 transition-all transform hover:scale-105 shadow-2xl text-base inline-flex items-center justify-center">
-              <RocketIcon />Book Your Seat Now
+             🚀Book Your Seat Now
             </button>
             <a href={`tel:${PHONE}`}
               className="px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-bold rounded-2xl hover:bg-white/20 transition-all text-base text-center inline-flex items-center justify-center">
-              <PhoneCallIcon />Call Now — {PHONE}
+              <PhoneCallIcon />Call Now
             </a>
           </div>
         </div>
@@ -112,7 +112,8 @@ export default function OffersPage() {
               <span className="opacity-50">•</span>
               <span>🚀 Your 6 months matter – we support your placement journey</span>
               <span className="opacity-50">•</span>
-              <span>📍 Near IACSD CDAC Center · KnowIT Deccan · IET Center</span>
+              icon:<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>Near IACSD CDAC Center · KnowIT Deccan · IET Center</span>
               <span className="opacity-50">•</span>
               <span>🏠 Newly Opened PG · Prime Location · Akurdi, Pune</span>
               <span className="opacity-50">•</span>
@@ -182,7 +183,7 @@ export default function OffersPage() {
                 <div className="flex gap-3 flex-shrink-0">
               <button onClick={bookNow}
                 className="px-6 py-3 bg-white text-purple-700 font-extrabold rounded-xl hover:bg-yellow-300 hover:text-purple-900 transition-all transform hover:scale-105 shadow-lg text-sm inline-flex items-center">
-                <RocketIcon />Book Now
+               🚀Book Now
               </button>
               <a href={WA_LINK} target="_blank" rel="noreferrer"
                 className="px-6 py-3 bg-green-500 text-white font-bold rounded-xl hover:bg-green-400 transition-all text-sm inline-flex items-center">
@@ -279,7 +280,7 @@ export default function OffersPage() {
 
             {/* College Special */}
             <div className="relative bg-gradient-to-br from-violet-600 to-purple-600 rounded-2xl p-5 text-white shadow-lg hover:shadow-[0_0_30px_rgba(139,92,246,0.4)] hover:-translate-y-1 transition-all duration-300 border border-violet-400/30 overflow-hidden flex flex-col">
-              <span className="inline-block bg-white/20 text-xs font-bold px-3 py-1 rounded-full mb-3 w-fit">🏫 COLLEGE SPECIAL</span>
+              <span className="inline-block bg-white/20 text-xs font-bold px-3 py-1 rounded-full mb-3 w-fit">COLLEGE SPECIAL</span>
               <h3 className="text-lg font-extrabold mb-1">🏫 College Student Special</h3>
               <p className="text-white/80 text-xs mb-3">DY Patil · PCCOE · PCET students</p>
               <div className="space-y-1.5 mb-4 flex-1">
@@ -295,7 +296,7 @@ export default function OffersPage() {
 
             {/* Refer & Earn */}
             <div className="relative bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl p-5 text-white shadow-lg hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] hover:-translate-y-1 transition-all duration-300 border border-orange-400/30 overflow-hidden flex flex-col">
-              <span className="inline-block bg-white/20 text-xs font-bold px-3 py-1 rounded-full mb-3 w-fit">💸 EARN MONEY</span>
+              <span className="inline-block bg-white/20 text-xs font-bold px-3 py-1 rounded-full mb-3 w-fit">EARN MONEY</span>
               <h3 className="text-lg font-extrabold mb-1">👥 Refer & Earn ₹500</h3>
               <p className="text-white/80 text-xs mb-3">After 2 months of stay</p>
               <div className="space-y-1.5 mb-4 flex-1">
@@ -370,8 +371,8 @@ export default function OffersPage() {
                     🚀 Book Now
                   </button>
                   <a href={WA_LINK} target="_blank" rel="noreferrer"
-                    className="px-6 py-3 bg-green-500 text-white font-bold rounded-xl hover:bg-green-400 transition-all text-sm">
-                    💬 WhatsApp
+                    className="px-6 py-3 bg-green-500 text-white font-bold rounded-xl hover:bg-green-400 transition-all text-sm inline-flex items-center gap-2">
+                    <WAIcon />WhatsApp
                   </a>
                 </div>
               </div>
@@ -406,15 +407,15 @@ export default function OffersPage() {
               onClick={bookNow}
               className="px-10 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-extrabold rounded-2xl hover:opacity-90 transition-all transform hover:scale-105 shadow-2xl text-base"
             >
-              🏠 View Available Rooms
+              View Available Rooms
             </button>
             <a href={`tel:${PHONE}`}
-              className="px-10 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-bold rounded-2xl hover:bg-white/20 transition-all text-base text-center">
-              📞 Call Now
+              className="px-10 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-bold rounded-2xl hover:bg-white/20 transition-all text-base text-center inline-flex items-center justify-center gap-2">
+              <PhoneCallIcon />Call Now
             </a>
             <a href={WA_LINK} target="_blank" rel="noreferrer"
-              className="px-10 py-4 bg-green-500 text-white font-bold rounded-2xl hover:bg-green-400 transition-all text-base text-center">
-              💬 WhatsApp
+              className="px-10 py-4 bg-green-500 text-white font-bold rounded-2xl hover:bg-green-400 transition-all text-base text-center inline-flex items-center justify-center gap-2">
+              <WAIcon />WhatsApp
             </a>
           </div>
         </div>

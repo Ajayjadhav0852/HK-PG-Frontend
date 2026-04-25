@@ -193,9 +193,6 @@ export default function FooterSection() {
             <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, margin: 0, textAlign: 'center' }}>
               © 2026 HK PG Boys Accommodation · Akurdi, Pune · All rights reserved
             </p>
-            <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 11, margin: 0 }}>
-              No Brokerage · Contact Owner Directly
-            </p>
           </div>
         </div>
       </div>
