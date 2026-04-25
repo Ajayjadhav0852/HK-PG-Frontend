@@ -219,7 +219,7 @@ function FanCarousel({ images, onImageClick, isAdmin, onDelete }) {
     <div className="w-full select-none" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
       {/* Carousel stage */}
       <div className="relative flex items-center justify-center"
-        style={{ height: 'clamp(280px, 50vw, 480px)', perspective: '1200px' }}>
+        style={{ height: 'clamp(240px, 42vw, 440px)', perspective: '1200px' }}>
         {slots.map(({ offset, scale, x, z, rotate, opacity, blur }) => {
           const idx = getIdx(offset)
           if (total < 5 && Math.abs(offset) > Math.floor(total / 2)) return null
@@ -231,8 +231,8 @@ function FanCarousel({ images, onImageClick, isAdmin, onDelete }) {
               onClick={() => isCenter ? onImageClick(idx) : resetAuto(offset > 0 ? 'right' : 'left')}
               style={{
                 position: 'absolute',
-                width: 'clamp(180px, 28vw, 320px)',
-                aspectRatio: '3/4',
+                width: isCenter ? 'clamp(280px, 52vw, 560px)' : 'clamp(140px, 22vw, 260px)',
+                aspectRatio: '4/3',
                 transform: `translateX(${x}) scale(${scale}) rotateY(${rotate}deg)`,
                 zIndex: z,
                 opacity,

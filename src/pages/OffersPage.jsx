@@ -1,16 +1,39 @@
 import { useNavigate } from 'react-router-dom'
 import FooterSection from '../components/FooterSection'
 
+// ── Inline SVG icons (Heroicons MIT) ─────────────────────────────────────────
+const RocketIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" style={{display:'inline',verticalAlign:'middle',marginRight:6}}>
+    <path d="M4.5 16.5c-1.5 1-1.5 2.5 0 3.5 1.5 1 3.5.5 4.5-1l6-10.5c1-1.5.5-3.5-1-4.5s-3.5-.5-4.5 1z"/><path d="M12 2l2 2-2 2-2-2z"/>
+  </svg>
+)
+const PhoneCallIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" style={{display:'inline',verticalAlign:'middle',marginRight:6}}>
+    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+  </svg>
+)
+const WAIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16" style={{display:'inline',verticalAlign:'middle',marginRight:6}}>
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.528 5.855L.057 23.882l6.198-1.448A11.934 11.934 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.006-1.371l-.36-.214-3.68.859.875-3.593-.234-.369A9.818 9.818 0 1 1 12 21.818z"/>
+  </svg>
+)
+const CheckIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width="14" height="14" style={{display:'inline',verticalAlign:'middle',marginRight:6,flexShrink:0}}>
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+)
+const HomeIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" style={{display:'inline',verticalAlign:'middle',marginRight:6}}>
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+  </svg>
+)
+
 const PHONE = '9579828996'
 const WA_LINK = `https://wa.me/91${PHONE}?text=${encodeURIComponent('Hi! I am interested in booking a room at HK PG Akurdi.')}`
 
-// Navigate to accommodation page TOP (not bottom)
 function useBookNow() {
   const navigate = useNavigate()
-  return () => {
-    navigate('/accommodation')
-    window.scrollTo({ top: 0, behavior: 'instant' })
-  }
+  return () => { navigate('/accommodation'); window.scrollTo({ top: 0, behavior: 'instant' }) }
 }
 
 export default function OffersPage() {
@@ -31,7 +54,8 @@ export default function OffersPage() {
           {/* Badge */}
           <div className="flex justify-center mb-6">
             <span className="inline-flex items-center gap-2 bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 text-xs font-bold px-4 py-1.5 rounded-full tracking-widest uppercase">
-              ⭐ CDAC STUDENT SPECIAL
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              CDAC STUDENT SPECIAL
             </span>
           </div>
 
@@ -46,36 +70,33 @@ export default function OffersPage() {
           {/* Value props */}
           <div className="flex flex-wrap justify-center gap-3 mb-8">
             {[
-              '✔ Save 2–3 hours daily travel',
-              '✔ Focus only on study & placement',
-              '✔ Quiet + study-friendly environment',
+              'Save 2–3 hours daily travel',
+              'Focus only on study & placement',
+              'Quiet + study-friendly environment',
             ].map((v, i) => (
-              <span key={i} className="bg-white/10 backdrop-blur-sm border border-white/20 text-white/90 text-sm font-semibold px-4 py-2 rounded-full">
-                {v}
+              <span key={i} className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white/90 text-sm font-semibold px-4 py-2 rounded-full">
+                <CheckIcon />{v}
               </span>
             ))}
           </div>
 
           {/* Urgency */}
           <div className="flex justify-center mb-8">
-            <span className="inline-flex items-center gap-2 bg-red-500/80 text-white text-sm font-bold px-5 py-2 rounded-full animate-pulse">
-              🔥 Limited beds available — Book fast!
+            <span className="inline-flex items-center gap-2 bg-red-500/80 text-white text-sm font-bold px-5 py-2 rounded-full">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="14" height="14"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              Limited beds available — Book fast!
             </span>
           </div>
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={bookNow}
-              className="px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-extrabold rounded-2xl hover:opacity-90 transition-all transform hover:scale-105 shadow-2xl text-base"
-            >
-              🚀 Book Your Seat Now
+            <button onClick={bookNow}
+              className="px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-extrabold rounded-2xl hover:opacity-90 transition-all transform hover:scale-105 shadow-2xl text-base inline-flex items-center justify-center">
+              <RocketIcon />Book Your Seat Now
             </button>
-            <a
-              href={`tel:${PHONE}`}
-              className="px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-bold rounded-2xl hover:bg-white/20 transition-all text-base text-center"
-            >
-              📞 Call Now — {PHONE}
+            <a href={`tel:${PHONE}`}
+              className="px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-bold rounded-2xl hover:bg-white/20 transition-all text-base text-center inline-flex items-center justify-center">
+              <PhoneCallIcon />Call Now — {PHONE}
             </a>
           </div>
         </div>
@@ -127,8 +148,8 @@ export default function OffersPage() {
             <div className="relative z-10">
               {/* Badge + title */}
               <div className="flex flex-wrap items-center gap-3 mb-4">
-                <span className="bg-yellow-400 text-yellow-900 text-xs font-extrabold px-3 py-1 rounded-full">🎯 CDAC SPECIAL</span>
-                <span className="bg-red-500/80 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">🔥 Limited Beds</span>
+                <span className="bg-yellow-400 text-yellow-900 text-xs font-extrabold px-3 py-1 rounded-full">CDAC SPECIAL</span>
+                <span className="bg-red-500/80 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">Limited Beds</span>
               </div>
 
               <h3 className="text-3xl sm:text-4xl font-extrabold mb-2">🎯 CDAC Success Package</h3>
@@ -142,7 +163,7 @@ export default function OffersPage() {
                   '✅ Quiet, distraction-free,well ventilated rooms',
                   '✅ Near IACSD CDAC Center ',
                   '✅ Easy travel to KnowIT Deccan & IET Center',
-                  '✅ Railway at doorstep · Bus stand 50m away',
+                  '✅ Railway at doorstep,Bus stand 50m away',
                   '✅ Group stay option (3-4 friends together)',
                   '✅ No long lock-in period',
                 ].map((f, i) => (
@@ -159,16 +180,14 @@ export default function OffersPage() {
                   <p className="text-white/70 text-sm">"Your 6 months matter – we support your placement journey"</p>
                 </div>
                 <div className="flex gap-3 flex-shrink-0">
-                  <button
-                    onClick={bookNow}
-                    className="px-6 py-3 bg-white text-purple-700 font-extrabold rounded-xl hover:bg-yellow-300 hover:text-purple-900 transition-all transform hover:scale-105 shadow-lg text-sm"
-                  >
-                    🚀 Book Now
-                  </button>
-                  <a href={WA_LINK} target="_blank" rel="noreferrer"
-                    className="px-6 py-3 bg-green-500 text-white font-bold rounded-xl hover:bg-green-400 transition-all text-sm">
-                    💬 WhatsApp
-                  </a>
+              <button onClick={bookNow}
+                className="px-6 py-3 bg-white text-purple-700 font-extrabold rounded-xl hover:bg-yellow-300 hover:text-purple-900 transition-all transform hover:scale-105 shadow-lg text-sm inline-flex items-center">
+                <RocketIcon />Book Now
+              </button>
+              <a href={WA_LINK} target="_blank" rel="noreferrer"
+                className="px-6 py-3 bg-green-500 text-white font-bold rounded-xl hover:bg-green-400 transition-all text-sm inline-flex items-center">
+                <WAIcon />WhatsApp
+              </a>
                 </div>
               </div>
             </div>
@@ -192,7 +211,7 @@ export default function OffersPage() {
             {/* Group Offer */}
             <div className="relative bg-gradient-to-br from-green-600 to-teal-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] hover:-translate-y-1 transition-all duration-300 border border-green-400/30 overflow-hidden group">
               <div className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-white/10" />
-              <span className="inline-block bg-white/20 text-xs font-bold px-3 py-1 rounded-full mb-3">👥 GROUP SPECIAL</span>
+              <span className="inline-block bg-white/20 text-xs font-bold px-3 py-1 rounded-full mb-3">GROUP SPECIAL</span>
               <h3 className="text-xl font-extrabold mb-2">👥 CDAC Group Offer</h3>
               <p className="text-white/80 text-sm mb-4">Come with 3-4 friends — stay together, study together</p>
               <div className="space-y-2 mb-5">
@@ -209,7 +228,7 @@ export default function OffersPage() {
             {/* Placement Material */}
             <div className="relative bg-gradient-to-br from-indigo-600 to-blue-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-[0_0_30px_rgba(99,102,241,0.4)] hover:-translate-y-1 transition-all duration-300 border border-indigo-400/30 overflow-hidden group">
               <div className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-white/10" />
-              <span className="inline-block bg-white/20 text-xs font-bold px-3 py-1 rounded-full mb-3">📚 STUDY SUPPORT</span>
+              <span className="inline-block bg-white/20 text-xs font-bold px-3 py-1 rounded-full mb-3">STUDY SUPPORT</span>
               <h3 className="text-xl font-extrabold mb-2">📚 Placement Material Support</h3>
               <p className="text-white/80 text-sm mb-4">Get the edge you need for CDAC placement</p>
               <div className="space-y-2 mb-5">
@@ -244,7 +263,7 @@ export default function OffersPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             {/* Annual Saver */}
             <div className="relative bg-gradient-to-br from-pink-600 to-rose-600 rounded-2xl p-5 text-white shadow-lg hover:shadow-[0_0_30px_rgba(236,72,153,0.4)] hover:-translate-y-1 transition-all duration-300 border border-pink-400/30 overflow-hidden flex flex-col">
-              <span className="inline-block bg-white/20 text-xs font-bold px-3 py-1 rounded-full mb-3 w-fit">💰 BEST VALUE</span>
+              <span className="inline-block bg-white/20 text-xs font-bold px-3 py-1 rounded-full mb-3 w-fit">BEST VALUE</span>
               <h3 className="text-lg font-extrabold mb-1">🎉 Annual Saver Plan</h3>
               <p className="text-white/80 text-xs mb-3">Stay 12 months, pay ONLY for 11</p>
               <div className="space-y-1.5 mb-4 flex-1">
@@ -405,3 +424,4 @@ export default function OffersPage() {
     </div>
   )
 }
+
