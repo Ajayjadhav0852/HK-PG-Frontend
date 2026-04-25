@@ -48,19 +48,13 @@ export default function ContactPage() {
           >
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center text-white"
-              style={{
-                background: 'linear-gradient(135deg, #d63384, #c026d3)',
-              }}
+              style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}
             >
               <PhoneIcon className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-xs text-gray-400 font-medium">
-                Owner (PG Management)
-              </p>
-              <p className="font-extrabold text-gray-800 text-lg group-hover:text-pink-600 transition">
-                9579828996
-              </p>
+              <p className="text-xs text-gray-400 font-medium">Owner (PG Management)</p>
+              <p className="font-extrabold text-gray-800 text-lg group-hover:text-pink-600 transition">9579828996</p>
             </div>
           </a>
 
@@ -71,44 +65,34 @@ export default function ContactPage() {
           >
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center text-white"
-              style={{
-                background: 'linear-gradient(135deg, #d63384, #c026d3)',
-              }}
+              style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}
             >
               <PhoneIcon className="w-6 h-6" />
             </div>
             <div>
               <p className="text-xs text-gray-400 font-medium">Owner</p>
-              <p className="font-extrabold text-gray-800 text-lg group-hover:text-pink-600 transition">
-                9096398032
-              </p>
+              <p className="font-extrabold text-gray-800 text-lg group-hover:text-pink-600 transition">9096398032</p>
             </div>
           </a>
 
-          {/* PG Management */}
+          {/* PG Management — side by side with WhatsApp */}
           <a
             href="tel:9022481019"
             className="bg-white rounded-2xl shadow-sm p-6 flex items-center gap-4 hover:shadow-md transition group"
           >
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center text-white"
-              style={{
-                background: 'linear-gradient(135deg, #d63384, #c026d3)',
-              }}
+              style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}
             >
               <PhoneIcon className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-xs text-gray-400 font-medium">
-                PG Management
-              </p>
-              <p className="font-extrabold text-gray-800 text-lg group-hover:text-pink-600 transition">
-                9022481019
-              </p>
+              <p className="text-xs text-gray-400 font-medium">PG Management</p>
+              <p className="font-extrabold text-gray-800 text-lg group-hover:text-pink-600 transition">9022481019</p>
             </div>
           </a>
 
-          {/* WhatsApp (SIDE BY SIDE with PG) */}
+          {/* WhatsApp — side by side with PG Management */}
           <a
             href="https://wa.me/919579828996?text=Hi%20I%20want%20to%20book%20a%20room%20in%20HK%20PG"
             target="_blank"
@@ -120,11 +104,9 @@ export default function ContactPage() {
             </div>
             <div>
               <p className="text-xs text-gray-400 font-medium">WhatsApp</p>
-              <p className="font-extrabold text-gray-800 text-lg group-hover:text-green-600 transition">
-                Chat Now
-              </p>
+              <p className="font-extrabold text-gray-800 text-lg group-hover:text-green-600 transition">Chat Now</p>
             </div>
-            <ArrowRightIcon className="w-5 h-5 text-green-500" />
+            <ArrowRightIcon className="w-5 h-5 text-green-500 ml-auto" />
           </a>
 
         </div>
