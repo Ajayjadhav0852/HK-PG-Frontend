@@ -375,10 +375,18 @@ export default function GalleryPage() {
   const [lightbox,      setLightbox]      = useState(null)
   const [error,         setError]         = useState('')
 
+  // Section order: 4-sharing first, then 3, 2, 1, then rest
+  const SECTION_ORDER = ['4-sharing','3-sharing','2-sharing','1-sharing','balcony','outdoor','indoor','common','parking','terrace','bathrooms','rooms']
+  const sortImages = (imgs) => [...imgs].sort((a, b) => {
+    const ai = SECTION_ORDER.indexOf(a.section)
+    const bi = SECTION_ORDER.indexOf(b.section)
+    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi)
+  })
+
   const fetchImages = useCallback(async () => {
     try {
       const res = await galleryApi.getAll()
-      setImages(res.data || [])
+      setImages(sortImages(res.data || []))
     } catch {
       setError('Could not load gallery. Please try again.')
     } finally {
