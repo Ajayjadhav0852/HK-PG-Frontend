@@ -157,37 +157,34 @@ function UploadCard({ onUploaded }) {
   )
 }
 
-// ── 3D Fan Carousel ───────────────────────────────────────────────────────────
+// ── Premium 3D Fan Carousel ───────────────────────────────────────────────────
 function FanCarousel({ images, onImageClick, isAdmin, onDelete }) {
   const [center, setCenter] = useState(0)
-  const [animDir, setAnimDir] = useState(null) // 'left' | 'right'
+  const [hover, setHover]   = useState(false)
+  const [glow, setGlow]     = useState({ x: 50, y: 50 })
   const autoRef = useRef(null)
+  const touchStart = useRef(null)
 
   const total = images.length
 
-  const go = (dir) => {
-    setAnimDir(dir)
+  const go = useCallback((dir) => {
     setCenter(c => (c + (dir === 'right' ? 1 : -1) + total) % total)
-    setTimeout(() => setAnimDir(null), 400)
-  }
-
-  // Auto-advance every 4s
-  useEffect(() => {
-    if (total < 2) return
-    autoRef.current = setInterval(() => go('right'), 4000)
-    return () => clearInterval(autoRef.current)
   }, [total])
 
   const resetAuto = (dir) => {
     clearInterval(autoRef.current)
     go(dir)
-    autoRef.current = setInterval(() => go('right'), 4000)
+    autoRef.current = setInterval(() => go('right'), 4500)
   }
 
-  // Touch/swipe support
-  const touchStart = useRef(null)
+  useEffect(() => {
+    if (total < 2) return
+    autoRef.current = setInterval(() => go('right'), 4500)
+    return () => clearInterval(autoRef.current)
+  }, [total, go])
+
   const handleTouchStart = (e) => { touchStart.current = e.touches[0].clientX }
-  const handleTouchEnd = (e) => {
+  const handleTouchEnd   = (e) => {
     if (touchStart.current === null) return
     const diff = touchStart.current - e.changedTouches[0].clientX
     if (Math.abs(diff) > 40) resetAuto(diff > 0 ? 'right' : 'left')
@@ -196,109 +193,212 @@ function FanCarousel({ images, onImageClick, isAdmin, onDelete }) {
 
   if (total === 0) return (
     <div className="flex flex-col items-center justify-center py-24 text-gray-400">
-      <div className="text-6xl mb-4">📷</div>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="56" height="56" className="mb-4 opacity-40">
+        <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+      </svg>
       <p className="text-base font-medium">No photos yet in this section</p>
-      <p className="text-sm mt-1">Photos will appear here once uploaded</p>
+      <p className="text-sm mt-1 opacity-60">Photos will appear here once uploaded</p>
     </div>
   )
 
-  // Build visible slots: far-left, left, center, right, far-right
   const getIdx = (offset) => (center + offset + total) % total
 
   const slots = [
-    { offset: -2, scale: 0.55, x: '-78%', z: 1, rotate: -18, opacity: 0.35, blur: 2 },
-    { offset: -1, scale: 0.75, x: '-48%', z: 2, rotate: -10, opacity: 0.65, blur: 1 },
+    { offset: -2, scale: 0.52, x: '-80%', z: 1, rotate: -20, opacity: 0.28, blur: 3 },
+    { offset: -1, scale: 0.72, x: '-50%', z: 2, rotate: -11, opacity: 0.60, blur: 1 },
     { offset:  0, scale: 1.00, x:   '0%', z: 5, rotate:   0, opacity: 1.00, blur: 0 },
-    { offset:  1, scale: 0.75, x:  '48%', z: 2, rotate:  10, opacity: 0.65, blur: 1 },
-    { offset:  2, scale: 0.55, x:  '78%', z: 1, rotate:  18, opacity: 0.35, blur: 2 },
+    { offset:  1, scale: 0.72, x:  '50%', z: 2, rotate:  11, opacity: 0.60, blur: 1 },
+    { offset:  2, scale: 0.52, x:  '80%', z: 1, rotate:  20, opacity: 0.28, blur: 3 },
   ]
 
   const centerImg = images[center]
+  const sectionLabel = SECTIONS.find(s => s.key === centerImg?.section)?.label || centerImg?.section
 
   return (
     <div className="w-full select-none" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-      {/* Carousel stage */}
-      <div className="relative flex items-center justify-center"
-        style={{ height: 'clamp(240px, 42vw, 440px)', perspective: '1200px' }}>
-        {slots.map(({ offset, scale, x, z, rotate, opacity, blur }) => {
-          const idx = getIdx(offset)
-          if (total < 5 && Math.abs(offset) > Math.floor(total / 2)) return null
-          const img = images[idx]
-          const isCenter = offset === 0
-          return (
-            <div
-              key={`${offset}-${idx}`}
-              onClick={() => isCenter ? onImageClick(idx) : resetAuto(offset > 0 ? 'right' : 'left')}
-              style={{
-                position: 'absolute',
-                width: isCenter ? 'clamp(280px, 52vw, 560px)' : 'clamp(140px, 22vw, 260px)',
-                aspectRatio: '4/3',
-                transform: `translateX(${x}) scale(${scale}) rotateY(${rotate}deg)`,
-                zIndex: z,
-                opacity,
-                filter: blur > 0 ? `blur(${blur}px)` : 'none',
-                transition: 'all 0.45s cubic-bezier(0.25,0.46,0.45,0.94)',
-                cursor: isCenter ? 'zoom-in' : 'pointer',
-                borderRadius: 20,
-                overflow: 'hidden',
-                boxShadow: isCenter
-                  ? '0 24px 60px rgba(0,0,0,0.35)'
-                  : '0 8px 24px rgba(0,0,0,0.18)',
-              }}
-            >
-              <img
-                src={cdnOpt(img.imageUrl, isCenter ? 800 : 400)}
-                alt={img.caption || img.section}
-                loading="lazy"
-                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-              />
-              {/* Admin delete on center only */}
-              {isAdmin && isCenter && (
-                <button
-                  onClick={async (e) => { e.stopPropagation(); if (window.confirm('Delete this image?')) await onDelete(img.id) }}
-                  className="absolute top-3 right-3 w-8 h-8 bg-red-600/90 text-white rounded-full flex items-center justify-center text-sm hover:bg-red-700 transition"
-                >✕</button>
-              )}
-            </div>
-          )
-        })}
-      </div>
 
-      {/* Caption + counter */}
-      <div className="text-center mt-6 min-h-[48px]">
-        {centerImg?.caption && (
-          <p className="font-semibold text-gray-800 text-base">{centerImg.caption}</p>
-        )}
-        <p className="text-xs text-gray-400 mt-1">
-          {SECTIONS.find(s => s.key === centerImg?.section)?.emoji}{' '}
-          {SECTIONS.find(s => s.key === centerImg?.section)?.label}
-          {' · '}{center + 1} / {total}
-        </p>
-      </div>
+      {/* ── Dark cinematic stage ─────────────────────────────────────────── */}
+      <div style={{
+        background: 'linear-gradient(180deg,#0f0c1a 0%,#1a0533 60%,#0f0c1a 100%)',
+        borderRadius: 32,
+        padding: '48px 0 40px',
+        position: 'relative',
+        overflow: 'hidden',
+        boxShadow: '0 32px 80px rgba(0,0,0,0.4)',
+      }}>
 
-      {/* Prev / Next buttons */}
-      <div className="flex items-center justify-center gap-4 mt-5">
-        <button onClick={() => resetAuto('left')}
-          className="w-11 h-11 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-pink-400 hover:text-pink-600 transition text-lg font-bold bg-white shadow-sm">
-          ‹
-        </button>
-        {/* Dot indicators */}
-        <div className="flex gap-1.5">
-          {images.map((_, i) => (
-            <button key={i} onClick={() => { clearInterval(autoRef.current); setCenter(i) }}
-              className="rounded-full transition-all"
-              style={{
-                width: i === center ? 20 : 6,
-                height: 6,
-                background: i === center ? 'linear-gradient(90deg,#d63384,#c026d3)' : '#e5e7eb',
-              }} />
-          ))}
+        {/* Ambient glow blobs */}
+        <div style={{
+          position: 'absolute', top: '20%', left: '15%',
+          width: 300, height: 300, borderRadius: '50%',
+          background: 'radial-gradient(circle,rgba(214,51,132,0.18),transparent 70%)',
+          filter: 'blur(40px)', pointerEvents: 'none',
+        }} />
+        <div style={{
+          position: 'absolute', top: '20%', right: '15%',
+          width: 300, height: 300, borderRadius: '50%',
+          background: 'radial-gradient(circle,rgba(192,38,211,0.18),transparent 70%)',
+          filter: 'blur(40px)', pointerEvents: 'none',
+        }} />
+
+        {/* Carousel stage */}
+        <div className="relative flex items-center justify-center"
+          style={{ height: 'clamp(240px, 44vw, 460px)', perspective: '1400px' }}>
+          {slots.map(({ offset, scale, x, z, rotate, opacity, blur }) => {
+            const idx = getIdx(offset)
+            if (total < 5 && Math.abs(offset) > Math.floor(total / 2)) return null
+            const img = images[idx]
+            const isCenter = offset === 0
+            return (
+              <div
+                key={`${offset}-${idx}`}
+                onClick={() => isCenter ? onImageClick(idx) : resetAuto(offset > 0 ? 'right' : 'left')}
+                onMouseEnter={() => isCenter && setHover(true)}
+                onMouseLeave={() => { setHover(false); setGlow({ x: 50, y: 50 }) }}
+                onMouseMove={(e) => {
+                  if (!isCenter) return
+                  const rect = e.currentTarget.getBoundingClientRect()
+                  setGlow({
+                    x: ((e.clientX - rect.left) / rect.width) * 100,
+                    y: ((e.clientY - rect.top)  / rect.height) * 100,
+                  })
+                }}
+                style={{
+                  position: 'absolute',
+                  width: isCenter ? 'clamp(260px, 50vw, 540px)' : 'clamp(120px, 20vw, 240px)',
+                  aspectRatio: '4/3',
+                  transform: `translateX(${x}) scale(${hover && isCenter ? 1.06 : scale}) rotateY(${rotate}deg)`,
+                  zIndex: z,
+                  opacity,
+                  filter: blur > 0 ? `blur(${blur}px)` : 'none',
+                  transition: 'all 0.65s cubic-bezier(0.22,1,0.36,1)',
+                  cursor: isCenter ? 'zoom-in' : 'pointer',
+                  borderRadius: 22,
+                  overflow: 'hidden',
+                  // Glassmorphism border
+                  border: isCenter
+                    ? '1.5px solid rgba(255,255,255,0.22)'
+                    : '1px solid rgba(255,255,255,0.10)',
+                  boxShadow: isCenter
+                    ? hover
+                      ? '0 48px 120px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.15)'
+                      : '0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.10)'
+                    : '0 8px 28px rgba(0,0,0,0.35)',
+                }}
+              >
+                {/* Image with cinematic zoom */}
+                <img
+                  src={cdnOpt(img.imageUrl, isCenter ? 900 : 400)}
+                  alt={img.caption || img.section}
+                  loading="lazy"
+                  style={{
+                    width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+                    transform: hover && isCenter ? 'scale(1.08)' : 'scale(1.04)',
+                    transition: 'transform 0.6s ease',
+                    animation: isCenter ? 'cinematicZoom 14s ease-in-out infinite alternate' : 'none',
+                  }}
+                />
+
+                {/* Mouse-tracking glow overlay */}
+                {isCenter && (
+                  <div style={{
+                    position: 'absolute', inset: 0, pointerEvents: 'none',
+                    background: `radial-gradient(circle at ${glow.x}% ${glow.y}%, rgba(255,255,255,0.18), transparent 45%)`,
+                    transition: 'background 0.1s ease',
+                  }} />
+                )}
+
+                {/* Subtle vignette */}
+                <div style={{
+                  position: 'absolute', inset: 0, pointerEvents: 'none',
+                  background: 'linear-gradient(180deg,rgba(255,255,255,0.06) 0%,transparent 35%,rgba(0,0,0,0.25) 100%)',
+                }} />
+
+                {/* Admin delete */}
+                {isAdmin && isCenter && (
+                  <button
+                    onClick={async (e) => { e.stopPropagation(); if (window.confirm('Delete this image?')) await onDelete(img.id) }}
+                    style={{
+                      position: 'absolute', top: 12, right: 12,
+                      width: 32, height: 32, borderRadius: '50%',
+                      background: 'rgba(220,38,38,0.85)', color: 'white',
+                      border: 'none', cursor: 'pointer', fontSize: 16,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      backdropFilter: 'blur(8px)',
+                    }}
+                  >✕</button>
+                )}
+              </div>
+            )
+          })}
         </div>
-        <button onClick={() => resetAuto('right')}
-          className="w-11 h-11 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-pink-400 hover:text-pink-600 transition text-lg font-bold bg-white shadow-sm">
-          ›
-        </button>
+
+        {/* Caption + counter */}
+        <div className="text-center mt-6 px-4" style={{ minHeight: 52 }}>
+          {centerImg?.caption && (
+            <p style={{ color: 'rgba(255,255,255,0.92)', fontWeight: 700, fontSize: 16, margin: '0 0 4px' }}>
+              {centerImg.caption}
+            </p>
+          )}
+          <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: 12, margin: 0 }}>
+            {sectionLabel} · {center + 1} / {total}
+          </p>
+        </div>
+
+        {/* Prev / Next + dots */}
+        <div className="flex items-center justify-center gap-4 mt-5 px-4">
+          <button onClick={() => resetAuto('left')} style={{
+            width: 44, height: 44, borderRadius: '50%',
+            background: 'rgba(255,255,255,0.10)',
+            border: '1px solid rgba(255,255,255,0.18)',
+            color: 'white', fontSize: 22, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            backdropFilter: 'blur(8px)',
+            transition: 'background 0.2s ease',
+          }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.10)'}
+          >‹</button>
+
+          {/* Dot indicators */}
+          <div className="flex gap-1.5 flex-wrap justify-center" style={{ maxWidth: 200 }}>
+            {images.map((_, i) => (
+              <button key={i}
+                onClick={() => { clearInterval(autoRef.current); setCenter(i) }}
+                style={{
+                  borderRadius: 4, border: 'none', cursor: 'pointer',
+                  width: i === center ? 22 : 6, height: 6,
+                  background: i === center
+                    ? 'linear-gradient(90deg,#f472b6,#c026d3)'
+                    : 'rgba(255,255,255,0.25)',
+                  transition: 'all 0.3s ease',
+                  padding: 0,
+                }}
+              />
+            ))}
+          </div>
+
+          <button onClick={() => resetAuto('right')} style={{
+            width: 44, height: 44, borderRadius: '50%',
+            background: 'rgba(255,255,255,0.10)',
+            border: '1px solid rgba(255,255,255,0.18)',
+            color: 'white', fontSize: 22, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            backdropFilter: 'blur(8px)',
+            transition: 'background 0.2s ease',
+          }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.10)'}
+          >›</button>
+        </div>
       </div>
+
+      <style>{`
+        @keyframes cinematicZoom {
+          0%   { transform: scale(1.04); }
+          100% { transform: scale(1.12); }
+        }
+      `}</style>
     </div>
   )
 }
@@ -487,8 +587,6 @@ export default function GalleryPage() {
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
       `}</style>
-
-      <FooterSection />
     </div>
   )
 }
