@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 
 const quickLinks = [
   { label: 'Home',                path: '/' },
-  { label: 'Room Types',          path: '/accommodation' },
+  { label: 'Rooms',               path: '/accommodation' },
   { label: 'Facilities',          path: '/facilities' },
   { label: 'Gallery',             path: '/gallery' },
   { label: 'Special Offers',      path: '/offers' },

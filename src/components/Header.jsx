@@ -7,13 +7,13 @@ import { useAuth } from '../context/AuthContext'
 const LOGO_URL = 'https://res.cloudinary.com/dzr0crkvr/image/upload/q_auto,f_auto,w_200/hkpg/logo/hkpg-new-logo.png'
 
 const navLinks = [
-  { label: 'Home',          path: '/', id: 'home' },
-  { label: 'Facilities',    path: '/facilities', id: 'facilities' },
-  { label: 'Accommodation', path: '/accommodation', id: 'accommodation' },
-  { label: 'Gallery',       path: '/gallery', id: 'gallery' },
-  { label: 'Offers',        path: '/offers', id: 'offers' },
-  { label: 'Testimonials',  path: '/testimonials', id: 'testimonials' },
-  { label: 'Contact Us',    path: '/contact', id: 'contact' },
+  { label: 'Home',         path: '/', id: 'home' },
+  { label: 'Facilities',   path: '/facilities', id: 'facilities' },
+  { label: 'Rooms',        path: '/accommodation', id: 'accommodation' },
+  { label: 'Gallery',      path: '/gallery', id: 'gallery' },
+  { label: 'Offers',       path: '/offers', id: 'offers' },
+  { label: 'Testimonials', path: '/testimonials', id: 'testimonials' },
+  { label: 'Contact Us',   path: '/contact', id: 'contact' },
 ]
 
 export default function Header() {
