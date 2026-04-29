@@ -119,8 +119,7 @@ export default function Header() {
           transition: width 0.3s ease, left 0.3s ease;
         }
         .nav-link-hover:hover::after { width: 80%; left: 10%; }
-        .nav-link-active::after { width: 80% !important; left: 10% !important; }
-      `}</style>
+        .nav-link-active::after { width: 80% !important; left: 10% !important; }      `}</style>
 
       <header
         style={{
@@ -187,10 +186,8 @@ export default function Header() {
                 style={
                   isActive(link)
                     ? {
-                        ...gradientBtn,
-                        color: 'white',
-                        boxShadow: '0 4px 14px rgba(208,35,132,0.35)',
-                        transform: 'scale(1.04)',
+                        color: '#c026d3',
+                        fontWeight: 700,
                       }
                     : { color: '#374151' }
                 }
@@ -319,7 +316,7 @@ export default function Header() {
                 className="w-full text-left px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200"
                 style={{
                   ...(isActive(link)
-                    ? { ...gradientBtn, color: 'white', boxShadow: '0 3px 10px rgba(208,35,132,0.25)' }
+                    ? { color: '#c026d3', fontWeight: 700, borderLeft: '3px solid #c026d3', paddingLeft: '13px' }
                     : { color: '#374151' }),
                   animation: menuOpen ? `slideDown 0.3s ease ${i * 40}ms both` : 'none',
                 }}

@@ -52,6 +52,7 @@ const WA_CHAT_LINK = `https://wa.me/919579828996?text=${encodeURIComponent(
 
 function WhatsAppFloat() {
   const [visible, setVisible] = useState(false)
+  const [showTooltip, setShowTooltip] = useState(false)
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 1500)
@@ -64,6 +65,8 @@ function WhatsAppFloat() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with us on WhatsApp"
+      onMouseEnter={() => setShowTooltip(true)}
+      onMouseLeave={() => setShowTooltip(false)}
       className="fixed z-50 flex items-center justify-center rounded-full shadow-2xl transition-all duration-500"
       style={{
         bottom: '24px',
@@ -84,6 +87,29 @@ function WhatsAppFloat() {
         className="absolute rounded-full animate-ping"
         style={{ width: '58px', height: '58px', background: 'rgba(37,211,102,0.35)' }}
       />
+      {/* Slide-out tooltip */}
+      <span style={{
+        position: 'absolute',
+        right: '66px',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: '#1a1a2e',
+        color: 'white',
+        fontSize: 12,
+        fontWeight: 600,
+        padding: '6px 12px',
+        borderRadius: 8,
+        whiteSpace: 'nowrap',
+        pointerEvents: 'none',
+        opacity: showTooltip ? 1 : 0,
+        transition: 'opacity 0.2s ease, transform 0.2s ease',
+        transform: showTooltip ? 'translateY(-50%) translateX(0)' : 'translateY(-50%) translateX(8px)',
+        boxShadow: '0 4px 16px rgba(0,0,0,0.25)',
+      }}>
+        Chat with Owner
+        {/* Arrow */}
+        <span style={{ position: 'absolute', right: -6, top: '50%', transform: 'translateY(-50%)', width: 0, height: 0, borderTop: '5px solid transparent', borderBottom: '5px solid transparent', borderLeft: '6px solid #1a1a2e' }} />
+      </span>
     </a>
   )
 }
