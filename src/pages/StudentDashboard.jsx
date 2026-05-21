@@ -107,24 +107,10 @@ export default function StudentDashboard() {
     return acc
   }, { totalBeds: 0, vacantBeds: 0, occupiedBeds: 0 })
 
-  const [slowLoad, setSlowLoad] = useState(false)
-
-  useEffect(() => {
-    // If still loading after 5s, show "waking up server" message
-    const t = setTimeout(() => setSlowLoad(true), 5000)
-    return () => clearTimeout(t)
-  }, [])
-
   if (loading) return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 gap-3">
       <div className="w-10 h-10 border-4 border-pink-300 border-t-pink-600 rounded-full animate-spin" />
       <p className="text-gray-500 text-sm font-medium">Loading your dashboard...</p>
-      {slowLoad && (
-        <div className="text-center max-w-xs">
-          <p className="text-xs text-gray-400">⏳ Server is waking up — this takes ~30 seconds on first load.</p>
-          <p className="text-xs text-gray-400 mt-1">Please wait, your data will appear shortly.</p>
-        </div>
-      )}
     </div>
   )
 

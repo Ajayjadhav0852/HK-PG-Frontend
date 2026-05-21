@@ -1,4 +1,4 @@
-import { useState, memo, useEffect } from 'react'
+import { useState, memo } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { adminApi } from '../services/api'
 
@@ -195,24 +195,7 @@ const RoomCard = memo(function RoomCard({ slug, rt, onBook, onRoomUpdated, isAdm
 export default function RoomTypesSection({ onBook, roomsState, onRoomUpdated }) {
   const { user } = useAuth()
   const isAdmin = user?.role === 'admin'
-
-  // Show "loading" hint after 5 seconds if cards still loading
-  const [showWakeHint, setShowWakeHint] = useState(false)
-  const [wakeSeconds, setWakeSeconds] = useState(0)
   const isLoading = !roomsState || Object.keys(roomsState).length === 0
-
-  useEffect(() => {
-    if (!isLoading) { setShowWakeHint(false); setWakeSeconds(0); return }
-    const t = setTimeout(() => setShowWakeHint(true), 5000)
-    return () => clearTimeout(t)
-  }, [isLoading])
-
-  // Count seconds while wake hint is showing
-  useEffect(() => {
-    if (!showWakeHint || !isLoading) return
-    const t = setInterval(() => setWakeSeconds(s => s + 1), 1000)
-    return () => clearInterval(t)
-  }, [showWakeHint, isLoading])
 
   return (
     <div className="w-full px-4 sm:px-6 pt-10 pb-14">
@@ -230,27 +213,6 @@ export default function RoomTypesSection({ onBook, roomsState, onRoomUpdated }) 
             All rooms include WiFi, CCTV, and daily housekeeping. No hidden charges.
           </p>
         </div>
-
-        {/* Loading hint — shows if rooms take >5s (server cold start) */}
-        {showWakeHint && isLoading && (
-          <div className="mb-6 bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="text-2xl animate-spin">⏳</span>
-              <div>
-                <p className="text-sm font-bold text-amber-800">Server is waking up... ({wakeSeconds}s)</p>
-                <p className="text-xs text-amber-600 mt-0.5">
-                  Our free server sleeps when idle. It takes ~30–60 seconds to wake up. Please wait.
-                </p>
-              </div>
-            </div>
-            <div className="h-1.5 bg-amber-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-amber-500 rounded-full transition-all duration-1000"
-                style={{ width: `${Math.min((wakeSeconds / 60) * 100, 95)}%` }}
-              />
-            </div>
-          </div>
-        )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {SLUGS.map(slug => (
@@ -270,17 +232,17 @@ export default function RoomTypesSection({ onBook, roomsState, onRoomUpdated }) 
           <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-8 border border-purple-100">
             <div className="max-w-2xl mx-auto">
               <h3 className="text-2xl font-bold text-gray-800 mb-3">
-                🎯 Special Offers & Packages
+                Special Offers & Packages
               </h3>
               <p className="text-gray-600 mb-6">
-                Discover exclusive offers for CDAC students, degree students, and flexible stay options. 
+                Discover exclusive offers for CDAC students, degree students, and flexible stay options.
                 Save money with our special packages designed for your needs.
               </p>
               <button
                 onClick={() => window.location.href = '/offers'}
                 className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl hover:opacity-90 transition-all transform hover:scale-105 shadow-lg"
               >
-                🎁 Explore Special Offers →
+                Explore Special Offers →
               </button>
             </div>
           </div>
