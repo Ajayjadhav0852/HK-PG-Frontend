@@ -11,7 +11,6 @@ import HomePage          from './pages/HomePage'
 import FacilitiesPage    from './pages/FacilitiesPage'
 import AccommodationPage from './pages/AccommodationPage'
 import GalleryPage       from './pages/GalleryPage'
-import OffersPage        from './pages/OffersPage'
 import RulesAndRegulationsPage from './pages/RulesAndRegulationsPage'
 import PayRentPage       from './pages/PayRentPage'
 import TestimonialsPage  from './pages/TestimonialsPage'
@@ -214,9 +213,6 @@ function AppRoutes() {
           } />
           <Route path="/gallery" element={
             <PageWrapper><GalleryPage /></PageWrapper>
-          } />
-          <Route path="/offers" element={
-            <PageWrapper><OffersPage /></PageWrapper>
           } />
           <Route path="/rules-and-regulations" element={
             <PageWrapper><RulesAndRegulationsPage /></PageWrapper>

@@ -5,7 +5,6 @@ const quickLinks = [
   { label: 'Rooms',               path: '/accommodation' },
   { label: 'Facilities',          path: '/facilities' },
   { label: 'Gallery',             path: '/gallery' },
-  { label: 'Special Offers',      path: '/offers' },
   { label: 'Rules & Regulations', path: '/rules-and-regulations' },
   { label: 'Testimonials',        path: '/testimonials' },
   { label: 'Contact Us',          path: '/contact' },
@@ -161,7 +160,6 @@ export default function FooterSection() {
               {/* Phones */}
               {[
                 { num: '9579828996', label: 'Owner (PG Management)' },
-                { num: '9022481019', label: 'Team (PG Management)' },
                 { num: '9096398032', label: 'Owner' },
               ].map(({ num, label }) => (
                 <div key={num} style={{ display: 'flex', gap: 12, alignItems: 'center' }}>

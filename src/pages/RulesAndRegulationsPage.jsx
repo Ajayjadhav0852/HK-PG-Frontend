@@ -135,7 +135,7 @@ const RULES_SECTIONS = [
       {
         id: 'guest-charges',
         title: 'Guest Accommodation',
-        description: 'Guest accommodation charges: ₹400 per day.',
+        description: 'Guest accommodation charges: ₹300 per day.',
         important: false
       },
       {

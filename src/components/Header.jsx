@@ -11,7 +11,6 @@ const navLinks = [
   { label: 'Facilities',   path: '/facilities', id: 'facilities' },
   { label: 'Rooms',        path: '/accommodation', id: 'accommodation' },
   { label: 'Gallery',      path: '/gallery', id: 'gallery' },
-  { label: 'Offers',       path: '/offers', id: 'offers' },
   { label: 'Testimonials', path: '/testimonials', id: 'testimonials' },
   { label: 'Contact Us',   path: '/contact', id: 'contact' },
 ]

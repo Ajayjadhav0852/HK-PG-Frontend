@@ -75,24 +75,9 @@ export default function ContactPage() {
             </div>
           </a>
 
-          {/* PG Management — side by side with WhatsApp */}
-          <a
-            href="tel:9022481019"
-            className="bg-white rounded-2xl shadow-sm p-6 flex items-center gap-4 hover:shadow-md transition group"
-          >
-            <div
-              className="w-12 h-12 rounded-xl flex items-center justify-center text-white"
-              style={{ background: 'linear-gradient(135deg, #d63384, #c026d3)' }}
-            >
-              <PhoneIcon className="w-6 h-6" />
-            </div>
-            <div>
-              <p className="text-xs text-gray-400 font-medium">PG Management</p>
-              <p className="font-extrabold text-gray-800 text-lg group-hover:text-pink-600 transition">9022481019</p>
-            </div>
-          </a>
+          {/* PG Management card removed — only 2 owner numbers now */}
 
-          {/* WhatsApp — side by side with PG Management */}
+          {/* WhatsApp — side by side with Owner 2 */}
           <a
             href="https://wa.me/919579828996?text=Hi%20I%20want%20to%20book%20a%20room%20in%20HK%20PG"
             target="_blank"

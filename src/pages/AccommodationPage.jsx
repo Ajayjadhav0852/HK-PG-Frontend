@@ -37,7 +37,7 @@ export default function AccommodationPage({ rooms, onBook, onRoomUpdated }) {
                   </span>
                 </div>
                 <span className="text-xs text-gray-400 font-medium">
-                  out of {totalBeds} total · updates live
+                  out of {totalBeds} total
                 </span>
               </div>
 
